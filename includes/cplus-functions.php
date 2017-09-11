@@ -1,0 +1,324 @@
+<?php
+
+function cplus_get_my_dir() {
+	return untrailingslashit(__CPLUS_ROOT__);
+}
+
+// Repeaters functions --------------------------------------------------------]
+
+function cplus_get_repeater_output($repeater = 'default', $contact = null, $message = '', $classes = '') {
+	
+	$include = cplus_get_my_dir() .'/forms/'. $repeater .'.php';      		
+	if(!file_exists($include)) $include = cplus_get_my_dir() .'/forms/default.php';  
+	if(!file_exists($include)) return '';
+
+	if(!($contact instanceof cplus_Contact)) return '';
+
+	$_template = $repeater;
+	$_classes = $classes;
+	$_was_sent = false;
+	$_message = $message;
+	$_errors = $contact->errors;
+	$_values = $contact->as_values();
+	
+	ob_start();
+	include($include); 						// Include repeater template
+	$output = ob_get_contents();
+	ob_end_clean();
+
+	return $output;
+}	
+
+// Shortcode functions --------------------------------------------------------]
+
+function cplus_shortcode($atts, $content = null) {
+
+	extract(shortcode_atts(array(
+		'form' => 'contact',
+		'class' => '',
+		'ajax' => 'true',
+		'keep' => 'true',
+		'message' => '',
+	), $atts));
+
+	$available_forms = array('contact', 'default', 'booking');
+	if(!in_array($form, $available_forms)) $form =  'contact';
+
+	if(!is_null($content)) $message = do_shortcode($content);
+
+    $cplus = cplus_instance();
+    $contact = new cplus_Contact;
+    $was_sent = false;
+    
+    if($contact->is_valid()) $contact->send_mail();
+  
+	$cplus->ready();
+	return $cplus->contact_form($form, $contact, $message);
+}
+
+// Form printing functions ----------------------------------------------------]
+
+function cplus_classes($classes) {
+	return implode(' ', array_filter($classes));
+}	
+
+function cplus_form_message($was_error) {
+	return $was_error ? 
+		__('There was a problem with your submission. Errors have been highlighted below.', 'contact-plus') : 
+		__('Success! Your message was sent.', 'contact-plus');
+}
+
+function cplus_get_container($classes, $values, $errors) {
+	
+	$was_sent = isset($values['was_sent']) ? $values['was_sent'] : false;	
+	$was_error = empty($errors) ? false : true;
+	$icon_error = function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : '';
+	$icon_ok = function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : '';
+
+	return sprintf(
+		'<div id="cplus" class="%1$s">%4$s<div class="cplus-status%2$s"><span class="icon-ok">%5$s</span><span class="icon-error">%6$s</span><span class="message">%3$s</span></div>',
+			cplus_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
+			$was_sent ? ($was_error ? ' not-sent' : ' sent') : '',
+			cplus_form_message($was_error),
+			cplus_loader(1, 0.8),
+			$icon_ok,
+			$icon_error			
+	);
+}
+
+function cplus_print_container_closing($classes) {
+	
+	printf('</div><!-- .%1$s -->', $classes);
+}
+
+function cplus_get_required($required_data, &$required, &$required_valid) {
+	$required = is_array($required_data) ? $required_data[0] : $required_data;
+	$required_valid = is_array($required_data) ? $required_data[1] : '';
+}
+
+function cplus_get_data_required($required_data) {
+	
+	if(empty($required_data)) return '';
+	cplus_get_required($required_data, $required, $required_valid);
+	
+	$data_required = empty($required) ? '' : sprintf('data-required_rule="true" data-required="%1$s"', $required);
+	$data_required .= empty($required_valid) ? '' : sprintf('data-required_valid="%1$s"', $required_valid);
+	return $data_required;
+}
+
+function cplus_get_input($field_id, $field_type, $value, $required_data = '', $placeholder = '') {
+	
+	$class = $field_type == 'submit' ? 'button button-submit' : 'form-control';
+	$value = $field_type == 'checkbox' ? ($value == true ? 'checked' : '') : sprintf('value="%1$s"', empty($value) ? '' : esc_attr($value));
+	$placeholder = empty($placeholder) ? '' : sprintf('placeholder="%1$s"', $placeholder);
+	$name = $field_type == 'submit' ? '' : sprintf('name="cplus[%1$s]"', $field_id);
+	
+	$input = sprintf(
+		'<input class="%6$s" %1$s
+			type="%2$s" id="cplus-%3$s" 
+			%7$s
+			%4$s
+			%5$s
+		/>',
+		cplus_get_data_required($required_data),
+		$field_type,
+		$field_id,
+		$value,
+		$placeholder,
+		$class,
+		$name
+	);	
+	
+	return preg_replace('/\s+/', ' ', $input);
+}
+
+function cplus_get_textarea($field_id, $value, $required_data = '', $placeholder = '', $rows = 10) {
+
+	return sprintf(
+		'<textarea class="form-control" %1$s id="cplus-%3$s" name="cplus[%3$s]" rows="%2$s"%5$s>%4$s</textarea>',
+		cplus_get_data_required($required_data),
+		$rows,
+		$field_id,
+		esc_textarea($value),
+		empty($placeholder) ? '' : sprintf(' placeholder="%1$s"', $placeholder)
+	);	
+}
+
+function cplus_print_field($field_id, $type, $value, $label, $errors, $required_data = '', $placeholder = '') {
+
+	if($type == 'textarea') $field = cplus_get_textarea($field_id, $value, $required_data, $placeholder);
+	else if($type == 'submit') $field = cplus_get_input($field_id, $type, $label, $required_data, $placeholder);
+	else $field = cplus_get_input($field_id, $type, $value, $required_data, $placeholder);
+	
+	$error_class = isset($errors[$field_id]) ? ' error' : ' success';
+	$error_text = isset($errors[$field_id]) ? $errors[$field_id] : '';
+	
+	$label = sprintf('<label for="cplus-%1$s">%2$s%3$s</label>', $field_id, $label, empty($required_data) ? '' : '<span class="required">*</span>');
+	
+	if($type == 'submit') {
+		printf('<div class="cplus-control">%1$s</div>', $field);
+	} else {
+		printf(preg_replace('/\s+/', ' ',
+			'<div class="cplus-control%6$s">
+				%4$s
+				<div class="cplus-input %1$s">
+					%2$s%5$s
+		        <span for="cplus-%3$s" class="validation">%7$s</span>
+				</div>
+			</div>'),
+			$type, 
+			$field,
+			$field_id,
+			$type == 'checkbox' ? '' : $label,
+			$type == 'checkbox' ? $label : '',
+			$error_class,
+			$error_text
+		);
+	} 
+}
+
+function cplus_print_form($form_name, $form_values, $form_errors, $form_message = '', $classes = '') {
+	
+	$form = cplus_instance()->get_form($form_name);
+	if($form === false) return;
+
+	$output = cplus_get_container($classes, $form_values, $form_errors);
+
+	$output .= sprintf(
+	'<div class="cplus-form-container %2$s">%1$s
+		<form role="form" id="cplus-form" name="cplus-form" method="post" class="cplus-form %2$s">
+		%3$s
+		<input type="hidden" name="cplus_fname" value="%2$s">
+		<input type="hidden" name="post_link" value="%5$s">
+		<input type="hidden" name="post_id" value="%4$s">%6$s',
+		empty($form_message) ? '' : sprintf('<p>%1$s</p>', $form_message),
+		$form_name,
+		wp_nonce_field(cplus_instance()->ajax_nonce(false), 'cplus_nonce', true, false),
+		get_the_ID(),
+		trailingslashit($_SERVER['REQUEST_URI']),
+		'' // should be recaptcha ??
+/*
+if(isset($contact->Errors['recaptcha'])) { 
+				<div class="control-group form-group">
+					<p class="text-error"> echo $contact->errors['recaptcha']; </p>
+				</div>
+ } 
+*/
+	);
+	
+	echo preg_replace('/\s+/', ' ', $output);
+
+	foreach($form->get_fields() as $field) {
+		$field_id = $field['name'];
+		cplus_print_field(
+			$field_id, 
+			$field['type'], 
+			isset($form_values[$field_id]) ? $form_values[$field_id] : '', 
+			$field['label'], 
+			$form_errors, 
+			$field['required'], 
+			$field['placeholder']
+		);
+	}
+
+	printf('</form></div><!-- .%1$s --></div>', $form_name);
+}
+
+// WP Mailer functions --------------------------------------------------------]
+
+function cplus_from_email() {
+
+	$admin_email = cplus_admin_email();
+	$sitename = strtolower($_SERVER['SERVER_NAME']);
+	if(substr($sitename, 0, 4) == 'www.') $sitename = substr($sitename, 4);
+
+	if(strpbrk($admin_email, '@') == '@'.$sitename) return $admin_email;
+
+	return sprintf('wordpress@%1$s', $sitename);
+}
+
+function cplus_admin_email() {
+	return get_option('admin_email');
+}
+
+function  cplus_mailer($contact_email, $notify_email, $content) {
+
+	$site_name = htmlspecialchars_decode(get_bloginfo('name'));
+	 
+	// Notification recipients
+	$email_recipients = sanitize_text_field($notify_email);
+	$email_recipients = explode(',', $email_recipients);
+	$email_recipients = array_map('trim', $email_recipients);
+	$email_recipients = array_map('sanitize_email', $email_recipients);
+	$email_recipients = implode(',', $email_recipients);
+
+	// "From" email address
+	$send_from_email = cplus_from_email();
+	$send_from_name = $site_name;
+	$send_from = sprintf('%1$s <%2$s>', $send_from_name, $send_from_email);
+
+	if(empty($email_recipients)) $email_recipients = [cplus_admin_email()];
+
+	$subject = sprintf('New entry from %1$s', $site_name);
+	$headers = [
+		sprintf('From: %1$s', $send_from),
+		sprintf('Reply-To: %1$s', $contact_email)
+	];
+
+	$content_html_filter = function() { return 'text/html'; };
+	add_filter('wp_mail_content_type', $content_html_filter);
+
+	$result = wp_mail($email_recipients, $subject, $content, $headers);
+
+	remove_filter('wp_mail_content_type', $content_html_filter);
+	
+	return $result;
+}
+
+
+/*
+		<!-- recaptcha -->
+			<?php if($contact->RecaptchaPublicKey <> '' && $contact->RecaptchaPrivateKey <> '') { ?>
+
+				<div class="control-group form-group<?php
+				if(isset($contact->Errors['recaptcha'])) {
+					echo ' error has-error';
+				} ?>">
+					<div id="recaptcha_div">
+						<div class="g-recaptcha" data-theme="<?php echo cplus_PluginSettings::Theme(); ?>"
+						     data-sitekey="<?php echo $contact->RecaptchaPublicKey; ?>"></div>
+
+
+						<div for="cplus_recaptcha"
+						     class="help-block has-error error"><?php if(isset($contact->Errors['recaptcha'])) {
+								echo $contact->Errors['recaptcha'];
+							} ?></div>
+
+
+						<noscript>
+							<div style="width: 302px; height: 422px;">
+								<div style="width: 302px; height: 422px; position: relative;">
+									<div style="width: 302px; height: 422px; position: absolute;">
+										<iframe
+											src="https://www.google.com/recaptcha/api/fallback?k=<?php echo $contact->RecaptchaPublicKey; ?>"
+											frameborder="0" scrolling="no"
+											style="width: 302px; height:422px; border-style: none;">
+										</iframe>
+									</div>
+									<div style="width: 300px; height: 60px; border-style: none;
+                  bottom: 12px; left: 25px; margin: 0px; padding: 0px; right: 25px;
+                  background: #f9f9f9; border: 1px solid #c1c1c1; border-radius: 3px;">
+        <textarea id="g-recaptcha-response" name="g-recaptcha-response"
+                  class="g-recaptcha-response"
+                  style="width: 250px; height: 40px; border: 1px solid #c1c1c1;
+                         margin: 10px 25px; padding: 0px; resize: none;">
+        </textarea>
+									</div>
+								</div>
+							</div>
+						</noscript>
+
+					</div>
+				</div>
+			<?php } ?>
+*/
