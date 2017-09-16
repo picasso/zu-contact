@@ -1,34 +1,4 @@
 <?php
-
-function cplus_get_my_dir() {
-	return untrailingslashit(__CPLUS_ROOT__);
-}
-
-// Repeaters functions --------------------------------------------------------]
-
-function cplus_get_repeater_output($repeater = 'default', $contact = null, $message = '', $classes = '') {
-	
-	$include = cplus_get_my_dir() .'/forms/'. $repeater .'.php';      		
-	if(!file_exists($include)) $include = cplus_get_my_dir() .'/forms/default.php';  
-	if(!file_exists($include)) return '';
-
-	if(!($contact instanceof cplus_Contact)) return '';
-
-	$_template = $repeater;
-	$_classes = $classes;
-	$_was_sent = false;
-	$_message = $message;
-	$_errors = $contact->errors;
-	$_values = $contact->as_values();
-	
-	ob_start();
-	include($include); 						// Include repeater template
-	$output = ob_get_contents();
-	ob_end_clean();
-
-	return $output;
-}	
-
 // Shortcode functions --------------------------------------------------------]
 
 function cplus_shortcode($atts, $content = null) {
@@ -46,21 +16,43 @@ function cplus_shortcode($atts, $content = null) {
 
 	if(!is_null($content)) $message = do_shortcode($content);
 
-    $cplus = cplus_instance();
     $contact = new cplus_Contact;
-    $was_sent = false;
-    
     if($contact->is_valid()) $contact->send_mail();
   
-	$cplus->ready();
-	return $cplus->contact_form($form, $contact, $message);
+	cplus_instance()->ready();
+	
+	$args = [];	
+	$args['was_sent'] = false;
+	$args['message'] = $message;
+	$args['errors'] = $contact->errors;
+	$args['values'] = $contact->as_values();
+
+	$repeater = new ZU_PlusRepeaters(cplus_get_my_dir(), 'forms');
+	return $repeater->get_repeater_output($form, $args, $class);
+}
+
+// AJAX functions -------------------------------------------------------------]
+
+function cplus_ajax_submit() {
+	
+    $contact = new cplus_Contact;
+
+    $result['sent'] = false;
+    $result['is_valid'] = $contact->is_valid();
+    
+    if($result['is_valid']) $result['sent'] = $contact->send_mail();
+    
+    $result['errors'] = $contact->errors;
+    
+    $was_error = empty($contact->errors) && $result['sent'] ? false : true;
+    
+    $result['message'] = cplus_form_message($was_error);
+
+    if($was_error) wp_send_json_error($result);
+	else wp_send_json_success($result);
 }
 
 // Form printing functions ----------------------------------------------------]
-
-function cplus_classes($classes) {
-	return implode(' ', array_filter($classes));
-}	
 
 function cplus_form_message($was_error) {
 	return $was_error ? 
@@ -77,18 +69,13 @@ function cplus_get_container($classes, $values, $errors) {
 
 	return sprintf(
 		'<div id="cplus" class="%1$s">%4$s<div class="cplus-status%2$s"><span class="icon-ok">%5$s</span><span class="icon-error">%6$s</span><span class="message">%3$s</span></div>',
-			cplus_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
+			zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
 			$was_sent ? ($was_error ? ' not-sent' : ' sent') : '',
 			cplus_form_message($was_error),
-			cplus_loader(1, 0.8),
+			zu()->loader(1, 0.8),
 			$icon_ok,
 			$icon_error			
 	);
-}
-
-function cplus_print_container_closing($classes) {
-	
-	printf('</div><!-- .%1$s -->', $classes);
 }
 
 function cplus_get_required($required_data, &$required, &$required_valid) {
@@ -225,6 +212,63 @@ if(isset($contact->Errors['recaptcha'])) {
 }
 
 // WP Mailer functions --------------------------------------------------------]
+
+function cplus_spam_filter($contact) {
+   //
+   // This is all we need to do to weed out the spam.
+   //  If Akismet plugin is enabled then it will be hooked into these filters.
+   //
+	if(!($contact instanceof cplus_Contact)) return $contact;
+   
+    $comment_data = apply_filters('preprocess_comment', [
+        'comment_post_ID' => $contact->post_id,
+        'comment_author' => $contact->name,
+        'comment_author_email' => $contact->email,
+        'comment_content' => $contact->message,
+        'comment_type' => 'contact-plus',
+        'comment_author_url' => '',
+    ]);
+
+    $contact->spam = false;
+
+    //If it is spam then log as a comment
+    if(isset($comment_data['akismet_result']) && $comment_data['akismet_result'] === 'true') {
+		$comment_data['comment_approved'] = 'spam';
+		wp_insert_comment($comment_data);
+		$contact->spam = true;
+    } 
+    
+    return $contact;
+}    
+
+function cplus_php_mailer($phpmailer) {
+/*
+    $phpmailer->isSMTP();     
+    $phpmailer->Host = 'smtp.example.com';
+    $phpmailer->SMTPAuth = true; // Force it to use Username and Password to authenticate
+    $phpmailer->Port = 25;
+    $phpmailer->Username = 'yourusername';
+    $phpmailer->Password = 'yourpassword';
+*/
+
+    // Additional settings…
+    //$phpmailer->SMTPSecure = "tls"; // Choose SSL or TLS, if necessary for your server
+    //$phpmailer->From = "you@yourdomail.com";
+    //$phpmailer->FromName = "Your Name";
+
+/*
+	add_action( 'phpmailer_init', 'my_phpmailer_init' );
+	function my_phpmailer_init( PHPMailer $phpmailer ) {
+	    $phpmailer->Host = 'smtp.yourSMTPhost.net';
+	    $phpmailer->Port = 465; // could be different
+	    $phpmailer->Username = 'YOURUSERNAME'; // if required
+	    $phpmailer->Password = 'YOURPASSWORD'; // if required
+	    $phpmailer->SMTPAuth = true; // if required
+	    $phpmailer->SMTPSecure = 'ssl'; // enable if required, 'tls' is another possible value
+	    $phpmailer->IsSMTP();
+	}
+*/
+}
 
 function cplus_from_email() {
 

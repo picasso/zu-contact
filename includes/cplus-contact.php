@@ -142,7 +142,7 @@ class cplus_Contact {
 				$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
 				$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
 			}	
-			$this->was_sent = cplus_instance()->send_contact($this->email, $content);
+			$this->was_sent = cplus_mailer($this->email, cplus_instance()->email_recipients(), $content);
 		}
 		return $this->was_sent;
 	}

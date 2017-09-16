@@ -1,5 +1,3 @@
-// @zodekit-prepend 'attachment-display.js'; 
-
 /* global cplus_custom */
 (function($) {
 
@@ -137,6 +135,4 @@ function isScrolledIntoView(elem) {
 */
 
 })(jQuery);
-
-
 
