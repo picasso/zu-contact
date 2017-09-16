@@ -2,6 +2,8 @@
 //
 // This file loaded only when all parent classes are loaded from plugin
 //	
+define('CPLUS_VALIDATE_VERSION', '1.11.0');
+
 class Contact_Plus extends zuplus_Plugin {
 
 	private $default_form = null;
@@ -45,39 +47,17 @@ class Contact_Plus extends zuplus_Plugin {
 	public function frontend_enqueue() {
 		
 		parent::frontend_enqueue();
-
-/*
-	//load google recaptcha script if required
-	if($contact->is_recaptcha()) {
-		wp_enqueue_script('csf-recaptcha2');
-	}
+		
+		if($this->check_option('use_recaptcha')) {		//	load Google recaptcha script if required
+			
+// 	 	    wp_enqueue_script($this->prefix.'-recaptcha2', 'https://www.google.com/recaptcha/api.js?hl=' . get_locale(), null, null, true);
+		}
   
-    //here we need some jquery scripts and styles, so load them here
-    if ( cplus_PluginSettings::UseClientValidation() == true) {
-        wp_enqueue_script('jquery-validate');
-        wp_enqueue_script('cplus-validate');
-    }
-
-    //only load the stylesheet if required
-    if ( cplus_PluginSettings::LoadStyleSheet() == true)
-         wp_enqueue_style('cplus-bootstrap');
-         
-        wp_register_script('jquery-validate', CSCF_PLUGIN_URL . '/js/jquery.validate.min.js', array(
-            'jquery'
-        ) , '1.11.0', true);
-        
-        wp_register_script( 'cscf-validate', CSCF_PLUGIN_URL . "/js/jquery.validate.contact.form.js", 
-            'jquery', 
-            CSCF_VERSION_NUM, true );
-        
-        wp_localize_script( 'cscf-validate', 'cscfvars', 
-            array( 'ajaxurl' => admin_url( 'admin-ajax.php' ) ) );
-
- 	    wp_register_script( 'csf-recaptcha2',
-		    'https://www.google.com/recaptcha/api.js?hl=' . get_locale(), null, null, true );
-         
-*/
-
+	    if($this->check_option('client_validate')) {
+	
+// 	        wp_enqueue_script('jquery-validate', __CPLUS_ROOT__ . '/js/jquery.validate.min.js', ['jquery'], CPLUS_VALIDATE_VERSION, true);
+// 	        wp_enqueue_script('cplus-validate');
+	    }
 	}
 
 	public function register_form($form) {
@@ -98,7 +78,7 @@ class Contact_Plus extends zuplus_Plugin {
 	}
 	
 	public function email_recipients() { 
-		return '';
+		return $this->option_value('notify');
 	}
 }
 
@@ -113,32 +93,32 @@ class CPLUS_Admin extends zuplus_Admin {
 			'use_recaptcha' 	=>	false,
 			'client_validate'		=>	false,
 			'custom_css'			=>	true,
+			'notify'					=>	'',
 		]; 
 	}
-	protected function should_enqueue_css() {
-		return false;
+
+	public function validate_options($input) {
+		
+		$new_values = parent::validate_options($input);
+		
+		// validate e-mails
+		$new_values['notify'] = $this->validate_email_list($input, 'notify');
+		return $new_values;
 	}
 
-	protected function should_enqueue_js() {
-		return false;
-	}
-
-	public function status_callback() {
-		return ''; //sprintf('<p>xx: <span>%1$s</span></p><p>xxx: <span>%2$s</span></p>', 1, 2);		
-	}
-	
 	public function print_options($post) {
 
-		$this->form->checkbox('use_recaptcha', 'Use Google Recaptcha', 'Load Google <span>recaptcha</span> script if required.');
-		$this->form->checkbox('client_validate', 'Client Validation', '');
+		$this->form->checkbox('use_recaptcha', 'Use Google Recaptcha', 'Loads Google <span>recaptcha</span> script if required.');
+		$this->form->checkbox('client_validate', 'Client Validation', 'Add scripts for validation on client (without AJAX).');
 		$this->form->checkbox('custom_css', 'Use Plugin CSS', 'If switched off the plugin stylesheet won\'t be loaded.');		
+		$this->form->text('notify', 'Notify emails', 'List of emails to be notified when an entry occurs (comma separated).');		
 	
 		echo $this->form->fields('Simple Ajax Contact Form');
 		echo $this->form->print_save_mobile();
 	}
 }
 
-// Additional Files -----------------------------------------------------------]
+// Additional Classes & Functions ---------------------------------------------]
 
 require_once(__CPLUS_ROOT__ . 'includes/cplus-functions.php');
 require_once(__CPLUS_ROOT__ . 'includes/cplus-contact.php');
@@ -157,3 +137,6 @@ function cplus_options() {
 
 function cplus_get_form($name = '') { return cplus_instance()->get_form($name); }
 
+function cplus_use_recaptcha() {
+	return cplus_instance()->check_option('use_recaptcha');
+}
