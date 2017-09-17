@@ -100,9 +100,7 @@ class CPLUS_Admin extends zuplus_Admin {
 	public function validate_options($input) {
 		
 		$new_values = parent::validate_options($input);
-		
-		// validate e-mails
-		$new_values['notify'] = $this->validate_email_list($input, 'notify');
+		$new_values['notify'] = $this->validate_emails($input, 'notify'); 	// validate e-mails
 		return $new_values;
 	}
 

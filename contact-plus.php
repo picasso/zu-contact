@@ -4,7 +4,7 @@ Plugin Name: Contact Plus
 Plugin URI: https://***REMOVED***.ru/plugins/
 GitHub Plugin URI: https://github.com/picasso/contact-plus
 Description: Simple Ajax Contact Form
-Version: 0.7.3
+Version: 0.7.4
 Author: Dmitry Rudakov
 Author URI: https://***REMOVED***.ru/about/
 Text Domain: contact-plus
@@ -13,7 +13,7 @@ Domain Path: /lang/
 
 // Prohibit direct script loading
 defined( 'ABSPATH' ) || die( 'No direct script access allowed!' );
-define('CPLUS_VERSION', '0.7.3');
+define('CPLUS_VERSION', '0.7.4');
 define('CPLUS_NAME', 'Contact Plus');
 define('__CPLUS_ROOT__', plugin_dir_path(__FILE__)); 
 define('__CPLUS_FILE__', __FILE__); 
