@@ -1,0 +1,107 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: contact-plus\n"
+"POT-Creation-Date: 2018-03-20 16:49+0100\n"
+"PO-Revision-Date: 2018-03-20 17:06+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __:1,2c;_e:1,2c;_n:1,2,4c;_x:1,2,3c;_ex:1,2,3c;"
+"_nx:4c,1,2;esc_attr__:1,2c;esc_attr_e:1,2c;esc_attr_x:1,2c;esc_html__:1,2c;"
+"esc_html_e:1,2c;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;"
+"__ngettext_noop:1,2\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SearchPathExcluded-1: admin\n"
+"X-Poedit-SearchPathExcluded-2: bower_components\n"
+"X-Poedit-SearchPathExcluded-3: fonts\n"
+"X-Poedit-SearchPathExcluded-4: images\n"
+"X-Poedit-SearchPathExcluded-5: js\n"
+"X-Poedit-SearchPathExcluded-6: node_modules\n"
+"X-Poedit-SearchPathExcluded-7: public\n"
+"X-Poedit-SearchPathExcluded-8: sass\n"
+"X-Poedit-SearchPathExcluded-9: scripts\n"
+"X-Poedit-SearchPathExcluded-10: sources\n"
+"X-Poedit-SearchPathExcluded-11: *.json\n"
+"X-Poedit-SearchPathExcluded-12: *.css\n"
+
+#: includes/cplus-contact.php:39
+msgid "Nonce failed - is not correct or expired"
+msgstr "Проверка nonce не удалась - nonce неверен или срок его действия истек"
+
+#: includes/cplus-contact.php:40
+msgid "Form data not found"
+msgstr "Данные для формы не найдены"
+
+#: includes/cplus-contact.php:46
+msgid "Form name not found"
+msgstr "Имя формы не найдено"
+
+#: includes/cplus-form-booking.php:11 includes/cplus-form-default.php:11
+msgid "Name"
+msgstr "Имя"
+
+#: includes/cplus-form-booking.php:13 includes/cplus-form-default.php:13
+msgid "Please give your name."
+msgstr "Пожалуйста, укажите свое имя."
+
+#: includes/cplus-form-booking.php:14 includes/cplus-form-default.php:14
+msgid "Your Name"
+msgstr "Ваше имя"
+
+#: includes/cplus-form-booking.php:19 includes/cplus-form-default.php:19
+msgid "Email"
+msgstr "Эл. адрес"
+
+#: includes/cplus-form-booking.php:21 includes/cplus-form-default.php:21
+msgid "Please give your email address."
+msgstr "Укажите адрес своей электронной почты."
+
+#: includes/cplus-form-booking.php:21 includes/cplus-form-default.php:21
+msgid "Please enter a valid email address."
+msgstr "Пожалуйста, введите действительный адрес электронной почты."
+
+#: includes/cplus-form-booking.php:22 includes/cplus-form-default.php:22
+msgid "Your Email Address"
+msgstr "Ваш адрес электронной почты"
+
+#: includes/cplus-form-booking.php:27 includes/cplus-form-default.php:27
+msgid "Message"
+msgstr "Сообщение"
+
+#: includes/cplus-form-booking.php:29 includes/cplus-form-default.php:29
+msgid "Please give a message."
+msgstr "Пожалуйста, введите сообщение."
+
+#: includes/cplus-form-booking.php:30 includes/cplus-form-default.php:30
+msgid "Your Message"
+msgstr "Ваше сообщение"
+
+#: includes/cplus-form-booking.php:35
+msgid "Book"
+msgstr "Бронировать"
+
+#: includes/cplus-form-default.php:35
+msgid "Send me a copy"
+msgstr "Прислать мне копию"
+
+#: includes/cplus-form-default.php:41
+msgid "Send Message"
+msgstr "Отправить сообщение"
+
+#: includes/cplus-functions.php:59
+msgid ""
+"There was a problem with your submission. Errors have been highlighted below."
+msgstr "С отправкой формы возникли проблемы. Ошибки выделены ниже."
+
+#: includes/cplus-functions.php:60
+msgid "Success! Your message was sent."
+msgstr "Отлично! Ваше сообщение было отправлено."

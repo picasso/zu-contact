@@ -3,15 +3,15 @@
 
 function cplus_shortcode($atts, $content = null) {
 
-	extract(shortcode_atts(array(
-		'form' => 'contact',
-		'class' => '',
-		'ajax' => 'true',
-		'keep' => 'true',
-		'message' => '',
-	), $atts));
+	extract(shortcode_atts([
+		'form' 			=> 'contact',
+		'class' 			=> '',
+		'ajax' 			=> 'true',
+		'keep' 			=> 'true',
+		'message' 		=> '',
+	], $atts));
 
-	$available_forms = array('contact', 'default', 'booking');
+	$available_forms = ['contact', 'default', 'booking'];
 	if(!in_array($form, $available_forms)) $form =  'contact';
 
 	if(!is_null($content)) $message = do_shortcode($content);

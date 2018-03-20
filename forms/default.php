@@ -15,7 +15,6 @@
 	$image = empty($_thumbnails) ? '' : sprintf('<img src="%1$s" data-post_id="%2$s" />',  $_thumbnails['768'], $_post_id);
 	$heading = sprintf('<h2><a href="%1$s" data-post_id="%2$s">%3$s</a></h2>', $_link, $_post_id, get_the_title($_post_id));
 	$excerpt = zu()->get_excerpt($_post_id);
-	$excerpt = empty($excerpt) ? '' : sprintf('%3$s&nbsp;<a href="%1$s" title="%2$s">[...]</a>', $_link, __('Read More...', 'drfoto'), $excerpt);
 ?>
 
 <div class="zu-row zu-odd_even_item <?php echo $_classes; ?>">

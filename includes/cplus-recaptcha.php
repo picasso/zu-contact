@@ -68,11 +68,11 @@ class cplus_ReCaptcha {
 		}
 		$getResponse       = self::SubmitHttpGet(
 			self::$siteVerifyUrl,
-			array(
-				'secret'   => $secret,
-				'remoteip' => $remoteIp,
-				'response' => $response
-			)
+			[
+				'secret'   		=> 	$secret,
+				'remoteip' 	=> 	$remoteIp,
+				'response' 	=> 	$response
+			]
 		);
 		$answers           = json_decode($getResponse, true);
 		$recaptchaResponse = new cplus_ReCaptchaResponseV2();

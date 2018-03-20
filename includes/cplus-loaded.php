@@ -15,6 +15,7 @@ class Contact_Plus extends zuplus_Plugin {
 			'admin'					=> 	'CPLUS_Admin',
 			'plugin_file'			=> 	__CPLUS_FILE__,
 			'plugin_name'		=>	CPLUS_NAME,
+			'menu'					=>	CPLUS_MENU,
 			'version'				=> 	CPLUS_VERSION,
 			'options_nosave'	=>	[],
 		];
@@ -87,6 +88,28 @@ class CPLUS_Admin extends zuplus_Admin {
 	//
 	// Should/Could be Redefined in Child Class ----------------------------------]
 	//
+	
+	// 	To modify menu and submenu you should pass array with optional keys  ['reorder', 'rename', 'remove', 'separator']
+	//		If presented key should array of array with the following keys
+	//		'menu'					- item-slug
+	//		'new_index'			- new item position
+	//		'after_index'			- item position will be after item with this slug
+	//		'after_index2'		- item position will be after item with this slug + 1 (the space could be used for separator later)
+	//		'before_index'		- item position will be before item with this slug
+	//		'before_index2'		- item position will be before item with this slug - 1 (the space could be used for separator later)
+	//		'new_name'			- new item name
+	//		'parent'					- parent menu slug (if absent then  'options-general.php' will be used)
+
+	protected function custom_admin_submenu() {
+		return [
+			'reorder'	=>	[
+				[
+					'menu'					=> 	'cplus-settings',
+					'after_index2'		=>	'zuplus-settings',
+				],
+			],
+		];
+	}
 
 	protected function options_defaults() { 
 		return [
@@ -111,7 +134,7 @@ class CPLUS_Admin extends zuplus_Admin {
 		$this->form->checkbox('custom_css', 'Use Plugin CSS', 'If switched off the plugin stylesheet won\'t be loaded.');		
 		$this->form->text('notify', 'Notify emails', 'List of emails to be notified when an entry occurs (comma separated).');		
 	
-		echo $this->form->fields('Simple Ajax Contact Form');
+		echo $this->form->fields('Simple Ajax Contact Forms');
 		echo $this->form->print_save_mobile();
 	}
 }
@@ -122,6 +145,7 @@ require_once(__CPLUS_ROOT__ . 'includes/cplus-functions.php');
 require_once(__CPLUS_ROOT__ . 'includes/cplus-contact.php');
 require_once(__CPLUS_ROOT__ . 'includes/cplus-form.php');
 require_once(__CPLUS_ROOT__ . 'includes/cplus-form-default.php');
+require_once(__CPLUS_ROOT__ . 'includes/cplus-form-booking.php');
 
 // Helpers --------------------------------------------------------------------]
 
