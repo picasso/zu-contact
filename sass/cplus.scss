@@ -1,40 +1,43 @@
 // Form & controls ------------------------------------------------------------]
 
-$placeholder-color: rgba(black, 0.5);
-$placeholder-font-size: .875em;
+$cplus-placeholder-color: rgba(black, 0.5) !default;
+$cplus-placeholder-font-size: .875em !default;
 
-$ok-color: #66cc52;
-$error-color: #ff5533;
-$required-color: #ff8066;
-$required-color-pass: $ok-color;
-$status-background-color: rgba(black, 0.1);
+$cplus-ok-color: #66cc52 !default;
+$cplus-error-color: #ff5533 !default;
+$cplus-error-border-color: #ff5533 !default;
+$cplus-required-color: #ff8066 !default;
+$cplus-required-color-pass: $cplus-ok-color !default;
+$status-background-color: rgba(black, 0.1) !default;
 
-$loader-size: 40px;
-$loader-color: $error-color;
+$cplus-loader-size: 40px !default;
+$cplus-loader-color: $cplus-error-color !default;
 
-$field-left-margin: 4px;
-$field-top-margin: 8px;
+$cplus-field-left-margin: 4px !default;
+$cplus-field-top-margin: 8px !default;
 
-$input-text-color: #222;
-$input-text-font-weight: 400;
-$input-color: #ffffeb; //#ffffe0 - #fffffa
-$input-focus-color: white;
-$input-border-color: white;
-$input-focus-border-color: #ffff61;
-$input-focus-color-size: 5px;
-$input-padding: 0.6em;
-$input-border-radius: 2px;
+$cplus-input-text-color: #222 !default;
+$cplus-input-text-font-weight: 400 !default;
+$cplus-input-color: #ffffeb !default; 					//#ffffe0 - #fffffa
+$cplus-input-focus-color: white !default;
+$cplus-input-border-color: white !default;
+$cplus-input-focus-border-color: #ffff61 !default;
+$cplus-input-focus-color-size: 5px !default;
+$cplus-input-padding: 0.6em !default;
+$cplus-input-border-radius: 2px !default;
 
-$label-font-weight: 600;
+$cplus-label-color: inherit !default;
+$cplus-label-font-weight: 600 !default;
 
-$button-color: #cb4e4e;
-$button-focus-color: white;
-$button-font-weight: 500;
-$button-border-radius: 3px;
+$cplus-button-color: #cb4e4e !default;
+$cplus-button-focus-color: white !default;
+$cplus-button-font-weight: 500 !default;
+$cplus-button-border-radius: 3px !default;
+$cplus-button-width: 200px !default; 
 
 @mixin placeholder { 								
-	color: $placeholder-color;
-	font-size: $placeholder-font-size;
+	color: $cplus-placeholder-color;
+	font-size: $cplus-placeholder-font-size;
 	letter-spacing: .5pt;
 	opacity: 1;
 }
@@ -76,11 +79,11 @@ $button-border-radius: 3px;
 			opacity: 1;
 		}
 		svg {
-			color: $loader-color;
-			width: $loader-size; 
+			color: $cplus-loader-color;
+			width: $cplus-loader-size; 
 			height: 100%;
 			path, rect {
-				fill: $loader-color;
+				fill: $cplus-loader-color;
 			}
 		}	
 	}
@@ -97,9 +100,9 @@ $button-border-radius: 3px;
 	}
 
 	.cplus-control {
-		margin-top: $field-top-margin * 2;
+		margin-top: $cplus-field-top-margin * 2;
 		.cplus-input {
-			margin-top: $field-top-margin;
+			margin-top: $cplus-field-top-margin;
 		}
 	}
 // 	    width: calc(100% - 16px);
@@ -108,7 +111,7 @@ $button-border-radius: 3px;
 		display: table;
 	    padding: 10px;
 	    background-color: $status-background-color;
-	    border-radius: $input-border-radius + 1;
+	    border-radius: $cplus-input-border-radius + 1;
 		@extend %small;
 		transition: opacity 0.3s ease-in-out;
 		opacity: 0;
@@ -117,7 +120,7 @@ $button-border-radius: 3px;
 		}
 		&.sent {
 			opacity: 1;
-			color: $ok-color;
+			color: $cplus-ok-color;
 			.icon-ok {
 				visibility: visible;
 			}
@@ -127,7 +130,7 @@ $button-border-radius: 3px;
 		}
 		&.not-sent {
 			opacity: 1;
-			color: $error-color;
+			color: $cplus-error-color;
 			.icon-error {
 				visibility: visible;
 			}
@@ -151,13 +154,13 @@ $button-border-radius: 3px;
 		svg {
 			width: 30px;
 			height: auto;
-			margin-right: $field-left-margin * 2;
+			margin-right: $cplus-field-left-margin * 2;
 		}
 	}
 	.validation {
 		display: none;
-	    font-weight: $input-text-font-weight;
-	    margin: $field-top-margin 0 ($field-top-margin * 2);
+	    font-weight: $cplus-input-text-font-weight;
+	    margin: $cplus-field-top-margin 0 ($cplus-field-top-margin * 2);
 		@extend %small;
 		transition: opacity 0.3s ease-in-out;
 		opacity: 1;		
@@ -174,23 +177,23 @@ $button-border-radius: 3px;
 		.success {
 			label { 
 				.required {
-			    	color: $ok-color;
+			    	color: $cplus-ok-color;
 				}
 			}
 		}
 		.error {
 			label {
-			    color: $required-color;
+			    color: $cplus-required-color;
 				.required {
-			    	color: $error-color;
+			    	color: $cplus-error-color;
 				}
 			}
 			input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]), textarea {
-			    border: 1px solid rgba($error-color, 0.5);
-			    box-shadow: 0 0 $input-focus-color-size $error-color;
+			    border: 1px solid rgba($cplus-error-border-color, 0.5);
+			    box-shadow: 0 0 $cplus-input-focus-color-size $cplus-error-border-color;
 			}
 			.validation {
-				color: $error-color;
+				color: $cplus-error-color;
 				display: block;
 			}
 		}
@@ -199,7 +202,7 @@ $button-border-radius: 3px;
 	    height: 1px;
 	    overflow: hidden;
 	    border-top: 2px solid rgba(white, 0.7);
-	    margin: ($field-top-margin * 4) 0;
+	    margin: ($cplus-field-top-margin * 4) 0;
 	}
 	.captcha {
 	    margin-left: 32%;
@@ -219,11 +222,12 @@ $button-border-radius: 3px;
 	}
 
 	label {
-	    font-weight: $label-font-weight;
+		color: $cplus-label-color;
+	    font-weight: $cplus-label-font-weight;
 	    letter-spacing: .5pt;
     	.required {
-		    color: $required-color;
-		    margin-left: $field-left-margin;
+		    color: $cplus-required-color;
+		    margin-left: $cplus-field-left-margin;
 		}
 		&.small {
 			@extend %small;
@@ -232,7 +236,7 @@ $button-border-radius: 3px;
 	}
 	.checkbox, .radio {
 		label {
-			font-weight: $input-text-font-weight;
+			font-weight: $cplus-input-text-font-weight;
 		    display: inline-block;
 		    padding-left: 10px;
 		    vertical-align: middle;
@@ -242,20 +246,20 @@ $button-border-radius: 3px;
 	
 	input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not([type='image']):not([type='file']), textarea {
 	    appearance: none;
-	    border-radius: $input-border-radius;
+	    border-radius: $cplus-input-border-radius;
 	    outline: none;
-	    color: $input-text-color;
-	    font-weight: $input-text-font-weight;
-	    border: 1px solid $input-border-color;
-	    background-color: $input-color;
-	    padding: $input-padding;
+	    color: $cplus-input-text-color;
+	    font-weight: $cplus-input-text-font-weight;
+	    border: 1px solid $cplus-input-border-color;
+	    background-color: $cplus-input-color;
+	    padding: $cplus-input-padding;
 		&:disabled {
 			@extend %disabled;
 		}    
 	    &:focus {
-		    background-color: $input-focus-color;
-		    box-shadow: 0 0 $input-focus-color-size $input-focus-border-color;
-		    border: 1px solid $input-focus-border-color;
+		    background-color: $cplus-input-focus-color;
+		    box-shadow: 0 0 $cplus-input-focus-color-size $cplus-input-focus-border-color;
+		    border: 1px solid $cplus-input-focus-border-color;
 		}
 	}
 	input[type=checkbox], input[type=radio] {
@@ -282,25 +286,26 @@ $button-border-radius: 3px;
 	input[type=submit], input[type=button] {
 		appearance: none;
 	    border: 1px solid transparent;
-	    background-color: $button-color;
+	    background-color: $cplus-button-color;
 	    color: white;
-	    box-shadow: 1px 1px darken($button-color, 10%);
+	    box-shadow: 1px 1px darken($cplus-button-color, 10%);
 	    cursor: pointer;
 	    text-transform: uppercase;
 	    letter-spacing: 1px;
 	    padding: 10px 20px;
-
+		min-width: $cplus-button-width;
+		
 	    display: inline-block;
-	    font-weight: $button-font-weight;
+	    font-weight: $cplus-button-font-weight;
 	    outline: none;
 	    position: relative;
-	    border-radius: $button-border-radius;
+	    border-radius: $cplus-button-border-radius;
 		float: right;
 		transition: all 0.3s ease-in-out;
 	    transition-property: background-color, top, left, border-color;
 
 	    &:disabled {
-			background: rgba($button-color, 0.5);
+			background: rgba($cplus-button-color, 0.5);
 			color: rgba(white, 0.5);
 		}
 	    &:after {
@@ -310,9 +315,9 @@ $button-border-radius: 3px;
 		    transition: all 0.3s;
 		}
 		&:hover {
-		    box-shadow: 1px 1px darken($button-color, 20%);
-		    background-color: darken($button-color, 10%);
-		    border-color: rgba($button-focus-color, 0.3);
+		    box-shadow: 1px 1px darken($cplus-button-color, 20%);
+		    background-color: darken($cplus-button-color, 10%);
+		    border-color: rgba($cplus-button-focus-color, 0.3);
 		}
 		&:active {
 			top: 1px;

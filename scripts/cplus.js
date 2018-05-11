@@ -13,7 +13,7 @@
 				// add classes which could be used in others elements				
 				var parent_offset = $container.parent().offset().top;
 				var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
-						cplus_subheading_margin = Math.floor($subheading.offset().top - parent_offset),
+						cplus_subheading_margin = $subheading.length ? Math.floor($subheading.offset().top - parent_offset) : cplus_container_margin,
 						cplus_subheading_top = Math.floor($container.find('.cplus-status').outerHeight() / 2),
 						cplus_form_margin = Math.floor($form.offset().top - parent_offset);
 				
@@ -23,7 +23,7 @@
 					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
 					'</style>').appendTo('body');
 				
-				$subheading.css({top: cplus_subheading_top});
+				if($subheading.length) $subheading.css({top: cplus_subheading_top});
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {
 	
