@@ -7,23 +7,23 @@
 				$body = $('body'),
 				$container = $('#cplus'),
 				$subheading = $container.find('.cplus-subheading'),
+				$status = $container.find('.cplus-status'),
 				$form = $container.find('form'),
 				$button = $form.find('#cplus-submit');
 				
 				// add classes which could be used in others elements				
 				var parent_offset = $container.parent().offset().top;
 				var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
-						cplus_subheading_margin = $subheading.length ? Math.floor($subheading.offset().top - parent_offset) : cplus_container_margin,
-						cplus_subheading_top = Math.floor($container.find('.cplus-status').outerHeight() / 2),
+						cplus_status_margin = Math.floor($status.offset().top - parent_offset),
 						cplus_form_margin = Math.floor($form.offset().top - parent_offset);
 				
 				$('<style type="text/css">' +
 					'.cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;} ' +
-					'.cplus-subheading-margin{margin-top:'+(cplus_subheading_margin+cplus_subheading_top)+'px !important;} ' +
+					'.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;} ' +
 					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
 					'</style>').appendTo('body');
 				
-				if($subheading.length) $subheading.css({top: cplus_subheading_top});
+				if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {
 	
@@ -52,10 +52,9 @@
 
 		function cplus_processPostData(data) {
 			
-			var $status = $container.find('.cplus-status');
 			var $message = $status.find('.message');
 			
-			$container.addClass('cplus-processed');
+			$container.addClass('cplus-processed').removeClass('cplus-general-errors');
 			$message.html(data.message === undefined ? $message.data('errmsg') : data.message);
 			
 		    if(data.is_valid === true) {
@@ -79,6 +78,7 @@
 	            $.each(data.errors, function(name, value) {
 		            if(name === 'nonce' || name === 'form') {	// General errors
 			            $message.append('<span>' + value + '</span>');
+			            $container.addClass('cplus-general-errors');
 		            } else {
 		                var $er_span = $form.find('span[for="cplus-' + name + '"]');
 		                $er_span.html(value);

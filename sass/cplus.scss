@@ -197,7 +197,14 @@ $cplus-button-width: 200px !default;
 				display: block;
 			}
 		}
+		
+		&.cplus-general-errors {
+			.success label .required {
+				color: $cplus-error-color;
+			}
+		}
 	}
+	
 	.hrule {
 	    height: 1px;
 	    overflow: hidden;
