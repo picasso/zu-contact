@@ -14,15 +14,16 @@
 				var parent_offset = $container.parent().offset().top;
 				var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
 						cplus_subheading_margin = Math.floor($subheading.offset().top - parent_offset),
+						cplus_subheading_top = Math.floor($container.find('.cplus-status').outerHeight() / 2),
 						cplus_form_margin = Math.floor($form.offset().top - parent_offset);
 				
 				$('<style type="text/css">' +
-					'.cplus-container-margin{margin-top:'+cplus_container_margin+'px;}' +
-					'.cplus-subheading-margin{margin-top:'+cplus_subheading_margin+'px;}' +
-					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px;}' +
+					'.cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;} ' +
+					'.cplus-subheading-margin{margin-top:'+(cplus_subheading_margin+cplus_subheading_top)+'px !important;} ' +
+					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
 					'</style>').appendTo('body');
 				
-				$subheading.css({ top: Math.floor($container.find('.cplus-status').outerHeight() / 2) });
+				$subheading.css({top: cplus_subheading_top});
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {
 	
