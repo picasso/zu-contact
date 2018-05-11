@@ -6,9 +6,11 @@
 		var 	//$window = $(window), 				// Cache selectors
 				$body = $('body'),
 				$container = $('#cplus'),
+				$subheading = $container.find('.cplus-subheading'),
 				$form = $container.find('form'),
 				$button = $form.find('#cplus-submit');
 
+				$subheading.css({ top: Math.floor($container.find('.cplus-status').outerHeight() / 2) });
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {
 	
@@ -41,21 +43,12 @@
 			var $message = $status.find('.message');
 			
 			$container.addClass('cplus-processed');
-			$message.html(data.message);
+			$message.html(data.message === undefined ? $message.data('errmsg') : data.message);
 			
 		    if(data.is_valid === true) {
 			    
 			    $form.find('.cplus-control.error').removeClass('error');		// Remove previous errors
 			    $status.removeClass('sent not-sent').addClass('sent');
-		        //show sent message div
-/*
-		        $formdiv = $div.find('.cscfForm');
-		        $formdiv.css('display', 'none');
-		        $messagediv = $div.find('.cscfMessageSent');
-		        if (response.sent === false) $messagediv = $div.find('.cscfMessageNotSent');
-		        $messagediv.css('display', 'block');
-*/
-		
 /*
 		        if (isScrolledIntoView($div) == false) {
 		            jQuery('html,body')
@@ -86,7 +79,10 @@
 		
 		function ajaxCalled(is_init) {
 			
-			if(is_init) $button.attr('disabled', 'disabled');
+			if(is_init) {
+				$subheading.removeClass('before_posting');
+				$button.attr('disabled', 'disabled');
+			}
 			else $button.removeAttr('disabled');
 			
 			$body.toggleClass('ajaxed', is_init);
@@ -111,7 +107,9 @@
 				
 				error: function (jqXHR, textStatus, errorThrown) {
 	                 
-					ajaxCalled(false);  
+					var data = { is_valid: false,  errors: { form: textStatus+' : '+errorThrown} };
+					cplus_processPostData(data);
+					
 					if(window.console && window.console.log) {
 						console.log(jqXHR, textStatus, errorThrown); 
 					}

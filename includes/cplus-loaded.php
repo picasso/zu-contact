@@ -41,8 +41,14 @@ class Contact_Plus extends zuplus_Plugin {
 		add_shortcode('cplus-contact-form', 'cplus_shortcode');
 	}
 
-	public function should_load_css() {
-		return $this->check_option('custom_css');
+	public function ready($use_ajax = true) {
+		
+		if($use_ajax) {
+			$handle = $this->enqueue_script('cplus');
+			wp_localize_script($handle, 'cplus_custom', $this->defaults());
+		}
+		
+		if($this->check_option('custom_css')) $this->enqueue_style('cplus');
 	}
 
 	public function frontend_enqueue() {
@@ -74,7 +80,7 @@ class Contact_Plus extends zuplus_Plugin {
 	}
 
 	public function get_form($form_name = '') {
-		$form_name = empty($form_name) ? $this->default_form : $form_name;
+		$form_name = empty($form_name) || $form_name == 'default' ? $this->default_form : $form_name;
 		return isset($this->forms[$form_name]) ? $this->forms[$form_name] : false;
 	}
 	

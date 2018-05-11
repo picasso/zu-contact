@@ -23,10 +23,35 @@ function cplus_register_booking_form() {
 	);
 
 	$form->register_field(
+		'phone', 
+		__('Phone', 'contact-plus'), 
+		 'tel', 
+		 '', //__('Please give your phone number.', 'contact-plus'), 
+		__('Your Phone Number eg. +49-541-754-3010', 'contact-plus')
+	);
+
+	$form->register_field(
+		'city', 
+		__('City', 'contact-plus'), 
+		 'text', 
+		 '', //__('Please give the city where you live.', 'contact-plus'), 
+		__('Your City', 'contact-plus')
+	);
+
+	$form->register_field(
+		'places', 
+		__('Places', 'contact-plus'), 
+		 'number', 
+		 __('Please give the amount of places to book for you.', 'contact-plus'), 
+		__('How Many Places?', 'contact-plus')
+	);
+
+
+	$form->register_field(
 		'message', 
 		__('Message', 'contact-plus'), 
 		'textarea',
-		__('Please give a message.', 'contact-plus'), 
+		'', 
 		__('Your Message', 'contact-plus')
 	);
 

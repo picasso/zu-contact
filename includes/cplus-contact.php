@@ -50,12 +50,15 @@ class cplus_Contact {
 				
 					$field_id = $field['name'];
 					$field_type = $field['type'];
-					
+
 					if($field_type == 'text' || $field_type == 'textarea') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 					if($field_type == 'email') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_EMAIL);
+					if($field_type == 'url') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_URL);
+					if($field_type == 'number') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_NUMBER_INT);
+					if($field_type == 'tel') $value = preg_replace('/[^0-9+-]/', '', $cplus[$field_id]);
 					if($field_type == 'checkbox') $value = isset($cplus[$field_id]) ? true : false;
 					if($field_type == 'submit') continue;
-					
+
 					$this->attributes[$field_id] = $value;
 					
 					if($field_id == 'name') $this->name = $value;
@@ -87,10 +90,6 @@ class cplus_Contact {
 				$field_type = $field['type'];
 				$value = $this->attributes[$field_id];
 				cplus_get_required($field['required'], $required, $required_valid); 	// convert required values from Array or String
-/*
-				$required = is_array($field['required']) ? $field['required'][0] : $field['required'];
-				$required_valid = is_array($field['required']) ? $field['required'][1] : '';
-*/
 							
 				if($field_type == 'email') {		//email || email invalid address
 		
@@ -103,7 +102,23 @@ class cplus_Contact {
 					if(strlen($value) < 3) $this->errors[$field_id] = $required;
 				}
 
-				if($field_type == 'checkbox') {		//checkbox which should checked - like "I agree with terms & conditions"
+				if($field_type == 'number') {											// numbers should be great than 0
+
+					if(intval($value) <= 0) $this->errors[$field_id] = $required;
+				}
+
+				if($field_type == 'tel') {													// phone should be at least 8 digits
+					
+					if(strlen($value) < 8) $this->errors[$field_id] = $required;
+				}
+
+				if($field_type == 'url') {													// url || invalid url
+					
+					if(strlen($value) == 0) $this->errors[$field_id] = $required;
+					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_URL)) $this->errors[$field_id] = $required_valid;
+				}
+
+				if($field_type == 'checkbox') {										//checkbox which should checked - like "I agree with terms & conditions"
 					
 					if(strlen($value) !== true) $this->errors[$field_id] = $required;
 				}
@@ -134,8 +149,9 @@ class cplus_Contact {
 			apply_filters('cplus_spam_filter', $this);
 	
 			if($this->spam === true) return ($this->was_sent = true);
-	
-			$content = sprintf('<p>New entry was submitted at <strong>%1$s</strong></p>', date('d.m H:i'));
+			
+			$subject = __('New entry was submitted at', 'contact-plus');
+			$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
 	
 			foreach($this->attributes as $field_id => $value) {
 				$field = $this->form->get_field($field_id);
@@ -143,6 +159,11 @@ class cplus_Contact {
 				$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
 			}	
 			$this->was_sent = cplus_mailer($this->email, cplus_instance()->email_recipients(), $content);
+			
+			if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
+				$content = str_replace($subject, __('You sent it at', 'contact-plus'), $content);
+				cplus_mailer($this->email, $this->email, $content, true);
+			}
 		}
 		return $this->was_sent;
 	}

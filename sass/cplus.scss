@@ -55,6 +55,7 @@ $button-border-radius: 3px;
 
     margin: 16px 0;
     max-width: 100%;
+    position: relative;
 
 // 	::-webkit-input-placeholder		//	Chrome/Opera/Safari 
 // 	::-moz-placeholder					// Firefox 19+ 
@@ -82,6 +83,17 @@ $button-border-radius: 3px;
 				fill: $loader-color;
 			}
 		}	
+	}
+	
+	.cplus-subheading {
+		position: absolute;
+		top: 0;
+		left: 0;
+		transition: opacity 0.2s ease-in-out;
+		opacity: 0;
+		&.before_posting {
+			opacity: 1;
+		}
 	}
 
 	.cplus-control {
@@ -126,13 +138,14 @@ $button-border-radius: 3px;
 		span {
 			display: table-cell;
 			vertical-align: middle;
-			line-height: 1em;
+			line-height: 1.5em;
 			&.icon-ok, &.icon-error {
 				display: inline-block;
 				visibility: hidden;
+				margin-top: 0.2em
 			}
 			span {
-				padding-top: 0.5em;
+				padding-top: 0.2em;
 			}
 		}
 		svg {
@@ -153,6 +166,11 @@ $button-border-radius: 3px;
 		}
 	}
 	&.cplus-processed {
+		
+		.cplus-subheading {
+			display: none !important;
+		}
+		
 		.success {
 			label { 
 				.required {

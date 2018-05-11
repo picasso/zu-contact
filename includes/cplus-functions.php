@@ -4,12 +4,18 @@
 function cplus_shortcode($atts, $content = null) {
 
 	extract(shortcode_atts([
-		'form' 			=> 'contact',
-		'class' 			=> '',
-		'ajax' 			=> 'true',
-		'keep' 			=> 'true',
-		'message' 		=> '',
+		'form' 				=> 'contact',
+		'class' 				=> '',
+		'ajax' 				=> true,
+		'message' 			=> '',
+		'subheading'		=> '',
 	], $atts));
+
+	$subheading_defaults = [
+		'default'			=> 	__('Contact Us', 'contact-plus'),
+		'contact'			=> 	__('Write Us', 'contact-plus'),
+		'booking'			=>	__('Book Your Place', 'contact-plus'),
+	];
 
 	$available_forms = ['contact', 'default', 'booking'];
 	if(!in_array($form, $available_forms)) $form =  'contact';
@@ -19,13 +25,18 @@ function cplus_shortcode($atts, $content = null) {
     $contact = new cplus_Contact;
     if($contact->is_valid()) $contact->send_mail();
   
-	cplus_instance()->ready();
+	cplus_instance()->ready(filter_var($ajax, FILTER_VALIDATE_BOOLEAN));
 	
 	$args = [];	
-	$args['was_sent'] = false;
+
+	$args['was_sent'] = $contact->was_sent;
 	$args['message'] = $message;
 	$args['errors'] = $contact->errors;
 	$args['values'] = $contact->as_values();
+	
+	$args['values']['was_sent'] = $contact->was_sent;
+
+	if(!empty($subheading)) $args['values']['subheading'] = filter_var($subheading, FILTER_VALIDATE_BOOLEAN) ? $subheading_defaults[$form] : $subheading;
 
 	$repeater = new ZU_PlusRepeaters(cplus_get_my_dir(), 'forms');
 	return $repeater->get_repeater_output($form, $args, $class);
@@ -66,21 +77,28 @@ function cplus_get_container($classes, $values, $errors) {
 	$was_error = empty($errors) ? false : true;
 	$icon_error = function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : '';
 	$icon_ok = function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : '';
+	$subheading = isset($values['subheading']) ? sprintf('<h2 class="cplus-subheading before_posting">%s</h2>', $values['subheading']) : '';
 
 	return sprintf(
-		'<div id="cplus" class="%1$s">%4$s<div class="cplus-status%2$s"><span class="icon-ok">%5$s</span><span class="icon-error">%6$s</span><span class="message">%3$s</span></div>',
+		'<div id="cplus" class="%1$s">%4$s%7$s<div class="cplus-status%2$s">
+			<span class="icon-ok">%5$s</span>
+			<span class="icon-error">%6$s</span>
+			<span class="message" data-errmsg="%8$s">%3$s</span>
+		</div>',
 			zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
-			$was_sent ? ($was_error ? ' not-sent' : ' sent') : '',
+			($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
 			cplus_form_message($was_error),
 			zu()->loader(1, 0.8),
 			$icon_ok,
-			$icon_error			
+			$icon_error,
+			$subheading	,
+			cplus_form_message(true)	
 	);
 }
 
 function cplus_get_required($required_data, &$required, &$required_valid) {
 	$required = is_array($required_data) ? $required_data[0] : $required_data;
-	$required_valid = is_array($required_data) ? $required_data[1] : '';
+	$required_valid = is_array($required_data) ? $required_data[1] : $required_data;
 }
 
 function cplus_get_data_required($required_data) {
@@ -278,14 +296,14 @@ function cplus_from_email() {
 
 	if(strpbrk($admin_email, '@') == '@'.$sitename) return $admin_email;
 
-	return sprintf('wordpress@%1$s', $sitename);
+	return sprintf('mailer@%1$s', $sitename);
 }
 
 function cplus_admin_email() {
 	return get_option('admin_email');
 }
 
-function  cplus_mailer($contact_email, $notify_email, $content) {
+function  cplus_mailer($contact_email, $notify_email, $content, $carbon_copy = false) {
 
 	$site_name = htmlspecialchars_decode(get_bloginfo('name'));
 	 
@@ -303,17 +321,14 @@ function  cplus_mailer($contact_email, $notify_email, $content) {
 
 	if(empty($email_recipients)) $email_recipients = [cplus_admin_email()];
 
-	$subject = sprintf('New entry from %1$s', $site_name);
-	$headers = [
-		sprintf('From: %1$s', $send_from),
-		sprintf('Reply-To: %1$s', $contact_email)
-	];
+	$subject = sprintf($carbon_copy ? 'Submitted from %s': 'New entry from %s', $site_name);
+	$headers = [sprintf('From: %s', $send_from)];
+	
+	if(!$carbon_copy) $headers[] = sprintf('Reply-To: %s', $contact_email);
 
 	$content_html_filter = function() { return 'text/html'; };
 	add_filter('wp_mail_content_type', $content_html_filter);
-
 	$result = wp_mail($email_recipients, $subject, $content, $headers);
-
 	remove_filter('wp_mail_content_type', $content_html_filter);
 	
 	return $result;

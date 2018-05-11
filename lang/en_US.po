@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contact-plus\n"
-"POT-Creation-Date: 2018-03-20 16:49+0100\n"
-"PO-Revision-Date: 2018-03-20 16:57+0100\n"
+"POT-Creation-Date: 2018-05-11 12:24+0200\n"
+"PO-Revision-Date: 2018-05-11 12:26+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -44,6 +44,14 @@ msgstr "Form data not found"
 msgid "Form name not found"
 msgstr "Form name not found"
 
+#: includes/cplus-contact.php:153
+msgid "New entry was submitted at"
+msgstr "New entry was submitted at"
+
+#: includes/cplus-contact.php:164
+msgid "You sent it at"
+msgstr "You sent it at"
+
 #: includes/cplus-form-booking.php:11 includes/cplus-form-default.php:11
 msgid "Name"
 msgstr "Name"
@@ -72,21 +80,49 @@ msgstr "Please enter a valid email address."
 msgid "Your Email Address"
 msgstr "Your Email Address"
 
-#: includes/cplus-form-booking.php:27 includes/cplus-form-default.php:27
+#: includes/cplus-form-booking.php:27
+msgid "Phone"
+msgstr "Phone"
+
+#: includes/cplus-form-booking.php:30
+msgid "Your Phone Number eg. +49-541-754-3010"
+msgstr "Your Phone Number eg. +49-541-754-3010"
+
+#: includes/cplus-form-booking.php:35
+msgid "City"
+msgstr "City"
+
+#: includes/cplus-form-booking.php:38
+msgid "Your City"
+msgstr "Your City"
+
+#: includes/cplus-form-booking.php:43
+msgid "Places"
+msgstr "Number of Places"
+
+#: includes/cplus-form-booking.php:45
+msgid "Please give the amount of places to book for you."
+msgstr "Please give the amount of places to book for you."
+
+#: includes/cplus-form-booking.php:46
+msgid "How Many Places?"
+msgstr "How Many Places?"
+
+#: includes/cplus-form-booking.php:52 includes/cplus-form-default.php:27
 msgid "Message"
 msgstr "Message"
 
-#: includes/cplus-form-booking.php:29 includes/cplus-form-default.php:29
-msgid "Please give a message."
-msgstr "Please give a message."
-
-#: includes/cplus-form-booking.php:30 includes/cplus-form-default.php:30
+#: includes/cplus-form-booking.php:55 includes/cplus-form-default.php:30
 msgid "Your Message"
 msgstr "Your Message"
 
-#: includes/cplus-form-booking.php:35
+#: includes/cplus-form-booking.php:60
 msgid "Book"
 msgstr "Book"
+
+#: includes/cplus-form-default.php:29
+msgid "Please give a message."
+msgstr "Please give a message."
 
 #: includes/cplus-form-default.php:35
 msgid "Send me a copy"
@@ -96,12 +132,24 @@ msgstr "Send me a copy"
 msgid "Send Message"
 msgstr "Send Message"
 
-#: includes/cplus-functions.php:59
+#: includes/cplus-functions.php:15
+msgid "Contact Us"
+msgstr "Contact Us"
+
+#: includes/cplus-functions.php:16
+msgid "Write Us"
+msgstr "Write Us"
+
+#: includes/cplus-functions.php:17
+msgid "Book Your Place"
+msgstr "Book Your Place"
+
+#: includes/cplus-functions.php:70
 msgid ""
 "There was a problem with your submission. Errors have been highlighted below."
 msgstr ""
 "There was a problem with your submission. Errors have been highlighted below."
 
-#: includes/cplus-functions.php:60
+#: includes/cplus-functions.php:71
 msgid "Success! Your message was sent."
 msgstr "Success! Your message was sent."

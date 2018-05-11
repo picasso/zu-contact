@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contact-plus\n"
-"POT-Creation-Date: 2018-03-20 16:49+0100\n"
-"PO-Revision-Date: 2018-03-20 17:06+0100\n"
+"POT-Creation-Date: 2018-05-11 12:24+0200\n"
+"PO-Revision-Date: 2018-05-11 12:29+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -45,6 +45,14 @@ msgstr "Данные для формы не найдены"
 msgid "Form name not found"
 msgstr "Имя формы не найдено"
 
+#: includes/cplus-contact.php:153
+msgid "New entry was submitted at"
+msgstr "Новая форма была отправлена в"
+
+#: includes/cplus-contact.php:164
+msgid "You sent it at"
+msgstr "Вы отправили это в"
+
 #: includes/cplus-form-booking.php:11 includes/cplus-form-default.php:11
 msgid "Name"
 msgstr "Имя"
@@ -73,21 +81,49 @@ msgstr "Пожалуйста, введите действительный адр
 msgid "Your Email Address"
 msgstr "Ваш адрес электронной почты"
 
-#: includes/cplus-form-booking.php:27 includes/cplus-form-default.php:27
+#: includes/cplus-form-booking.php:27
+msgid "Phone"
+msgstr "Телефон"
+
+#: includes/cplus-form-booking.php:30
+msgid "Your Phone Number eg. +49-541-754-3010"
+msgstr "Ваш номер телефона, например. +7-495-754-3010"
+
+#: includes/cplus-form-booking.php:35
+msgid "City"
+msgstr "Город"
+
+#: includes/cplus-form-booking.php:38
+msgid "Your City"
+msgstr "Ваш город"
+
+#: includes/cplus-form-booking.php:43
+msgid "Places"
+msgstr "Количество мест"
+
+#: includes/cplus-form-booking.php:45
+msgid "Please give the amount of places to book for you."
+msgstr "Пожалуйста, укажите количество мест для бронирования."
+
+#: includes/cplus-form-booking.php:46
+msgid "How Many Places?"
+msgstr "Сколько мест?"
+
+#: includes/cplus-form-booking.php:52 includes/cplus-form-default.php:27
 msgid "Message"
 msgstr "Сообщение"
 
-#: includes/cplus-form-booking.php:29 includes/cplus-form-default.php:29
-msgid "Please give a message."
-msgstr "Пожалуйста, введите сообщение."
-
-#: includes/cplus-form-booking.php:30 includes/cplus-form-default.php:30
+#: includes/cplus-form-booking.php:55 includes/cplus-form-default.php:30
 msgid "Your Message"
 msgstr "Ваше сообщение"
 
-#: includes/cplus-form-booking.php:35
+#: includes/cplus-form-booking.php:60
 msgid "Book"
 msgstr "Бронировать"
+
+#: includes/cplus-form-default.php:29
+msgid "Please give a message."
+msgstr "Пожалуйста, введите сообщение."
 
 #: includes/cplus-form-default.php:35
 msgid "Send me a copy"
@@ -97,11 +133,23 @@ msgstr "Прислать мне копию"
 msgid "Send Message"
 msgstr "Отправить сообщение"
 
-#: includes/cplus-functions.php:59
+#: includes/cplus-functions.php:15
+msgid "Contact Us"
+msgstr "Свяжитесь с нами"
+
+#: includes/cplus-functions.php:16
+msgid "Write Us"
+msgstr "Напишите нам"
+
+#: includes/cplus-functions.php:17
+msgid "Book Your Place"
+msgstr "Забронируйте место"
+
+#: includes/cplus-functions.php:70
 msgid ""
 "There was a problem with your submission. Errors have been highlighted below."
 msgstr "С отправкой формы возникли проблемы. Ошибки выделены ниже."
 
-#: includes/cplus-functions.php:60
+#: includes/cplus-functions.php:71
 msgid "Success! Your message was sent."
 msgstr "Отлично! Ваше сообщение было отправлено."
