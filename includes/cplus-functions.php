@@ -149,9 +149,9 @@ function cplus_get_textarea($field_id, $value, $required_data = '', $placeholder
 	);	
 }
 
-function cplus_print_field($field_id, $type, $value, $label, $errors, $required_data = '', $placeholder = '') {
-
-	if($type == 'textarea') $field = cplus_get_textarea($field_id, $value, $required_data, $placeholder);
+function cplus_print_field($field_id, $type, $value, $label, $errors, $required_data = '', $placeholder = '', $maybe_param = 0) {
+_dbug_log('$maybe_param=', $maybe_param);
+	if($type == 'textarea') $field = cplus_get_textarea($field_id, $value, $required_data, $placeholder, $maybe_param);
 	else if($type == 'submit') $field = cplus_get_input($field_id, $type, $label, $required_data, $placeholder);
 	else $field = cplus_get_input($field_id, $type, $value, $required_data, $placeholder);
 	
@@ -222,7 +222,8 @@ if(isset($contact->Errors['recaptcha'])) {
 			$field['label'], 
 			$form_errors, 
 			$field['required'], 
-			$field['placeholder']
+			$field['placeholder'],
+			$field['type'] == 'textarea' ? $form->rows_in_message : 0
 		);
 	}
 

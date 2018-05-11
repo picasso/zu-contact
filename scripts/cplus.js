@@ -9,7 +9,19 @@
 				$subheading = $container.find('.cplus-subheading'),
 				$form = $container.find('form'),
 				$button = $form.find('#cplus-submit');
-
+				
+				// add classes which could be used in others elements				
+				var parent_offset = $container.parent().offset().top;
+				var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
+						cplus_subheading_margin = Math.floor($subheading.offset().top - parent_offset),
+						cplus_form_margin = Math.floor($form.offset().top - parent_offset);
+				
+				$('<style type="text/css">' +
+					'.cplus-container-margin{margin-top:'+cplus_container_margin+'px;}' +
+					'.cplus-subheading-margin{margin-top:'+cplus_subheading_margin+'px;}' +
+					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px;}' +
+					'</style>').appendTo('body');
+				
 				$subheading.css({ top: Math.floor($container.find('.cplus-status').outerHeight() / 2) });
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {

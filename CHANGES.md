@@ -1,9 +1,11 @@
-#### 0.8.1 / 2018-05-11
+#### 0.8.2 / 2018-05-11
 * added `subheading` attribute
 * added new fields types: `number`, `tel`, `url`
 * improved  js error processing
 * added support of `carbon-copy` attribute
 * updated language dictionaries
+* added `$rows_in_message` attribute for forms
+* dynamically added classes with form margins
 * css optimization
 
 #### 0.7.6 / 2018-03-20

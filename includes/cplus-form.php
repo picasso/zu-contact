@@ -6,11 +6,13 @@ class cplus_Form {
 	
 	public $name;
 	public $fields;
+	public $rows_in_message;
 	
-	function __construct($name = 'cplus') {
+	function __construct($name = 'cplus', $rows_in_message = 10) {
 		
 		$this->name = $name;
 		$this->fields = [];
+		$this->rows_in_message = $rows_in_message;
 	}
 
 	private function create_field($id, $label, $type, $required, $placeholder) {		// $required - String or Array of Strings

@@ -4,7 +4,7 @@
 //
 function cplus_register_booking_form() {
 	
-	$form = new cplus_Form('booking');
+	$form = new cplus_Form('booking', 4); 		// 4 - rows in message
 	
 	$form->register_field(
 		'name', 
