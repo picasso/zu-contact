@@ -4,7 +4,7 @@
 //
 function cplus_register_default_form() {
 	
-	$form = new cplus_Form('contact');
+	$form = new cplus_Form('default', ['carbon_copy' => true]);
 	
 	$form->register_field(
 		'name', 
@@ -31,16 +31,19 @@ function cplus_register_default_form() {
 	);
 
 	$form->register_field(
-		'carbon-copy', 
-		__('Send me a copy', 'contact-plus'), 
-		'checkbox'
-	);
-
-	$form->register_field(
 		'submit', 
-		__('Send Message', 'contact-plus'), 
+		__('Send Message', 'contact-plus'),  							// __('Subscribe', 'contact-plus')
 		'submit'
 	);
 
-	cplus_instance()->register_form($form);
+	cplus_instance()->register_form($form);						// Register default form
+	
+	$contact_form = clone $form;
+	$contact_form->process_params([
+		'name'				=> 	'contact',
+		'rows'				=>	5,
+		'carbon_copy'	=>	false,
+	]);
+	cplus_instance()->register_form($contact_form);			// Register contact form
+	
 }

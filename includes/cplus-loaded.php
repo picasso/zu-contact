@@ -73,6 +73,9 @@ class Contact_Plus extends zuplus_Plugin {
 
 			if(empty($this->default_form)) $this->default_form = $form->name;		// first added form will be default
 			
+			if($form->carbon_copy) $form->append_field('carbon-copy', __('Send me a copy', 'contact-plus'), 'checkbox');
+			else $form->remove_field('carbon-copy');
+			
 			$this->forms[$form->name] = $form;
 			return true;
 		
@@ -82,6 +85,55 @@ class Contact_Plus extends zuplus_Plugin {
 	public function get_form($form_name = '') {
 		$form_name = empty($form_name) || $form_name == 'default' ? $this->default_form : $form_name;
 		return isset($this->forms[$form_name]) ? $this->forms[$form_name] : false;
+	}
+	
+	public function get_success_message($form_name = '') {
+
+		$success_messages = [
+			'default'			=> 	__('Your Request Has Been Sent', 'contact-plus'),
+			'contact'			=> 	__('Success! Your message was sent.', 'contact-plus'),
+			'booking'			=>	__('Your Booking Request Has Been Sent', 'contact-plus'),
+			'subscribe'		=>	[__('You Are Now subscribed to Our Newsletter', 'contact-plus'), __('You Are Now subscribed to My Newsletter', 'contact-plus')],
+		];
+
+		$message = isset($success_messages[$form_name]) ? $success_messages[$form_name] : $success_messages['default'];		
+		if(is_array($message)) $message = $this->check_option('me_or_us') ?  $message[1] : $message[0];
+		
+		return $message;
+	}
+	
+	public function get_error_message($form_name = '') {
+		return __('There was a problem with your submission. Errors have been highlighted below.', 'contact-plus');
+	}
+
+	public function get_subheading($subheading, $form_name = '') {
+
+		$subheading_us = [
+			'contact'			=> 	__('Contact Us', 'contact-plus'),
+			'write'				=> 	__('Write Us', 'contact-plus'),
+			'book'				=>	__('Book Your Place', 'contact-plus'),
+			'subscribe'		=>	__('Subscribe to Our Newsletter', 'contact-plus'),
+		];
+		
+		$subheading_me = [
+			'contact'			=> 	__('Contact Me', 'contact-plus'),
+			'write'				=> 	__('Write To Me', 'contact-plus'),
+			'book'				=>	__('Book Your Place', 'contact-plus'),
+			'subscribe'		=>	__('Subscribe to My Newsletter', 'contact-plus'),
+		];
+
+		$subheading_form = [
+			'default'			=> 	'write',
+			'contact'			=> 	'contact',
+			'booking'			=>	'book',
+		];
+
+		$form_name = isset($subheading_form[$form_name]) ? $subheading_form[$form_name] : '';
+		$index = empty($form_name) ? $subheading : $form_name;
+
+		$selected = $this->check_option('me_or_us') ? $subheading_me : $subheading_us;
+		
+		return isset($selected[$index]) ? $selected[$index] : $subheading;
 	}
 	
 	public function email_recipients() { 
@@ -122,6 +174,7 @@ class CPLUS_Admin extends zuplus_Admin {
 			'use_recaptcha' 	=>	false,
 			'client_validate'		=>	false,
 			'custom_css'			=>	true,
+			'me_or_us'			=>	false,		// if true - use 'Me' in subheading, otherwise 'Us'
 			'notify'					=>	'',
 		]; 
 	}
@@ -138,6 +191,7 @@ class CPLUS_Admin extends zuplus_Admin {
 		$this->form->checkbox('use_recaptcha', 'Use Google Recaptcha', 'Loads Google <span>recaptcha</span> script if required.');
 		$this->form->checkbox('client_validate', 'Client Validation', 'Add scripts for validation on client (without AJAX).');
 		$this->form->checkbox('custom_css', 'Use Plugin CSS', 'If switched off the plugin stylesheet won\'t be loaded.');		
+		$this->form->checkbox('me_or_us', 'use "Me" instead of "Us"', 'If switched off - "Us" will be used in the form subheading.');		
 		$this->form->text('notify', 'Notify emails', 'List of emails to be notified when an entry occurs (comma separated).');		
 	
 		echo $this->form->fields('Simple Ajax Contact Forms');

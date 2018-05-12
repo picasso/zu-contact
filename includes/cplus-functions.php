@@ -9,13 +9,8 @@ function cplus_shortcode($atts, $content = null) {
 		'ajax' 				=> true,
 		'message' 			=> '',
 		'subheading'		=> '',
+		'rows'				=> -1,
 	], $atts));
-
-	$subheading_defaults = [
-		'default'			=> 	__('Contact Us', 'contact-plus'),
-		'contact'			=> 	__('Write Us', 'contact-plus'),
-		'booking'			=>	__('Book Your Place', 'contact-plus'),
-	];
 
 	$available_forms = ['contact', 'default', 'booking'];
 	if(!in_array($form, $available_forms)) $form =  'contact';
@@ -24,7 +19,7 @@ function cplus_shortcode($atts, $content = null) {
 
     $contact = new cplus_Contact;
     if($contact->is_valid()) $contact->send_mail();
-  
+ 
 	cplus_instance()->ready(filter_var($ajax, FILTER_VALIDATE_BOOLEAN));
 	
 	$args = [];	
@@ -36,7 +31,8 @@ function cplus_shortcode($atts, $content = null) {
 	
 	$args['values']['was_sent'] = $contact->was_sent;
 
-	if(!empty($subheading)) $args['values']['subheading'] = filter_var($subheading, FILTER_VALIDATE_BOOLEAN) ? $subheading_defaults[$form] : $subheading;
+	if(!empty($subheading)) $args['values']['subheading'] = cplus_instance()->get_subheading($subheading, filter_var($subheading, FILTER_VALIDATE_BOOLEAN) ? $form : '');
+	if($rows !== -1) $args['values']['rows'] = absint($rows);
 
 	$repeater = new ZU_PlusRepeaters(cplus_get_my_dir(), 'forms');
 	return $repeater->get_repeater_output($form, $args, $class);
@@ -57,7 +53,9 @@ function cplus_ajax_submit() {
     
     $was_error = empty($contact->errors) && $result['sent'] ? false : true;
     
-    $result['message'] = cplus_form_message($was_error);
+    $form_name = isset($_POST['cplus_fname']) ? $_POST['cplus_fname'] : '';
+    
+    $result['message'] = cplus_form_message($was_error, $form_name);
 
     if($was_error) wp_send_json_error($result);
 	else wp_send_json_success($result);
@@ -65,13 +63,11 @@ function cplus_ajax_submit() {
 
 // Form printing functions ----------------------------------------------------]
 
-function cplus_form_message($was_error) {
-	return $was_error ? 
-		__('There was a problem with your submission. Errors have been highlighted below.', 'contact-plus') : 
-		__('Success! Your message was sent.', 'contact-plus');
+function cplus_form_message($was_error, $form_name = '') {
+	return $was_error ? cplus_instance()->get_error_message($form_name) : cplus_instance()->get_success_message($form_name);
 }
 
-function cplus_get_container($classes, $values, $errors) {
+function cplus_get_container($classes, $values, $errors, $form_name) {
 	
 	$was_sent = isset($values['was_sent']) ? $values['was_sent'] : false;	
 	$was_error = empty($errors) ? false : true;
@@ -87,12 +83,12 @@ function cplus_get_container($classes, $values, $errors) {
 		</div>',
 			zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
 			($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
-			cplus_form_message($was_error),
+			cplus_form_message($was_error, $form_name),
 			zu()->loader(1, 0.8),
 			$icon_ok,
 			$icon_error,
 			$subheading	,
-			cplus_form_message(true)	
+			cplus_form_message(true, $form_name)	
 	);
 }
 
@@ -150,7 +146,7 @@ function cplus_get_textarea($field_id, $value, $required_data = '', $placeholder
 }
 
 function cplus_print_field($field_id, $type, $value, $label, $errors, $required_data = '', $placeholder = '', $maybe_param = 0) {
-_dbug_log('$maybe_param=', $maybe_param);
+
 	if($type == 'textarea') $field = cplus_get_textarea($field_id, $value, $required_data, $placeholder, $maybe_param);
 	else if($type == 'submit') $field = cplus_get_input($field_id, $type, $label, $required_data, $placeholder);
 	else $field = cplus_get_input($field_id, $type, $value, $required_data, $placeholder);
@@ -186,8 +182,8 @@ function cplus_print_form($form_name, $form_values, $form_errors, $form_message 
 	
 	$form = cplus_instance()->get_form($form_name);
 	if($form === false) return;
-
-	$output = cplus_get_container($classes, $form_values, $form_errors);
+	
+	$output = cplus_get_container($classes, $form_values, $form_errors, $form_name);
 
 	$output .= sprintf(
 	'<div class="cplus-form-container %2$s">%1$s
@@ -212,6 +208,8 @@ if(isset($contact->Errors['recaptcha'])) {
 	);
 	
 	echo preg_replace('/\s+/', ' ', $output);
+	
+	$rows = isset($form_values['rows']) ? $form_values['rows'] : $form->rows_in_message;
 
 	foreach($form->get_fields() as $field) {
 		$field_id = $field['name'];
@@ -223,7 +221,7 @@ if(isset($contact->Errors['recaptcha'])) {
 			$form_errors, 
 			$field['required'], 
 			$field['placeholder'],
-			$field['type'] == 'textarea' ? $form->rows_in_message : 0
+			$field['type'] == 'textarea' ? $rows : 0
 		);
 	}
 
@@ -304,7 +302,7 @@ function cplus_admin_email() {
 	return get_option('admin_email');
 }
 
-function  cplus_mailer($contact_email, $notify_email, $content, $carbon_copy = false) {
+function  cplus_mailer($contact_email, $notify_email, $content, $carbon_copy = false, $post_id = null, $post_link = '') {
 
 	$site_name = htmlspecialchars_decode(get_bloginfo('name'));
 	 
@@ -325,7 +323,10 @@ function  cplus_mailer($contact_email, $notify_email, $content, $carbon_copy = f
 	$subject = sprintf($carbon_copy ? 'Submitted from %s': 'New entry from %s', $site_name);
 	$headers = [sprintf('From: %s', $send_from)];
 	
-	if(!$carbon_copy) $headers[] = sprintf('Reply-To: %s', $contact_email);
+	if(!$carbon_copy) {
+		$headers[] = sprintf('Reply-To: %s', $contact_email);
+		$content = sprintf('<p><strong>Submitted for</strong>: <a href="%2$s">%1$s</a></p>%3$s', get_the_title($post_id), get_permalink($post_id), $content);
+	}
 
 	$content_html_filter = function() { return 'text/html'; };
 	add_filter('wp_mail_content_type', $content_html_filter);

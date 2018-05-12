@@ -158,7 +158,7 @@ class cplus_Contact {
 				$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
 				$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
 			}	
-			$this->was_sent = cplus_mailer($this->email, cplus_instance()->email_recipients(), $content);
+			$this->was_sent = cplus_mailer($this->email, cplus_instance()->email_recipients(), $content, false, $this->post_id, $this->post_link);
 			
 			if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
 				$content = str_replace($subject, __('You sent it at', 'contact-plus'), $content);

@@ -94,6 +94,8 @@ $cplus-button-width: 200px !default;
 		left: 0;
 		transition: opacity 0.2s ease-in-out;
 		opacity: 0;
+		margin-top: 0 !important;
+		padding-top: 0 !important;
 		&.before_posting {
 			opacity: 1;
 		}
@@ -105,7 +107,6 @@ $cplus-button-width: 200px !default;
 			margin-top: $cplus-field-top-margin;
 		}
 	}
-// 	    width: calc(100% - 16px);
 
 	.cplus-status {
 		display: table;

@@ -7,14 +7,23 @@ class cplus_Form {
 	public $name;
 	public $fields;
 	public $rows_in_message;
+	public $carbon_copy;
 	
-	function __construct($name = 'cplus', $rows_in_message = 10) {
+	function __construct($name = 'cplus', $params = []) {
 		
 		$this->name = $name;
 		$this->fields = [];
-		$this->rows_in_message = $rows_in_message;
+		
+		$this->process_params($params);
 	}
 
+	public function process_params($params) {
+		
+		$this->name = isset($params['name']) ? $params['name'] : $this->name;
+		$this->rows_in_message = isset($params['rows']) ? $params['rows'] : 10;
+		$this->carbon_copy = isset($params['carbon_copy']) ? $params['carbon_copy'] : false;
+	}
+	
 	private function create_field($id, $label, $type, $required, $placeholder) {		// $required - String or Array of Strings
 		
 		return [
@@ -39,6 +48,23 @@ class cplus_Form {
 		return true;
 	}
 
+	public function append_field($id, $label, $type = 'text', $required = '', $placeholder = '') {
+		
+		if(isset($this->fields[$id])) return false;
+		
+		$fields_keys = array_keys($this->fields);
+		$last_pos = count($this->fields) - 1;
+		$last_id = $fields_keys[$last_pos];
+		$last_field = $this->fields[$last_id];
+		
+		$field = $this->create_field($id, $label, $type, $required, $placeholder);
+		$field['order'	] = $last_field['order'];
+		$last_field['order']++;
+		
+		$this->fields = array_merge(array_slice($this->fields, 0, $last_pos), [$id => $field, $last_id => $last_field]);
+		return true;
+	}
+
 	public function set_field_attr($id, $attr_name, $attr_value) {
 		
 		if(isset($this->fields[$id])) return false;
@@ -56,6 +82,7 @@ class cplus_Form {
 		
 		$this->fields = array_map(function($field) use($position) {
 			if($field['order'] >= $position) $field['order']++; 
+			return $field;
 		}, $this->fields);
 	
 		$field = $this->create_field($id, $label, $type, $required, $placeholder);
@@ -64,14 +91,18 @@ class cplus_Form {
 	}
 
 	public function remove_field($id) {
+	
+		if(!isset($this->fields[$id])) return false;
 		
 		$position = $this->fields[$id]['order'];
 		
 		$this->fields = array_map(function($field) use($position) {
 			if($field['order'] >= $position) $field['order']--; 
+			return $field;
 		}, $this->fields);
 	
 		unset($this->fields[$id]);
+		return true;
 	}
 	
 	public function get_field($id) {

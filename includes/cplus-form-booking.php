@@ -4,7 +4,7 @@
 //
 function cplus_register_booking_form() {
 	
-	$form = new cplus_Form('booking', 4); 		// 4 - rows in message
+	$form = new cplus_Form('booking', ['rows' => 4]); 		
 	
 	$form->register_field(
 		'name', 
@@ -45,7 +45,6 @@ function cplus_register_booking_form() {
 		 __('Please give the amount of places to book for you.', 'contact-plus'), 
 		__('How Many Places?', 'contact-plus')
 	);
-
 
 	$form->register_field(
 		'message', 

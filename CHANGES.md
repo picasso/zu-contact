@@ -1,3 +1,14 @@
+#### 0.9.1 / 2018-05-11
+* bug fixing
+* updated language dictionaries
+* added `append_field()` method to `cplus_Form` class
+* added `carbon_copy` attribute to `cplus_Form` class
+* added `get_success_message()`method to `Contact_Plus` class
+* processed `post_id` from posting page
+* added `rows` attribute to shortcode
+* added `me_or_us` option to select between predefined headings and messages
+* improved  js error processing
+
 #### 0.8.2 / 2018-05-11
 * added `subheading` attribute
 * added new fields types: `number`, `tel`, `url`

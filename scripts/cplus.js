@@ -11,19 +11,23 @@
 				$form = $container.find('form'),
 				$button = $form.find('#cplus-submit');
 				
-				// add classes which could be used in others elements				
-				var parent_offset = $container.parent().offset().top;
-				var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
-						cplus_status_margin = Math.floor($status.offset().top - parent_offset),
-						cplus_form_margin = Math.floor($form.offset().top - parent_offset);
-				
-				$('<style type="text/css">' +
-					'.cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;} ' +
-					'.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;} ' +
-					'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
-					'</style>').appendTo('body');
-				
-				if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
+				if($container.length) {
+					// add classes which could be used in others elements				
+					var parent_offset = $container.parent().offset().top;
+					var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
+							cplus_status_margin = Math.floor($status.offset().top - parent_offset),
+							cplus_form_margin = Math.floor($form.offset().top - parent_offset);
+					
+					$('<style type="text/css">' +
+						'.cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;} ' +
+						'.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;} ' +
+						'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
+						'</style>').appendTo('body');
+					
+					if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
+				} else {
+					return;					// something wrong but we do not need to break JS
+				}
 /*
 	    $form.find('#recaptcha_response_field').focus(function () {
 	
