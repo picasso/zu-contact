@@ -235,7 +235,8 @@ function cplus_spam_filter($contact) {
    // This is all we need to do to weed out the spam.
    //  If Akismet plugin is enabled then it will be hooked into these filters.
    //
-	if(!($contact instanceof cplus_Contact)) return $contact;
+   
+  	if(!($contact instanceof cplus_Contact)) return $contact;
    
     $comment_data = apply_filters('preprocess_comment', [
         'comment_post_ID' => $contact->post_id,
@@ -243,6 +244,7 @@ function cplus_spam_filter($contact) {
         'comment_author_email' => $contact->email,
         'comment_content' => $contact->message,
         'comment_type' => 'contact-plus',
+        'comment_parent' => 0,
         'comment_author_url' => '',
     ]);
 
@@ -254,8 +256,8 @@ function cplus_spam_filter($contact) {
 		wp_insert_comment($comment_data);
 		$contact->spam = true;
     } else {
-		$comment_data['comment_approved'] = 'hold';
-		wp_insert_comment($comment_data);
+		$comment_data['comment_approved'] = 0;
+		$cid =wp_insert_comment($comment_data);
     }
     
     return $contact;
