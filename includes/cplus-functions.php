@@ -253,7 +253,10 @@ function cplus_spam_filter($contact) {
 		$comment_data['comment_approved'] = 'spam';
 		wp_insert_comment($comment_data);
 		$contact->spam = true;
-    } 
+    } else {
+		$comment_data['comment_approved'] = 'hold';
+		wp_insert_comment($comment_data);
+    }
     
     return $contact;
 }    

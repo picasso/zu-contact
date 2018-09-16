@@ -1,3 +1,6 @@
+#### 0.9.2 / 2018-09-16
+* all forms now are added to DB as comments
+
 #### 0.9.1 / 2018-05-11
 * bug fixing
 * updated language dictionaries
