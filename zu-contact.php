@@ -37,7 +37,7 @@ add_action('zuplus_loaded', function() { 	//  All ZU+ classes are loaded now
 
 	if(__CPLUS_LOG__) _dbug_change_log_location(__FILE__, 2);
 
-	require_once(__CPLUS_ROOT__ . 'includes/cplus-loaded.php');
+	require_once(__CPLUS_ROOT__ . 'includes/zuc-loaded.php');
 	cplus_instance();
 });
 

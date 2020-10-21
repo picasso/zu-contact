@@ -205,7 +205,7 @@ class CPLUS_Admin extends zuplus_Admin {
 // Additional Classes & Functions ---------------------------------------------]
 
 require_once(__CPLUS_ROOT__ . 'includes/zuc-functions.php');
-require_once(__CPLUS_ROOT__ . 'includes/zuc-contact.php');
+require_once(__CPLUS_ROOT__ . 'includes/data.php');
 require_once(__CPLUS_ROOT__ . 'includes/zuc-form.php');
 require_once(__CPLUS_ROOT__ . 'includes/zuc-form-default.php');
 require_once(__CPLUS_ROOT__ . 'includes/zuc-form-booking.php');
