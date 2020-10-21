@@ -1,43 +1,43 @@
 // Form & controls ------------------------------------------------------------]
 
-$cplus-placeholder-color: rgba(black, 0.5) !default;
-$cplus-placeholder-font-size: .875em !default;
+$zuc-placeholder-color: rgba(black, 0.5) !default;
+$zuc-placeholder-font-size: .875em !default;
 
-$cplus-ok-color: #66cc52 !default;
-$cplus-error-color: #ff5533 !default;
-$cplus-error-border-color: #ff5533 !default;
-$cplus-required-color: #ff8066 !default;
-$cplus-required-color-pass: $cplus-ok-color !default;
+$zuc-ok-color: #66cc52 !default;
+$zuc-error-color: #ff5533 !default;
+$zuc-error-border-color: #ff5533 !default;
+$zuc-required-color: #ff8066 !default;
+$zuc-required-color-pass: $zuc-ok-color !default;
 $status-background-color: rgba(black, 0.1) !default;
 
-$cplus-loader-size: 40px !default;
-$cplus-loader-color: $cplus-error-color !default;
+$zuc-loader-size: 40px !default;
+$zuc-loader-color: $zuc-error-color !default;
 
-$cplus-field-left-margin: 4px !default;
-$cplus-field-top-margin: 8px !default;
+$zuc-field-left-margin: 4px !default;
+$zuc-field-top-margin: 8px !default;
 
-$cplus-input-text-color: #222 !default;
-$cplus-input-text-font-weight: 400 !default;
-$cplus-input-color: #ffffeb !default; 					//#ffffe0 - #fffffa
-$cplus-input-focus-color: white !default;
-$cplus-input-border-color: white !default;
-$cplus-input-focus-border-color: #ffff61 !default;
-$cplus-input-focus-color-size: 5px !default;
-$cplus-input-padding: 0.6em !default;
-$cplus-input-border-radius: 2px !default;
+$zuc-input-text-color: #222 !default;
+$zuc-input-text-font-weight: 400 !default;
+$zuc-input-color: #ffffeb !default; 					//#ffffe0 - #fffffa
+$zuc-input-focus-color: white !default;
+$zuc-input-border-color: white !default;
+$zuc-input-focus-border-color: #ffff61 !default;
+$zuc-input-focus-color-size: 5px !default;
+$zuc-input-padding: 0.6em !default;
+$zuc-input-border-radius: 2px !default;
 
-$cplus-label-color: inherit !default;
-$cplus-label-font-weight: 600 !default;
+$zuc-label-color: inherit !default;
+$zuc-label-font-weight: 600 !default;
 
-$cplus-button-color: #cb4e4e !default;
-$cplus-button-focus-color: white !default;
-$cplus-button-font-weight: 500 !default;
-$cplus-button-border-radius: 3px !default;
-$cplus-button-width: 200px !default; 
+$zuc-button-color: #cb4e4e !default;
+$zuc-button-focus-color: white !default;
+$zuc-button-font-weight: 500 !default;
+$zuc-button-border-radius: 3px !default;
+$zuc-button-width: 200px !default;
 
-@mixin placeholder { 								
-	color: $cplus-placeholder-color;
-	font-size: $cplus-placeholder-font-size;
+@mixin placeholder {
+	color: $zuc-placeholder-color;
+	font-size: $zuc-placeholder-font-size;
 	letter-spacing: .5pt;
 	opacity: 1;
 }
@@ -60,34 +60,34 @@ $cplus-button-width: 200px !default;
     max-width: 100%;
     position: relative;
 
-// 	::-webkit-input-placeholder		//	Chrome/Opera/Safari 
-// 	::-moz-placeholder					// Firefox 19+ 
-// 	:-ms-input-placeholder 			// IE 10+ 
-// 	:-moz-placeholder					// Firefox 18-   
+// 	::-webkit-input-placeholder		//	Chrome/Opera/Safari
+// 	::-moz-placeholder					// Firefox 19+
+// 	:-ms-input-placeholder 			// IE 10+
+// 	:-moz-placeholder					// Firefox 18-
 
 	::-webkit-input-placeholder { @include placeholder;}
 	::-moz-placeholder { @include placeholder;}
 	:-ms-input-placeholder { @include placeholder;}
-	:-moz-placeholder { @include placeholder;}	
+	:-moz-placeholder { @include placeholder;}
 
 	.cplus-loader {
 		float: right;
 		clear: both;
 		transition: opacity 0.3s ease-in-out;
 		opacity: 0;
-		.ajaxed & { 
+		.ajaxed & {
 			opacity: 1;
 		}
 		svg {
-			color: $cplus-loader-color;
-			width: $cplus-loader-size; 
+			color: $zuc-loader-color;
+			width: $zuc-loader-size;
 			height: 100%;
 			path, rect {
-				fill: $cplus-loader-color;
+				fill: $zuc-loader-color;
 			}
-		}	
+		}
 	}
-	
+
 	.cplus-subheading {
 		position: absolute;
 		top: 0;
@@ -102,9 +102,9 @@ $cplus-button-width: 200px !default;
 	}
 
 	.cplus-control {
-		margin-top: $cplus-field-top-margin * 2;
+		margin-top: $zuc-field-top-margin * 2;
 		.cplus-input {
-			margin-top: $cplus-field-top-margin;
+			margin-top: $zuc-field-top-margin;
 		}
 	}
 
@@ -112,7 +112,7 @@ $cplus-button-width: 200px !default;
 		display: table;
 	    padding: 10px;
 	    background-color: $status-background-color;
-	    border-radius: $cplus-input-border-radius + 1;
+	    border-radius: $zuc-input-border-radius + 1;
 		@extend %small;
 		transition: opacity 0.3s ease-in-out;
 		opacity: 0;
@@ -121,7 +121,7 @@ $cplus-button-width: 200px !default;
 		}
 		&.sent {
 			opacity: 1;
-			color: $cplus-ok-color;
+			color: $zuc-ok-color;
 			.icon-ok {
 				visibility: visible;
 			}
@@ -131,7 +131,7 @@ $cplus-button-width: 200px !default;
 		}
 		&.not-sent {
 			opacity: 1;
-			color: $cplus-error-color;
+			color: $zuc-error-color;
 			.icon-error {
 				visibility: visible;
 			}
@@ -155,62 +155,62 @@ $cplus-button-width: 200px !default;
 		svg {
 			width: 30px;
 			height: auto;
-			margin-right: $cplus-field-left-margin * 2;
+			margin-right: $zuc-field-left-margin * 2;
 		}
 	}
 	.validation {
 		display: none;
-	    font-weight: $cplus-input-text-font-weight;
-	    margin: $cplus-field-top-margin 0 ($cplus-field-top-margin * 2);
+	    font-weight: $zuc-input-text-font-weight;
+	    margin: $zuc-field-top-margin 0 ($zuc-field-top-margin * 2);
 		@extend %small;
 		transition: opacity 0.3s ease-in-out;
-		opacity: 1;		
+		opacity: 1;
 		.ajaxed & {
 			opacity: 0 !important;
 		}
 	}
 	&.cplus-processed {
-		
+
 		.cplus-subheading {
 			display: none !important;
 		}
-		
+
 		.success {
-			label { 
+			label {
 				.required {
-			    	color: $cplus-ok-color;
+			    	color: $zuc-ok-color;
 				}
 			}
 		}
 		.error {
 			label {
-			    color: $cplus-required-color;
+			    color: $zuc-required-color;
 				.required {
-			    	color: $cplus-error-color;
+			    	color: $zuc-error-color;
 				}
 			}
 			input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]), textarea {
-			    border: 1px solid rgba($cplus-error-border-color, 0.5);
-			    box-shadow: 0 0 $cplus-input-focus-color-size $cplus-error-border-color;
+			    border: 1px solid rgba($zuc-error-border-color, 0.5);
+			    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-error-border-color;
 			}
 			.validation {
-				color: $cplus-error-color;
+				color: $zuc-error-color;
 				display: block;
 			}
 		}
-		
+
 		&.cplus-general-errors {
 			.success label .required {
-				color: $cplus-error-color;
+				color: $zuc-error-color;
 			}
 		}
 	}
-	
+
 	.hrule {
 	    height: 1px;
 	    overflow: hidden;
 	    border-top: 2px solid rgba(white, 0.7);
-	    margin: ($cplus-field-top-margin * 4) 0;
+	    margin: ($zuc-field-top-margin * 4) 0;
 	}
 	.captcha {
 	    margin-left: 32%;
@@ -230,12 +230,12 @@ $cplus-button-width: 200px !default;
 	}
 
 	label {
-		color: $cplus-label-color;
-	    font-weight: $cplus-label-font-weight;
+		color: $zuc-label-color;
+	    font-weight: $zuc-label-font-weight;
 	    letter-spacing: .5pt;
     	.required {
-		    color: $cplus-required-color;
-		    margin-left: $cplus-field-left-margin;
+		    color: $zuc-required-color;
+		    margin-left: $zuc-field-left-margin;
 		}
 		&.small {
 			@extend %small;
@@ -244,30 +244,30 @@ $cplus-button-width: 200px !default;
 	}
 	.checkbox, .radio {
 		label {
-			font-weight: $cplus-input-text-font-weight;
+			font-weight: $zuc-input-text-font-weight;
 		    display: inline-block;
 		    padding-left: 10px;
 		    vertical-align: middle;
 			@extend %small;
 		}
 	}
-	
+
 	input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not([type='image']):not([type='file']), textarea {
 	    appearance: none;
-	    border-radius: $cplus-input-border-radius;
+	    border-radius: $zuc-input-border-radius;
 	    outline: none;
-	    color: $cplus-input-text-color;
-	    font-weight: $cplus-input-text-font-weight;
-	    border: 1px solid $cplus-input-border-color;
-	    background-color: $cplus-input-color;
-	    padding: $cplus-input-padding;
+	    color: $zuc-input-text-color;
+	    font-weight: $zuc-input-text-font-weight;
+	    border: 1px solid $zuc-input-border-color;
+	    background-color: $zuc-input-color;
+	    padding: $zuc-input-padding;
 		&:disabled {
 			@extend %disabled;
-		}    
+		}
 	    &:focus {
-		    background-color: $cplus-input-focus-color;
-		    box-shadow: 0 0 $cplus-input-focus-color-size $cplus-input-focus-border-color;
-		    border: 1px solid $cplus-input-focus-border-color;
+		    background-color: $zuc-input-focus-color;
+		    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-input-focus-border-color;
+		    border: 1px solid $zuc-input-focus-border-color;
 		}
 	}
 	input[type=checkbox], input[type=radio] {
@@ -276,7 +276,7 @@ $cplus-button-width: 200px !default;
 	    vertical-align: middle;
 		&:disabled {
 			@extend %disabled;
-		}    
+		}
 	}
 	select, textarea {
 	    appearance: none;
@@ -294,26 +294,26 @@ $cplus-button-width: 200px !default;
 	input[type=submit], input[type=button] {
 		appearance: none;
 	    border: 1px solid transparent;
-	    background-color: $cplus-button-color;
+	    background-color: $zuc-button-color;
 	    color: white;
-	    box-shadow: 1px 1px darken($cplus-button-color, 10%);
+	    box-shadow: 1px 1px darken($zuc-button-color, 10%);
 	    cursor: pointer;
 	    text-transform: uppercase;
 	    letter-spacing: 1px;
 	    padding: 10px 20px;
-		min-width: $cplus-button-width;
-		
+		min-width: $zuc-button-width;
+
 	    display: inline-block;
-	    font-weight: $cplus-button-font-weight;
+	    font-weight: $zuc-button-font-weight;
 	    outline: none;
 	    position: relative;
-	    border-radius: $cplus-button-border-radius;
+	    border-radius: $zuc-button-border-radius;
 		float: right;
 		transition: all 0.3s ease-in-out;
 	    transition-property: background-color, top, left, border-color;
 
 	    &:disabled {
-			background: rgba($cplus-button-color, 0.5);
+			background: rgba($zuc-button-color, 0.5);
 			color: rgba(white, 0.5);
 		}
 	    &:after {
@@ -323,9 +323,9 @@ $cplus-button-width: 200px !default;
 		    transition: all 0.3s;
 		}
 		&:hover {
-		    box-shadow: 1px 1px darken($cplus-button-color, 20%);
-		    background-color: darken($cplus-button-color, 10%);
-		    border-color: rgba($cplus-button-focus-color, 0.3);
+		    box-shadow: 1px 1px darken($zuc-button-color, 20%);
+		    background-color: darken($zuc-button-color, 10%);
+		    border-color: rgba($zuc-button-focus-color, 0.3);
 		}
 		&:active {
 			top: 1px;
@@ -349,4 +349,3 @@ $cplus-button-width: 200px !default;
     }
 }
 */
-

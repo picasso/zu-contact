@@ -36,14 +36,14 @@ class cplus_Contact {
 		$is_nonce_verified = ($is_post && wp_verify_nonce($_POST['cplus_nonce'], cplus_instance()->ajax_nonce(false))) ? true : false;
 		$is_cplus_object = ($is_post && $is_nonce_verified && isset($_POST['cplus'])) ? true : false;
 		
-		if($is_post && !$is_nonce_verified) $this->errors['nonce'] = __('Nonce failed - is not correct or expired', 'contact-plus');
-		if($is_nonce_verified && !$is_cplus_object) $this->errors['form'] = __('Form data not found', 'contact-plus');
+		if($is_post && !$is_nonce_verified) $this->errors['nonce'] = __('Nonce failed - is not correct or expired', 'zu-contact');
+		if($is_nonce_verified && !$is_cplus_object) $this->errors['form'] = __('Form data not found', 'zu-contact');
 
 		if($is_cplus_object) {
 			
 			$cplus = $_POST['cplus'];
 			$this->form = cplus_instance()->get_form(isset($_POST['cplus_fname']) ? $_POST['cplus_fname'] : '');
-			if($this->form === false) $this->errors['form'] = __('Form name not found', 'contact-plus');
+			if($this->form === false) $this->errors['form'] = __('Form name not found', 'zu-contact');
 			
 			if($this->form !== false) {
 				foreach($this->form->get_fields() as $field) {
@@ -132,7 +132,7 @@ class cplus_Contact {
 			$resp = csf_RecaptchaV2::VerifyResponse($_SERVER['REMOTE_ADDR'], $this->recaptcha_private_key, $_POST['g-recaptcha-response']);
 
 			if(!$resp->success) {
-				$this->errors['recaptcha'] = __('Please solve the recaptcha to continue.', 'contact-plus');
+				$this->errors['recaptcha'] = __('Please solve the recaptcha to continue.', 'zu-contact');
 			}
 		}
 */
@@ -150,7 +150,7 @@ class cplus_Contact {
 	
 			if($this->spam === true) return ($this->was_sent = true);
 			
-			$subject = __('New entry was submitted at', 'contact-plus');
+			$subject = __('New entry was submitted at', 'zu-contact');
 			$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
 	
 			foreach($this->attributes as $field_id => $value) {
@@ -161,7 +161,7 @@ class cplus_Contact {
 			$this->was_sent = cplus_mailer($this->email, cplus_instance()->email_recipients(), $content, false, $this->post_id, $this->post_link);
 			
 			if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
-				$content = str_replace($subject, __('You sent it at', 'contact-plus'), $content);
+				$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
 				cplus_mailer($this->email, $this->email, $content, true);
 			}
 		}
