@@ -14,7 +14,6 @@ trait zu_ContactAjax {
 	}
 
 	private function ajax_data() {
-		_dbug('$is_frontend ajax_data');
 		return $this->merge_js_data(['form'	=> $this->default_name]);
 	}
 
@@ -31,7 +30,7 @@ trait zu_ContactAjax {
 
 	    $was_error = empty($contact->errors) && $result['sent'] ? false : true;
 
-	    $form_name = isset($_POST['cplus_fname']) ? $_POST['cplus_fname'] : '';
+	    $form_name = $_POST['cplus_fname'] ?? '';
 
 	    $result['message'] = cplus_form_message($was_error, $form_name);
 
@@ -74,7 +73,7 @@ trait zu_ContactAjax {
 	    return $contact;
 	}
 
-	function cplus_php_mailer($phpmailer) {
+	public function php_mailer($phpmailer) {
 	/*
 	    $phpmailer->isSMTP();
 	    $phpmailer->Host = 'smtp.example.com';
@@ -103,9 +102,9 @@ trait zu_ContactAjax {
 	*/
 	}
 
-	function cplus_from_email() {
+	public function from_email() {
 
-		$admin_email = cplus_admin_email();
+		$admin_email = $this->admin_email();
 		$sitename = strtolower($_SERVER['SERVER_NAME']);
 		if(substr($sitename, 0, 4) == 'www.') $sitename = substr($sitename, 4);
 
@@ -114,11 +113,11 @@ trait zu_ContactAjax {
 		return sprintf('mailer@%1$s', $sitename);
 	}
 
-	function cplus_admin_email() {
+	public function admin_email() {
 		return get_option('admin_email');
 	}
 
-	function  cplus_mailer($contact_email, $notify_email, $content, $carbon_copy = false, $post_id = null, $post_link = '') {
+	public function mailer($contact_email, $notify_email, $content, $carbon_copy = false, $post_id = null, $post_link = '') {
 
 		$site_name = htmlspecialchars_decode(get_bloginfo('name'));
 
@@ -130,11 +129,11 @@ trait zu_ContactAjax {
 		$email_recipients = implode(',', $email_recipients);
 
 		// "From" email address
-		$send_from_email = cplus_from_email();
+		$send_from_email = $this->from_email();
 		$send_from_name = $site_name;
 		$send_from = sprintf('%1$s <%2$s>', $send_from_name, $send_from_email);
 
-		if(empty($email_recipients)) $email_recipients = [cplus_admin_email()];
+		if(empty($email_recipients)) $email_recipients = [$this->admin_email()];
 
 		$subject = sprintf($carbon_copy ? 'Submitted from %s': 'New entry from %s', $site_name);
 		$headers = [sprintf('From: %s', $send_from)];

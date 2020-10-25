@@ -37,7 +37,7 @@ class zu_Contact extends zukit_Plugin {
 	public function init() {
 
 		// Add all predefined forms -------------------------------------------]
-		
+
 		foreach(glob(dirname(__FILE__).'/forms/*.php') as $filename) {
 			include_once($filename);
 		}
@@ -133,10 +133,10 @@ class zu_Contact extends zukit_Plugin {
 	    return $is_frontend ? true : $this->ends_with_slug($hook);
 	}
 
-	// we don't want the enqueue frontend script always, only when shortcode is used
+	// We don't want the enqueue frontend script always, only when shortcode is used
 	protected function js_params($is_frontend) {
 		return [
-			'deps'			=> $is_frontend ? ['jquery'] : parent::js_params(false),
+			'deps'			=> $is_frontend ? ['jquery'] : null, // parent::js_params(false)['deps']
 			'register_only'	=> $is_frontend ? true : false,
 		];
 	}
@@ -206,13 +206,3 @@ class CPLUS_Admin extends zuplus_Admin {
 function zucontact($file = null) {
 	return zu_Contact::instance($file);
 }
-
-// Helpers --------------------------------------------------------------------]
-
-// function zuc_get_form($name = '') {
-// 	return zucontact()->get_form($name);
-// }
-//
-// function zuc_use_recaptcha() {
-// 	return zucontact()->is_option('use_recaptcha');
-// }

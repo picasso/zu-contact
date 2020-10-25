@@ -106,9 +106,8 @@ trait zu_ContactForm {
     // }
 
     public function sprint_form($name, $values, $errors, $message = null, $classes = '') {
-_dbug($name, $values, $errors, $message, $classes);
+
         $form = $this->get_form($name);
-        _dbug($form, $this->forms);
         if($form === false) return '';
 
         // Format container output

@@ -1,7 +1,7 @@
-#### 0.9.7 / 2020-09-16
+#### 0.9.7 / 2020-10-24
 * refactoring after adaptation for `Zukit` (not finished)
 
-> &#x274C;__Attention!__ Breaking changes in version 0.9.7.
+> &#x274C; __Attention!__ Breaking changes in version 0.9.7.
 
 #### 0.9.3 / 2018-09-16
 * all forms now are added to DB as comments
