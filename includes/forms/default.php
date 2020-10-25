@@ -2,11 +2,11 @@
 //
 // Default Contact Form
 //
-function cplus_register_default_form() {
+function zuc_register_default_form() {
 
-	$form = new cplus_Form('default', ['carbon_copy' => true]);
+	$form = new zu_ContactFields('default', ['carbon_copy' => true]);
 
-	$form->register_field(
+	$form->add(
 		'name',
 		__('Name', 'zu-contact'),
 		 'text',
@@ -14,7 +14,7 @@ function cplus_register_default_form() {
 		__('Your Name', 'zu-contact')
 	);
 
-	$form->register_field(
+	$form->add(
 		'email',
 		__('Email', 'zu-contact'),
 		'email',
@@ -22,7 +22,7 @@ function cplus_register_default_form() {
 		__('Your Email Address', 'zu-contact')
 	);
 
-	$form->register_field(
+	$form->add(
 		'message',
 		__('Message', 'zu-contact'),
 		'textarea',
@@ -30,22 +30,24 @@ function cplus_register_default_form() {
 		__('Your Message', 'zu-contact')
 	);
 
-	$form->register_field(
+	$form->add(
 		'submit',
 		__('Send Message', 'zu-contact'),  			// __('Subscribe', 'zu-contact')
 		'submit'
 	);
 
 	// Register default form
-	cplus_instance()->register_form($form);
+	zucontact()->register_form($form);
 
 	$contact_form = clone $form;
-	$contact_form->process_params([
-		'name'				=> 	'contact',
-		'rows'				=>	5,
-		'carbon_copy'		=>	false,
+	$contact_form->update([
+		'name'				=> 'contact',
+		'rows'				=> 5,
+		'carbon_copy'		=> false,
 	]);
-	// Register contact form
-	cplus_instance()->register_form($contact_form);
 
+	// Register contact form
+	zucontact()->register_form($contact_form);
 }
+
+zuc_register_default_form();
