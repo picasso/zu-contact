@@ -1,3 +1,9 @@
+#### 0.9.8 / 2020-10-28
+* added admin JS to render settings page
+* included `Zukit` framework
+* renaming and refactoring before adapting to `Zukit`
+* small improvements
+
 #### 0.9.7 / 2020-10-24
 * refactoring after adaptation for `Zukit` (not finished)
 
