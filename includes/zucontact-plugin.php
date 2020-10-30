@@ -34,6 +34,38 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
+	protected function extend_info() {
+		$stats = ['folders' => 2, 'galleries' => 4];
+		return [
+			'folders' 		=> empty($stats) ? null : [
+					'label'		=> __('Folders', 'zumedia'),
+					'value'		=> $stats['folders'],
+					'depends' 	=> 'folders',
+			],
+			'galleries' 	=> empty($stats) ? null : [
+					'label'		=> __('Galleries', 'zumedia'),
+					'value'		=> $stats['galleries'],
+			],
+		];
+	}
+
+	protected function extend_debug_actions($actions) {
+		$actions[] = [
+			'label'		=> __('Fix Orphaned Attachments', 'zumedia'),
+			'value'		=> 'zumedia_fix_orphaned',
+			'icon'		=> 'hammer',
+			'color'		=> 'blue',
+		];
+		$actions[] = [
+			'label'		=> __('Check Existed Terms', 'zumedia'),
+			'value'		=> 'zumedia_check_terms',
+			'icon'		=> 'warning',
+			'color'		=> 'gold',
+		];
+
+		return $actions;
+	}
+
 	public function init() {
 
 		// Add all predefined forms -------------------------------------------]
@@ -44,37 +76,37 @@ class zu_Contact extends zukit_Plugin {
 
 		// Add info rows & debug actions --------------------------------------]
 
-		add_filter('zukit_plugin_info', function() {
-			$stats = ['folders' => 2, 'galleries' => 4];
-			return [
-				'folders' 		=> empty($stats) ? null : [
-						'label'		=> __('Folders', 'zumedia'),
-						'value'		=> $stats['folders'],
-						'depends' 	=> 'folders',
-				],
-				'galleries' 	=> empty($stats) ? null : [
-						'label'		=> __('Galleries', 'zumedia'),
-						'value'		=> $stats['galleries'],
-				],
-			];
-		});
+		// add_filter('zukit_plugin_info', function() {
+		// 	$stats = ['folders' => 2, 'galleries' => 4];
+		// 	return [
+		// 		'folders' 		=> empty($stats) ? null : [
+		// 				'label'		=> __('Folders', 'zumedia'),
+		// 				'value'		=> $stats['folders'],
+		// 				'depends' 	=> 'folders',
+		// 		],
+		// 		'galleries' 	=> empty($stats) ? null : [
+		// 				'label'		=> __('Galleries', 'zumedia'),
+		// 				'value'		=> $stats['galleries'],
+		// 		],
+		// 	];
+		// });
 
-		add_filter('zukit_debug_actions', function($debug_actions) {
-
-			$debug_actions[] = [
-					'label'		=> __('Fix Orphaned Attachments', 'zumedia'),
-					'value'		=> 'zumedia_fix_orphaned',
-					'icon'		=> 'hammer',
-					'color'		=> 'blue',
-			];
-			$debug_actions[] = [
-					'label'		=> __('Check Existed Terms', 'zumedia'),
-					'value'		=> 'zumedia_check_terms',
-					'icon'		=> 'warning',
-					'color'		=> 'gold',
-			];
-			return $debug_actions;
-		});
+		// add_filter('zukit_debug_actions', function($debug_actions) {
+		//
+		// 	$debug_actions[] = [
+		// 			'label'		=> __('Fix Orphaned Attachments', 'zumedia'),
+		// 			'value'		=> 'zumedia_fix_orphaned',
+		// 			'icon'		=> 'hammer',
+		// 			'color'		=> 'blue',
+		// 	];
+		// 	$debug_actions[] = [
+		// 			'label'		=> __('Check Existed Terms', 'zumedia'),
+		// 			'value'		=> 'zumedia_check_terms',
+		// 			'icon'		=> 'warning',
+		// 			'color'		=> 'gold',
+		// 	];
+		// 	return $debug_actions;
+		// });
 
 		// Some 'inits' from traits -------------------------------------------]
 
