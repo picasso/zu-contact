@@ -3,23 +3,28 @@
 
 trait zu_ContactAjax {
 
+	public static $spam_filter = 'zucontact_spam_filter';
 	private $ajax_action = 'zucontact-submit';
 
 	private function init_ajax() {
 		add_action('wp_ajax_'.$this->ajax_action, [$this, 'ajax_submit']);
 		add_action('wp_ajax_nopriv_'.$this->ajax_action, [$this, 'ajax_submit']);
 
-		add_filter('zucontact_spam_filter', [$this, 'spam_filter']);
+		add_filter(self::$spam_filter, [$this, 'spam_filter']);
 		// add_action('phpmailer_init', 'cplus_php_mailer');
 	}
 
 	private function ajax_data() {
-		return $this->merge_js_data(['form'	=> $this->default_name]);
+		return $this->merge_js_data([
+			'form'		=> $this->default_name,
+			'prefix'	=> zu_ContactFields::$css_prefix,
+			'action'	=> $this->ajax_action,
+		]);
 	}
 
 	public function ajax_submit() {
 
-	    $contact = new zucontact_Data;
+	    $contact = new zu_ContactData;
 
 	    $result['sent'] = false;
 	    $result['is_valid'] = $contact->is_valid();
@@ -30,7 +35,7 @@ trait zu_ContactAjax {
 
 	    $was_error = empty($contact->errors) && $result['sent'] ? false : true;
 
-	    $form_name = $_POST['cplus_fname'] ?? '';
+	    $form_name = $_POST[zu_ContactFields::$css_prefix.'_fname'] ?? '';
 
 	    $result['message'] = cplus_form_message($was_error, $form_name);
 
@@ -46,7 +51,7 @@ trait zu_ContactAjax {
 	   //  If Akismet plugin is enabled then it will be hooked into these filters.
 	   //
 
-	  	if(!($contact instanceof zucontact_Data)) return $contact;
+	  	if(!($contact instanceof zu_ContactData)) return $contact;
 
 	    $comment_data = apply_filters('preprocess_comment', [
 	        'comment_post_ID' => $contact->post_id,

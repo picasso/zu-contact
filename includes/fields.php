@@ -4,11 +4,12 @@
 //
 class zu_ContactFields {
 
+	public static $css_prefix = 'zuc';
+
 	public $name = null;
 	public $fields = [];
 	public $rows_in_message = 10;
 	public $carbon_copy = false;
-	public $css_prefix = 'zuc';
 
 	function __construct($name = 'zucontact', $params = []) {
 		$this->name = $name;
@@ -19,7 +20,7 @@ class zu_ContactFields {
 		$this->name = $params['name'] ?? $this->name;
 		$this->rows_in_message = $params['rows'] ?? 10;
 		$this->carbon_copy = $params['carbon_copy'] ?? false;
-		$this->css_prefix = $params['prefix'] ?? 'zuc';
+		self::$css_prefix = $params['prefix'] ?? 'zuc';
 	}
 
 	private function field($id = null, $label = null, $type = null, $required = null, $placeholder = null) {
@@ -148,7 +149,7 @@ class zu_ContactFields {
 		$class = $field['type'] === 'submit' ? 'button button-submit' : 'form-control';
 		$value = $field['type'] === 'checkbox' ? ($value == true ? 'checked' : '') : sprintf('value="%1$s"', empty($value) ? '' : esc_attr($value));
 		$placeholder = empty($field['placeholder']) ? '' : sprintf('placeholder="%1$s"', $field['placeholder']);
-		$name = $field['type'] === 'submit' ? '' : sprintf('name="%2$s[%1$s]"', $field['name'], $this->css_prefix);
+		$name = $field['type'] === 'submit' ? '' : sprintf('name="%2$s[%1$s]"', $field['name'], self::$css_prefix);
 
 		return zu_sprintf(
 			'<input class="%6$s" %1$s
@@ -164,7 +165,7 @@ class zu_ContactFields {
 			$placeholder,
 			$class,
 			$name,
-			$this->css_prefix
+			self::$css_prefix
 		);
 	}
 
@@ -178,7 +179,7 @@ class zu_ContactFields {
 			$field['name'],
 			esc_textarea($value),
 			empty($field['placeholder']) ? '' : sprintf(' placeholder="%1$s"', $field['placeholder']),
-			$this->css_prefix
+			self::$css_prefix
 		);
 	}
 
@@ -201,14 +202,14 @@ class zu_ContactFields {
 			$id,
 			$field['label'],
 			empty($field['required']) ? '' : '<span class="required">*</span>',
-			$this->css_prefix
+			self::$css_prefix
 		);
 
 		if($field['type'] === 'submit') {
 			$output = zu_sprintf(
 				'<div class="%2$s-control">%1$s</div>',
 				$field_output,
-				$this->css_prefix
+				self::$css_prefix
 			);
 		} else {
 			$output = zu_sprintf(
@@ -228,7 +229,7 @@ class zu_ContactFields {
 				$field['type'] === 'checkbox' ? $label : '',
 				$msg_class,
 				$error_text,
-				$this->css_prefix
+				self::$css_prefix
 			);
 		}
 
