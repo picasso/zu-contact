@@ -15,7 +15,7 @@ trait zu_ContactShortcode {
 	}
 
 	public function shortcode($atts, $content = null) {
-_dbug($atts);
+
 		extract(shortcode_atts([
 			'form' 				=> 'contact',
 			'class' 			=> '',
@@ -25,12 +25,14 @@ _dbug($atts);
 			'rows'				=> -1,
 		], $atts));
 
-		$this->enqueue_only();
+		// if $ajax is true enqueue both css and script (null), otherwise css only (true)
+		$this->enqueue_only($ajax ? null : true);
 
 		if(!in_array($form, $this->available_forms())) $form = 'contact';
 		if(!is_null($content)) $message = do_shortcode($content);
 
 	    $contact = new zu_ContactData;
+_dbug($contact);
 	    if($contact->is_valid()) $contact->send_mail();
 
 		$values = $contact->as_values();
