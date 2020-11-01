@@ -1,160 +1,165 @@
-/* global cplus_custom */
 (function($) {
+	// eslint-disable-next-line no-undef
+	var jsdata = (typeof zucontact_jsdata !== 'undefined' && zucontact_jsdata.data !== undefined) ? zucontact_jsdata.data : {};
+	var Cs_prefix = jsdata.prefix;
+	// var Cs_container = `${prefix}-container`;
+	var Cs_subheading = `${Cs_prefix}-subheading`;
+	var Cs_status = `${Cs_prefix}-status`;
+	var Cs_submit = `${Cs_prefix}-submit`;
 
-	var cplus_data = cplus_custom.data || {};
 
 	$(document).ready( function() {
 
 		// Cache selectors
-		var 	//$window = $(window),
-				$body = $('body'),
-				$container = $('#cplus'),
-				$subheading = $container.find('.cplus-subheading'),
-				$status = $container.find('.cplus-status'),
-				$form = $container.find('form'),
-				$button = $form.find('#cplus-submit');
+		var $body = $('body'),
+		$container = $(`.${Cs_prefix}-container`),
+		$subheading = $container.find(`.${Cs_subheading}`),
+		$status = $container.find(`.${Cs_status}`),
+		$form = $container.find('form'),
+		$button = $form.find(`#${Cs_submit}`);
 
-				if($container.length) {
-					// add classes which could be used in others elements
-					var parent_offset = $container.parent().offset().top;
-					var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
-							cplus_status_margin = Math.floor($status.offset().top - parent_offset),
-							cplus_form_margin = Math.floor($form.offset().top - parent_offset);
+		if($container.length) {
+			// add classes which could be used in others elements
+			inlineStyle();
+			// var parent_offset = $container.parent().offset().top;
+			// var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
+			// 		cplus_status_margin = Math.floor($status.offset().top - parent_offset),
+			// 		cplus_form_margin = Math.floor($form.offset().top - parent_offset);
+			//
+			// $(`<style type="text/css">
+			// 	cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;}
+			// 	.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;}
+			// 	.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
+			// 	</style>`).appendTo('body');
+			// if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
+		} else {
+			// something wrong but we do not want to break JS
+			return;
+		}
 
-					$('<style type="text/css">' +
-						'.cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;} ' +
-						'.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;} ' +
-						'.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
-						'</style>').appendTo('body');
+		// NOTE: подключить captcha потом
+		// $form.find('#recaptcha_response_field').focus(function() {
+		//     $errele = $form.find(`div[for="${Cs_prefix}_recaptcha"]`);
+		//     $errele.html('');
+		// });
 
-					if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
-				} else {
-					// something wrong but we do not want to break JS
-					return;
-				}
-/*
-// NOTE: подключить captcha потом
-	    $form.find('#recaptcha_response_field').focus(function () {
+		// NOTE: сделать валидацию на клиенте?
+		// $form.validate({
+		//
+		//     errorElement: 'span',
+		//
+		//     highlight: function(label, errorClass, validClass) {
+		//         $(label).closest('.form-group').removeClass('has-success').addClass('has-error');
+		//         $(label).closest('.control-group').removeClass('success').addClass('error'); // support for bootstrap 2
+		//
+		//     },
+		//     unhighlight: function(label, errorClass, validClass) {
+		//         $(label).closest('.form-group').removeClass('has-error').addClass('has-success');
+		//         $(label).closest('.control-group').removeClass('error').addClass('success'); // support for bootstrap 2
+		//     }
+		// });
 
-	        $errele = $form.find('div[for='cplus_recaptcha']');
-	        $errele.html('');
+		function inlineStyle() {
+			var offset = $container.parent().offset().top;
+			var container_margin = Math.floor($container.offset().top - offset);
+			var status_margin = Math.floor($status.offset().top - offset);
+			var form_margin = Math.floor($form.offset().top - offset);
 
-	    });
-*/
+			$(`<style type="text/css">
+				.${Cs_prefix}-container-margin{margin-top:${container_margin}px !important;}
+				.${Cs_prefix}-subheading-margin{margin-top:${status_margin}px !important;}
+				.${Cs_prefix}-form-margin{margin-top:${form_margin}px !important;}
+			</style>`)
+				.appendTo('body');
 
-/*
-// NOTE: сделать валидацию на клиенте?
-	    $form.validate({
+			if($subheading.length) $subheading.css({top: status_margin - container_margin});
+		}
 
-	        errorElement: 'span',
+		function removePrevErrors() {
+			$form.find(`.${Cs_prefix}-control.error`).removeClass('error');
+			$status.removeClass('sent not-sent').addClass('sent');
+		}
 
-	        highlight: function (label, errorClass, validClass) {
-	            $(label).closest('.form-group').removeClass('has-success').addClass('has-error');
-	            $(label).closest('.control-group').removeClass('success').addClass('error'); // support for bootstrap 2
-
-	        },
-	        unhighlight: function (label, errorClass, validClass) {
-	            $(label).closest('.form-group').removeClass('has-error').addClass('has-success');
-	            $(label).closest('.control-group').removeClass('error').addClass('success'); // support for bootstrap 2
-	        }
-	    });
-*/
-
-		function cplus_processPostData(data) {
+		function processPostData(data) {
 
 			var $message = $status.find('.message');
 
-			$container.addClass('cplus-processed').removeClass('cplus-general-errors');
+			$container.addClass(`${Cs_prefix}-processed`).removeClass(`${Cs_prefix}-general-errors`);
 			$message.html(data.message === undefined ? $message.data('errmsg') : data.message);
 
-		    if(data.is_valid === true) {
+			if(data.is_valid === true) {
 				// Remove previous errors
-			    $form.find('.cplus-control.error').removeClass('error');
-			    $status.removeClass('sent not-sent').addClass('sent');
-/*
-		        if (isScrolledIntoView($div) == false) {
-		            jQuery('html,body')
-		                .animate({
-		                    scrollTop: jQuery($div.selector)
-		                        .offset().top
-		                }, 'slow');
-		        }
-*/
-		    } else {
+				removePrevErrors();
 
+				// if(isScrolledIntoView($div) === false) {
+				// 	$('html,body').animate({
+				// 		scrollTop: $($div.selector).offset().top
+				// 	}, 'slow');
+				// }
+			} else {
 				// Remove previous errors
-			    $form.find('.cplus-control.error').removeClass('error');
-			    $status.removeClass('sent not-sent').addClass('not-sent');
+				removePrevErrors();
 
-	            $.each(data.errors, function(name, value) {
+				$.each(data.errors, function(name, value) {
 					// General errors
-		            if(name === 'nonce' || name === 'form') {
-			            $message.append('<span>' + value + '</span>');
-			            $container.addClass('cplus-general-errors');
-		            } else {
-		                var $er_span = $form.find('span[for="cplus-' + name + '"]');
-		                $er_span.html(value);
-		                $er_span.closest('.cplus-control').addClass('error');
-		            }
-	            });
-		    }
-
+					if(name === 'nonce' || name === 'form') {
+						$message.append(`<span>${value}</span>`);
+						$container.addClass(`${Cs_prefix}-general-errors`);
+					} else {
+						var $er_span = $form.find(`span[for="${Cs_prefix}-${name}"]`);
+						$er_span.html(value);
+						$er_span.closest(`.${Cs_prefix}-control`).addClass('error');
+					}
+				});
+			}
 			ajaxCalled(false);
 		}
 
-		function ajaxCalled(is_init) {
-
-			if(is_init) {
+		function ajaxCalled(initiated) {
+			if(initiated) {
 				$subheading.removeClass('before_posting');
 				$button.attr('disabled', 'disabled');
+			} else {
+				$button.removeAttr('disabled');
 			}
-			else $button.removeAttr('disabled');
-
-			$body.toggleClass('ajaxed', is_init);
+			$body.toggleClass('ajaxed', initiated);
 		}
 
-	    $form.submit(function(e) {
+		$form.submit(function(e) {
 
-	        e.preventDefault();
+			e.preventDefault();
+			// if($form.validate().valid()) {
+			ajaxCalled(true);
 
-	//         if($form.validate().valid()) {
+			$.ajax({
+				type: 'post',
+				dataType: 'json',
+				cache: false,
+				url: jsdata.ajaxurl,
+				data: `${$form.serialize()}&action=${jsdata.action}`,
 
-	        ajaxCalled(true);
-
-	        $.ajax({
-	            type: 'post',
-	            dataType: 'json',
-	            cache: false,
-	            url: cplus_data.ajaxurl,
-	            data: $form.serialize() + '&action=cplus-submit',
-
-				success: function (data) { cplus_processPostData(data.data); },
-
-				error: function (jqXHR, textStatus, errorThrown) {
-
-					var data = { is_valid: false,  errors: { form: textStatus+' : '+errorThrown} };
-					cplus_processPostData(data);
-
+				success: function(data) { processPostData(data.data); },
+				error: function(jqXHR, textStatus, errorThrown) {
+					var data = { is_valid: false,  errors: { form: `${textStatus} : ${errorThrown}` }};
+					processPostData(data);
 					if(window.console && window.console.log) {
 						window.console.log(jqXHR, textStatus, errorThrown);
 					}
 				}
-	        });
-	    });
+			});
+		});
 
 	}); // end of $(document).ready
 
 
-/*
-function isScrolledIntoView(elem) {
-    var docViewTop = jQuery(window).scrollTop();
-    var docViewBottom = docViewTop + jQuery(window).height();
-
-    var elemTop = jQuery(elem).offset().top;
-    var elemBottom = elemTop + jQuery(elem).height();
-
-    return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-}
-*/
+	// function isScrolledIntoView(elem) {
+	// 	var docViewTop = $(window).scrollTop();
+	// 	var docViewBottom = docViewTop + $(window).height();
+	//
+	// 	var elemTop = $(elem).offset().top;
+	// 	var elemBottom = elemTop + $(elem).height();
+	//
+	// 	return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+	// }
 
 })(jQuery);

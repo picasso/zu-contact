@@ -34,28 +34,24 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
+	// Add plugin info debug actions ------------------------------------------]
+
 	protected function extend_info() {
-		$stats = ['folders' => 2, 'galleries' => 4];
+		$stats = $this->stats();
 		return [
-			'folders' 		=> empty($stats) ? null : [
-					'label'		=> __('Folders', 'zumedia'),
-					'value'		=> $stats['folders'],
-					'depends' 	=> 'folders',
+			'forms' => empty($stats) ? null : [
+				'label'		=> __('Available Forms', 'zu-contact'),
+				'value'		=> $stats['forms'] ?? 0,
+				// 'depends' 	=> 'folders',
 			],
-			'galleries' 	=> empty($stats) ? null : [
-					'label'		=> __('Galleries', 'zumedia'),
-					'value'		=> $stats['galleries'],
+			'commenst' 	=> empty($stats) ? null : [
+				'label'		=> __('Approved Comments', 'zu-contact'),
+				'value'		=> $stats['comments'] ?? 0,
 			],
 		];
 	}
 
 	protected function extend_debug_actions($actions) {
-		$actions[] = [
-			'label'		=> __('Fix Orphaned Attachments', 'zumedia'),
-			'value'		=> 'zumedia_fix_orphaned',
-			'icon'		=> 'hammer',
-			'color'		=> 'blue',
-		];
 		$actions[] = [
 			'label'		=> __('Check Existed Terms', 'zumedia'),
 			'value'		=> 'zumedia_check_terms',
@@ -74,40 +70,6 @@ class zu_Contact extends zukit_Plugin {
 			include_once($filename);
 		}
 
-		// Add info rows & debug actions --------------------------------------]
-
-		// add_filter('zukit_plugin_info', function() {
-		// 	$stats = ['folders' => 2, 'galleries' => 4];
-		// 	return [
-		// 		'folders' 		=> empty($stats) ? null : [
-		// 				'label'		=> __('Folders', 'zumedia'),
-		// 				'value'		=> $stats['folders'],
-		// 				'depends' 	=> 'folders',
-		// 		],
-		// 		'galleries' 	=> empty($stats) ? null : [
-		// 				'label'		=> __('Galleries', 'zumedia'),
-		// 				'value'		=> $stats['galleries'],
-		// 		],
-		// 	];
-		// });
-
-		// add_filter('zukit_debug_actions', function($debug_actions) {
-		//
-		// 	$debug_actions[] = [
-		// 			'label'		=> __('Fix Orphaned Attachments', 'zumedia'),
-		// 			'value'		=> 'zumedia_fix_orphaned',
-		// 			'icon'		=> 'hammer',
-		// 			'color'		=> 'blue',
-		// 	];
-		// 	$debug_actions[] = [
-		// 			'label'		=> __('Check Existed Terms', 'zumedia'),
-		// 			'value'		=> 'zumedia_check_terms',
-		// 			'icon'		=> 'warning',
-		// 			'color'		=> 'gold',
-		// 	];
-		// 	return $debug_actions;
-		// });
-
 		// Some 'inits' from traits -------------------------------------------]
 
 		$this->init_ajax();
@@ -121,8 +83,8 @@ class zu_Contact extends zukit_Plugin {
 		return [
 			'reorder'	=>	[
 				[
-					'menu'				=> 	'zucontact-settings',
-					'after_index2'		=>	'zuplus-settings',
+					'menu'			=> 	'zucontact-settings',
+					'after_index2'	=>	'zuplus-settings',
 				],
 			],
 		];
@@ -193,7 +155,7 @@ class zu_Contact extends zukit_Plugin {
 
 		    if($this->check_option('client_validate')) {
 				$this->enqueue_script('jquery.validate', null, ['jquery'], 'jquery-validate');
-	// 	        wp_enqueue_script('jquery-validate', __CPLUS_ROOT__ . '/js/jquery.validate.min.js', ['jquery'], CPLUS_VALIDATE_VERSION, true);
+	// 	        wp_enqueue_script('jquery-validate', __ROOT__ . '/js/jquery.validate.min.js', ['jquery'], _VALIDATE_VERSION, true);
 	// 	        wp_enqueue_script('cplus-validate');
 		    }
 		}
@@ -201,37 +163,15 @@ class zu_Contact extends zukit_Plugin {
 
 }
 
-class CPLUS_Admin extends zuplus_Admin {
-
-	protected function options_defaults() {
-		return [
-			'use_recaptcha' 	=>	false,
-			'client_validate'	=>	false,
-			'custom_css'		=>	true,
-			'me_or_us'			=>	false,		// if true - use 'Me' in subheading, otherwise 'Us'
-			'notify'			=>	'',
-		];
-	}
-
-	public function validate_options($input) {
-
-		$new_values = parent::validate_options($input);
-		$new_values['notify'] = $this->validate_emails($input, 'notify'); 	// validate e-mails
-		return $new_values;
-	}
-
-	public function print_options($post) {
-
-		$this->form->checkbox('use_recaptcha', 'Use Google Recaptcha', 'Loads Google <span>recaptcha</span> script if required.');
-		$this->form->checkbox('client_validate', 'Client Validation', 'Add scripts for validation on client (without AJAX).');
-		$this->form->checkbox('custom_css', 'Use Plugin CSS', 'If switched off the plugin stylesheet won\'t be loaded.');
-		$this->form->checkbox('me_or_us', 'use "Me" instead of "Us"', 'If switched off - "Us" will be used in the form subheading.');
-		$this->form->text('notify', 'Notify emails', 'List of emails to be notified when an entry occurs (comma separated).');
-
-		echo $this->form->fields('Simple Ajax Contact Forms');
-		echo $this->form->print_save_mobile();
-	}
-}
+// class CPLUS_Admin extends zuplus_Admin {
+//
+// 	public function validate_options($input) {
+//
+// 		$new_values = parent::validate_options($input);
+// 		$new_values['notify'] = $this->validate_emails($input, 'notify'); 	// validate e-mails
+// 		return $new_values;
+// 	}
+// }
 
 // Entry Point ----------------------------------------------------------------]
 
