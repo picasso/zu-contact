@@ -4,13 +4,14 @@
 // Includes all traits --------------------------------------------------------]
 
 include_once('zucontact-ajax.php');
+include_once('zucontact-mailer.php');
 include_once('zucontact-form.php');
 include_once('zucontact-shortcode.php');
 
 class zu_Contact extends zukit_Plugin {
 
 	// Form helpers, shortcode, ajax & mailer
-	use zu_ContactForm, zu_ContactShortcode, zu_ContactAjax;
+	use zu_ContactForm, zu_ContactShortcode, zu_ContactAjax, zu_ContactMailer;
 
 	protected function construct_more() {
 		// init static messages
