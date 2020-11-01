@@ -2,7 +2,6 @@
 
 // Class for holding and validating data captured from the contact form
 //
-
 class zu_ContactData {
 	public $name;
 	public $email;
@@ -16,6 +15,7 @@ class zu_ContactData {
 	public $errors;
 	public $form;
 
+	private $prefix;
 	private $recaptcha_public_key;
 	private $recaptcha_private_key;
 
@@ -25,54 +25,44 @@ class zu_ContactData {
 		$this->errors = [];
 		$this->attributes = [];
 		$this->form = false;
-/*
-		if(cplus_PluginSettings::UseRecaptcha()) {
-			$this->recaptcha_public_key  = cplus_PluginSettings::PublicKey();
-			$this->recaptcha_private_key = cplus_PluginSettings::PrivateKey();
-		}
-*/
+		$this->prefix = zu_ContactFields::$css_prefix;
+
+		// if(??::UseRecaptcha()) {
+		// 	$this->recaptcha_public_key  = ??::PublicKey();
+		// 	$this->recaptcha_private_key = ??::PrivateKey();
+		// }
+
 		$is_post = $_SERVER['REQUEST_METHOD'] == 'POST' ? true : false;
 
-		$is_nonce_verified = ($is_post && wp_verify_nonce($_POST['nonce'] ?? null, zucontact()->ajax_nonce(false))) ? true : false;
-		$is_cplus_object = ($is_post && $is_nonce_verified && isset($_POST['cplus'])) ? true : false;
+		$form_nonce = $_POST[$this->prefix.'_nonce'] ?? null;
+		$is_nonce_verified = ($is_post && wp_verify_nonce($form_nonce, zucontact()->ajax_nonce(false))) ? true : false;
+		$fdata = $_POST[$this->prefix] ?? null;
 
-		if($is_post && !$is_nonce_verified) $this->errors['nonce'] = __('Nonce failed - is not correct or expired', 'zu-contact');
-		if($is_nonce_verified && !$is_cplus_object) $this->errors['form'] = __('Form data not found', 'zu-contact');
+		if($is_post && !$is_nonce_verified) $this->errors['_nonce'] = true;
+		if($is_nonce_verified && empty($fdata)) $this->errors['_data'] = true;
 
-		if($is_cplus_object) {
+		if(!empty($fdata)) {
 
-			$cplus = $_POST['cplus'];
-			$this->form = zucontact()->get_form(isset($_POST['cplus_fname']) ? $_POST['cplus_fname'] : '');
-			if($this->form === false) $this->errors['form'] = __('Form name not found', 'zu-contact');
+			$this->post_id = isset($fdata['_post_id']) ? absint($fdata['_post_id']): null;
+			$this->post_link = $fdata['_post_link'] ?? null;
+			$this->form = zucontact()->get_form($fdata['_fname'] ?? false);
+			if($this->form === false) $this->errors['_fname'] = true;
 
 			if($this->form !== false) {
 				foreach($this->form->fields() as $field) {
 
 					$field_id = $field['name'];
-					$value = $this->validate_field($field, $cplus);
+					$value = $this->validate_field($field, $fdata);
 					if($value === null) continue;
-
-					// $field_type = $field['type'];
-					//
-					// if($field_type == 'text' || $field_type == 'textarea') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
-					// if($field_type == 'email') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_EMAIL);
-					// if($field_type == 'url') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_URL);
-					// if($field_type == 'number') $value = filter_var($cplus[$field_id], FILTER_SANITIZE_NUMBER_INT);
-					// if($field_type == 'tel') $value = preg_replace('/[^0-9+-]/', '', $cplus[$field_id]);
-					// if($field_type == 'checkbox') $value = isset($cplus[$field_id]) ? true : false;
-					// if($field_type == 'submit') continue;
 
 					$this->attributes[$field_id] = $value;
 
-					if($field_id == 'name') $this->name = $value;
-					else if($field_id == 'email') $this->email = $value;
-					else if($field_id == 'message') $this->message = $value;
+					if($field_id === 'name') $this->name = $value;
+					else if($field_id === 'email') $this->email = $value;
+					else if($field_id === 'message') $this->message = $value;
 				}
-
-				$this->post_id = isset($_POST['post_id']) ? $_POST['post_id'] : 0;
-				$this->post_link = isset($_POST['post_link']) ? $_POST['post_link'] : '';
 			}
-			unset($_POST['cplus']);
+			unset($_POST[$this->prefix]);
 		}
 
 		$this->spam = false;
@@ -83,19 +73,21 @@ class zu_ContactData {
 		$field_id = $field['name'] ?? '';
 		$field_type = $field['type'] ?? '';
 
-		if($field_type == 'text' || $field_type == 'textarea') {
+		if($field_type === 'text' || $field_type === 'textarea') {
 			return filter_var($form[$field_id], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
 		}
-		if($field_type == 'email') return filter_var($form[$field_id], FILTER_SANITIZE_EMAIL);
-		if($field_type == 'url') return filter_var($form[$field_id], FILTER_SANITIZE_URL);
-		if($field_type == 'number') return filter_var($form[$field_id], FILTER_SANITIZE_NUMBER_INT);
-		if($field_type == 'tel') return preg_replace('/[^0-9+-]/', '', $form[$field_id]);
-		if($field_type == 'checkbox') return isset($form[$field_id]) ? true : false;
-		// if($field_type == 'submit') continue;
+		if($field_type === 'email') return filter_var($form[$field_id], FILTER_SANITIZE_EMAIL);
+		if($field_type === 'url') return filter_var($form[$field_id], FILTER_SANITIZE_URL);
+		if($field_type === 'number') return filter_var($form[$field_id], FILTER_SANITIZE_NUMBER_INT);
+		if($field_type === 'tel') return preg_replace('/[^0-9+-]/', '', $form[$field_id]);
+		if($field_type === 'checkbox') return isset($form[$field_id]) ? true : false;
+
 		return null;
 	}
 
-	public function is_recaptcha() { return (!empty($this->recaptcha_public_key) && !empty($this->recaptcha_private_key)) ? true : false; }
+	public function is_recaptcha() {
+		return (!empty($this->recaptcha_public_key) && !empty($this->recaptcha_private_key)) ? true : false;
+	}
 
 	public function is_valid() {
 
@@ -104,57 +96,50 @@ class zu_ContactData {
 		foreach($this->form->fields() as $field) {
 
 			if($field['is_required']) {
-
 				$field_id = $field['name'];
 				$field_type = $field['type'];
 				$value = $this->attributes[$field_id];
-				$this->form->get_required($field['required'], $required, $required_valid); 	// convert required values from Array or String
-
-				if($field_type == 'email') {		//email || email invalid address
-
+				// convert required message from Array or String
+				$this->form->get_required($field['required'], $required, $required_valid);
+				//email || email invalid address
+				if($field_type == 'email') {
 					if(strlen($value) == 0) $this->errors[$field_id] = $required;
 					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_EMAIL)) $this->errors[$field_id] = $required_valid;
 				}
-
-				if($field_type == 'text' || $field_type == 'textarea') {		//name, message & general text fields - should at least 3 chars
-
+				//name, message & general text fields - should at least 3 chars
+				if($field_type == 'text' || $field_type == 'textarea') {
 					if(strlen($value) < 3) $this->errors[$field_id] = $required;
 				}
-
-				if($field_type == 'number') {											// numbers should be great than 0
-
+				// numbers should be great than 0
+				if($field_type == 'number') {
 					if(intval($value) <= 0) $this->errors[$field_id] = $required;
 				}
-
-				if($field_type == 'tel') {													// phone should be at least 8 digits
-
+				// phone should be at least 8 digits
+				if($field_type == 'tel') {
 					if(strlen($value) < 8) $this->errors[$field_id] = $required;
 				}
-
-				if($field_type == 'url') {													// url || invalid url
-
+				// url || invalid url
+				if($field_type == 'url') {
 					if(strlen($value) == 0) $this->errors[$field_id] = $required;
 					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_URL)) $this->errors[$field_id] = $required_valid;
 				}
-
-				if($field_type == 'checkbox') {										//checkbox which should checked - like "I agree with terms & conditions"
-
+				//checkbox which should checked - like "I agree with terms & conditions"
+				if($field_type == 'checkbox') {
 					if(strlen($value) !== true) $this->errors[$field_id] = $required;
 				}
 			}
 		}
 
 		//check recaptcha but only if we have keys
-/*
-		if($this->is_recaptcha()) {
 
-			$resp = csf_RecaptchaV2::VerifyResponse($_SERVER['REMOTE_ADDR'], $this->recaptcha_private_key, $_POST['g-recaptcha-response']);
-
-			if(!$resp->success) {
-				$this->errors['recaptcha'] = __('Please solve the recaptcha to continue.', 'zu-contact');
-			}
-		}
-*/
+		// if($this->is_recaptcha()) {
+		//
+		// 	$resp = RecaptchaV2::VerifyResponse($_SERVER['REMOTE_ADDR'], $this->recaptcha_private_key, $_POST['g-recaptcha-response']);
+		//
+		// 	if(!$resp->success) {
+		// 		$this->errors['recaptcha'] = __('Please solve the recaptcha to continue.', 'zu-contact');
+		// 	}
+		// }
 
 		return count($this->errors) == 0 ? true : false;
 	}
@@ -165,7 +150,7 @@ class zu_ContactData {
 
 		if($this->form !== false) {
 
-			apply_filters('cplus_spam_filter', $this);
+			apply_filters(zu_Contact::$spam_filter, $this);
 
 			if($this->spam === true) return ($this->was_sent = true);
 

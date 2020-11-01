@@ -8,16 +8,24 @@ trait zu_ContactForm {
     private $default_name = null;
 	private $forms = [];
 
-    private static $error_message = null;
+    private static $error_messages = null;
     private static $success_messages = null;
     private static $subheading_us = null;
     private static $subheading_me = null;
     private static $subheading_form = null;
 
     private function setup_messages() {
-        if(empty(self::$error_message)) {
+        if(empty(self::$error_messages)) {
 
-            self::$error_message = __('There was a problem with your submission. Errors have been highlighted below.', 'zu-contact');
+            // self::$error_message = __('There was a problem with your submission. Errors have been highlighted below.', 'zu-contact');
+
+            self::$error_messages = [
+                'basic'             => 	__('There was a problem with your submission.', 'zu-contact'),
+                'fields'            => 	__('Errors have been highlighted below.', 'zu-contact'),
+                'nonce'				=>	__('Nonce failed - is not correct or expired.', 'zu-contact'),
+                'data'              =>	__('Form data not found.', 'zu-contact'),
+                'name'              =>	__('Form name not found.', 'zu-contact'),
+            ];
 
             self::$success_messages = [
         		'default'			=> 	__('Your Request Has Been Sent', 'zu-contact'),
@@ -68,7 +76,7 @@ trait zu_ContactForm {
 	}
 
 	public function get_form($form_name = null) {
-		$form_name = empty($form_name) || $form_name === 'default' ? $this->default_name : $form_name;
+		$form_name = is_null($form_name) || $form_name === 'default' ? $this->default_name : $form_name;
 		return $this->forms[$form_name] ?? false;
 	}
 
@@ -86,7 +94,8 @@ trait zu_ContactForm {
     //     $was_error = empty($errors) ? false : true;
     //     $icon_error = function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : '';
     //     $icon_ok = function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : '';
-    //     $subheading = isset($values['subheading']) ? sprintf('<h2 class="cplus-subheading before_posting">%s</h2>', $values['subheading']) : '';
+    //     $subheading = isset($values['subheading']) ?
+    // sprintf('<h2 class="cplus-subheading before_posting">%s</h2>', $values['subheading']) : '';
     //
     //     return sprintf(
     //         '<div id="cplus" class="%1$s">%4$s%7$s<div class="cplus-status%2$s">
@@ -111,7 +120,7 @@ trait zu_ContactForm {
         if($form === false) return '';
 
         // Format container output
-        $css_prefix = $form->css_prefix;
+        $css_prefix = zu_ContactFields::$css_prefix;
         $was_sent = $values['_was_sent'] ?? false;
         $was_error = !empty($errors);
 
@@ -121,24 +130,31 @@ trait zu_ContactForm {
             $css_prefix
         );
 
+        // in CSS you should use .zuc-status { visibility: visible !important; }
+        // to compensate CSS specificity of in-line style="visibility:hidden;"
+        // "visibility:hidden;" is used to hide status when form CSS is missing
         $output = zu_sprintf(
             '<div id="%9$s-%10$s" class="%1$s">
                 %4$s%7$s
-                <div class="%9$s-status%2$s">
+                <div class="%9$s-status%2$s" style="visibility:hidden;">
                     <span class="icon-ok">%5$s</span>
                     <span class="icon-error">%6$s</span>
                     <span class="message" data-errmsg="%8$s">%3$s</span>
                 </div>',
-                $this->snippets('merge_classes', [$classes, $css_prefix.'-container', ($was_error || $was_sent) ? $css_prefix.'-processed': '']),
+                $this->snippets('merge_classes', [
+                    $classes,
+                    $css_prefix.'-container',
+                    ($was_error || $was_sent) ? $css_prefix.'-processed': ''
+                ]),
                 // zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
                 ($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
-                $was_error ? $this->error_message($name) : $this->success_message($name),
+                $was_error ? $this->error_message($errors) : $this->success_message($name),
                 $this->snippets('loader', 1, 0.8),
                 // zu()->loader(1, 0.8),
                 $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
                 $values['icon_cancel'] ?? (function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : ''),
                 $subheading,
-                $this->error_message($name),
+                $this->error_message($errors),
                 $css_prefix,
                 $name
         );
@@ -149,16 +165,16 @@ trait zu_ContactForm {
         //     <p class="text-error"> echo $errors['recaptcha']; </p>
         //     </div>
         //  }
-
+// name="%2$s[%1$s]
         // Add form container and FORM opening tags
         $output .= zu_sprintf(
             '<div class="%7$s-form-container %2$s">
                 %1$s
-                <form role="form" id="%7$s-form" name="%7$s-form" method="post" class="%7$s-form %2$s">
+                <form role="form" id="%7$s-form" name="%7$s" method="post" class="%7$s-form %2$s">
                 %3$s
-                <input type="hidden" name="%7$s_fname" value="%2$s"/>
-                <input type="hidden" name="post_link" value="%5$s"/>
-                <input type="hidden" name="post_id" value="%4$s"/>
+                <input type="hidden" name="%7$s[_fname]" value="%2$s"/>
+                <input type="hidden" name="%7$s[_post_link]" value="%5$s"/>
+                <input type="hidden" name="%7$s[_post_id]" value="%4$s"/>
                 %6$s',
             empty($message) ? '' : sprintf('<p>%1$s</p>', $message),
             $name,
@@ -199,8 +215,12 @@ trait zu_ContactForm {
         return $message;
     }
 
-    private function error_message() {
-        return self::$error_message;
+    private function error_message($errors) {
+        $key = 'fields';
+        if(($errors['_nonce'] ?? false) === true) $key = 'nonce';
+        else if(($errors['_data'] ?? false) === true) $key = 'data';
+        else if(($errors['_fname'] ?? false) === true) $key = 'name';
+        return sprintf('%1$s <i>%2$s</i>', self::$error_messages['basic'], self::$error_messages[$key]);
     }
 
     private function subheading($subheading, $key = null) {
@@ -208,5 +228,11 @@ trait zu_ContactForm {
         $index = empty($key) ? $subheading : $key;
         $selected = $this->is_option('me_or_us') ? self::$subheading_me : self::$subheading_us;
         return $selected[$index] ?? $subheading;
+    }
+
+    private function stats() {
+        return [
+            'forms'     => count($this->forms),
+        ];
     }
 }
