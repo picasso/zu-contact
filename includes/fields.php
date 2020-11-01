@@ -128,8 +128,14 @@ class zu_ContactFields {
 		if(!in_array($sorting_key, $available_attrs)) $sorting_key = 'order';
 
 		$fields = $this->fields;
-		usort($fields, function($a, $b) use ($sorting_key) { return ($a[$sorting_key] == $b[$sorting_key]) ? 0 : ($a[$sorting_key] > $b[$sorting_key] ? 1 : -1); });
+		usort($fields, function($a, $b) use ($sorting_key) {
+			return ($a[$sorting_key] == $b[$sorting_key]) ? 0 : ($a[$sorting_key] > $b[$sorting_key] ? 1 : -1);
+		});
 		return $fields;
+	}
+
+	public function available_fields() {
+		return array_keys($this->fields);
 	}
 
 	// Printing helpers -------------------------------------------------------]
@@ -147,7 +153,8 @@ class zu_ContactFields {
 	private function input($field, $value) {
 
 		$class = $field['type'] === 'submit' ? 'button button-submit' : 'form-control';
-		$value = $field['type'] === 'checkbox' ? ($value == true ? 'checked' : '') : sprintf('value="%1$s"', empty($value) ? '' : esc_attr($value));
+		$value_attr = sprintf('value="%1$s"', empty($value) ? '' : esc_attr($value));
+		$value = $field['type'] === 'checkbox' ? ($value == true ? 'checked' : '') : $value_attr;
 		$placeholder = empty($field['placeholder']) ? '' : sprintf('placeholder="%1$s"', $field['placeholder']);
 		$name = $field['type'] === 'submit' ? '' : sprintf('name="%2$s[%1$s]"', $field['name'], self::$css_prefix);
 

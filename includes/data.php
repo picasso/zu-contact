@@ -6,6 +6,7 @@ class zu_ContactData {
 	public $name;
 	public $email;
 	public $message;
+
 	public $post_id;
 	public $post_link;
 	public $spam;
@@ -144,39 +145,52 @@ class zu_ContactData {
 		return count($this->errors) == 0 ? true : false;
 	}
 
-	public function send_mail() {
-
-		$this->was_sent = false;
-
-		if($this->form !== false) {
-
-			apply_filters(zu_Contact::$spam_filter, $this);
-
-			if($this->spam === true) return ($this->was_sent = true);
-
-			$subject = __('New entry was submitted at', 'zu-contact');
-			$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
-
-			foreach($this->attributes as $field_id => $value) {
-				$field = $this->form->get($field_id);
-				$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
-				$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
-			}
-			$this->was_sent = cplus_mailer($this->email, zucontact()->recipients(), $content, false, $this->post_id, $this->post_link);
-
-			if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
-				$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
-				cplus_mailer($this->email, $this->email, $content, true);
-			}
-		}
-		return $this->was_sent;
+	public function get_message() {
+	    $was_error = empty($this->errors) && $this->was_sent ? false : true;
+		$fname = empty($this->form) ? null : $this->form->name;
+		return zucontact()->message($was_error ? $this->errors : null, $fname);
 	}
+
+	// remove all general errors (like _nonce, _data etc.)
+	public function get_errors() {
+		return array_filter($this->errors, function($key) {
+			return substr($key, 0, 1) !== '_';
+		}, ARRAY_FILTER_USE_KEY);
+	}
+
+	// public function send_mail() {
+	//
+	// 	$this->was_sent = false;
+	//
+	// 	if($this->form !== false) {
+	//
+	// 		apply_filters(zu_Contact::$spam_filter, $this);
+	//
+	// 		if($this->spam === true) return ($this->was_sent = true);
+	//
+	// 		$subject = __('New entry was submitted at', 'zu-contact');
+	// 		$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
+	//
+	// 		foreach($this->attributes as $field_id => $value) {
+	// 			$field = $this->form->get($field_id);
+	// 			$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
+	// 			$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
+	// 		}
+	// 		$this->was_sent = cplus_mailer($this->email, zucontact()->recipients(), $content, false, $this->post_id, $this->post_link);
+	//
+	// 		if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
+	// 			$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
+	// 			cplus_mailer($this->email, $this->email, $content, true);
+	// 		}
+	// 	}
+	// 	return $this->was_sent;
+	// }
 
 	public function as_values() {
 		$values = json_decode(json_encode($this), true);
-		$form = $values['form'] === false ? [] : $values['form'];
-		$fields = array_intersect_key($form, array_flip(['fields']));
-		$values = array_merge($values, $fields, $values['attributes']);
+		$fields = $this->form === false ? [] : $this->form->available_fields();
+		$values = array_merge($values, $fields, $this->attributes);
+_dbug('as_values', $values, $fields, $this->attributes);
 		unset($values['was_sent']);
 		unset($values['attributes']);
 		unset($values['form']);
