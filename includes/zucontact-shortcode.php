@@ -32,7 +32,7 @@ trait zu_ContactShortcode {
 		if(!is_null($content)) $message = do_shortcode($content);
 
 	    $contact = new zu_ContactData;
-_dbug($contact);
+// _dbug($contact);
 	    if($contact->is_valid()) $contact->send_mail();
 
 		$values = $contact->as_values();

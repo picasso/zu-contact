@@ -148,7 +148,7 @@ trait zu_ContactForm {
                 ]),
                 // zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
                 ($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
-                $was_error ? $this->error_message($errors) : $this->success_message($name),
+                $this->message($was_error ? null : $errors, $name),
                 $this->snippets('loader', 1, 0.8),
                 // zu()->loader(1, 0.8),
                 $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
@@ -228,6 +228,10 @@ trait zu_ContactForm {
         $index = empty($key) ? $subheading : $key;
         $selected = $this->is_option('me_or_us') ? self::$subheading_me : self::$subheading_us;
         return $selected[$index] ?? $subheading;
+    }
+
+    public function message($errors, $name) {
+        return empty($errors) ? $this->success_message($name) : $this->error_message($errors);
     }
 
     private function stats() {

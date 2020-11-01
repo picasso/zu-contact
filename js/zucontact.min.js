@@ -75,21 +75,25 @@
 			if($subheading.length) $subheading.css({top: status_margin - container_margin});
 		}
 
-		function removePrevErrors() {
+		function removePrevErrors(success) {
 			$form.find(`.${Cs_prefix}-control.error`).removeClass('error');
-			$status.removeClass('sent not-sent').addClass('sent');
+			$status.removeClass('sent not-sent').addClass(success ? 'sent' : 'not-sent');
 		}
 
 		function processPostData(data) {
 
 			var $message = $status.find('.message');
+			var msg = data.message === undefined ? $message.data('errmsg') : data.message;
+
+			// maybe we have general AJAX or server errors
+			if(data.errors && data.errors.ajax) msg = msg.replace(/<i>[^<]+/g, '<i>' + data.errors.ajax);
+			$message.html(msg);
 
 			$container.addClass(`${Cs_prefix}-processed`).removeClass(`${Cs_prefix}-general-errors`);
-			$message.html(data.message === undefined ? $message.data('errmsg') : data.message);
 
 			if(data.is_valid === true) {
-				// Remove previous errors
-				removePrevErrors();
+				// remove previous errors and mark as 'sent'
+				removePrevErrors(true);
 
 				// if(isScrolledIntoView($div) === false) {
 				// 	$('html,body').animate({
@@ -97,16 +101,18 @@
 				// 	}, 'slow');
 				// }
 			} else {
-				// Remove previous errors
-				removePrevErrors();
+				// remove previous errors and mark as 'not-sent'
+				removePrevErrors(false);
 
 				$.each(data.errors, function(name, value) {
-					// General errors
-					if(name === 'nonce' || name === 'form') {
-						$message.append(`<span>${value}</span>`);
-						$container.addClass(`${Cs_prefix}-general-errors`);
-					} else {
-						var $er_span = $form.find(`span[for="${Cs_prefix}-${name}"]`);
+					// general errors
+					// if(name === 'nonce' || name === 'form') {
+					// 	$message.append(`<span>${value}</span>`);
+					// 	$container.addClass(`${Cs_prefix}-general-errors`);
+					// } else {
+
+					var $er_span = $form.find(`span[for="${Cs_prefix}-${name}"]`);
+					if($er_span.length) {
 						$er_span.html(value);
 						$er_span.closest(`.${Cs_prefix}-control`).addClass('error');
 					}
@@ -128,7 +134,6 @@
 		$form.submit(function(e) {
 
 			e.preventDefault();
-			// if($form.validate().valid()) {
 			ajaxCalled(true);
 
 			$.ajax({
@@ -140,10 +145,16 @@
 
 				success: function(data) { processPostData(data.data); },
 				error: function(jqXHR, textStatus, errorThrown) {
-					var data = { is_valid: false,  errors: { form: `${textStatus} : ${errorThrown}` }};
-					processPostData(data);
+					processPostData({
+						is_valid: false,
+						errors: { ajax: `${jqXHR.status} : ${errorThrown}.` }
+					});
 					if(window.console && window.console.log) {
-						window.console.log(jqXHR, textStatus, errorThrown);
+						window.console.log({
+							textStatus: textStatus,
+							errorThrown: errorThrown,
+							jqXHR: jqXHR,
+						});
 					}
 				}
 			});
