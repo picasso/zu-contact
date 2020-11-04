@@ -93,8 +93,8 @@ class zu_Contact extends zukit_Plugin {
 
 	// Script enqueue ---------------------------------------------------------]
 
-	protected function js_data($is_frontend, $default_data) {
-		return  $is_frontend ? $this->ajax_data() : array_merge($default_data, [
+	protected function js_data($is_frontend) {
+		return  $is_frontend ? $this->ajax_data() : [
 			'jsdata_name'	=> 'zucontact_settings',
 			'actions' 		=> [
 				[
@@ -117,7 +117,7 @@ class zu_Contact extends zukit_Plugin {
 					'depends'	=> false,
 				],
 			],
-		]);
+		];
 	}
 
 	protected function should_load_css($is_frontend, $hook) {

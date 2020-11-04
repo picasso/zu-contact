@@ -11,11 +11,11 @@ trait zu_ContactAjax {
 	}
 
 	private function ajax_data() {
-		return $this->merge_js_data([
+		return [
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
-		]);
+		];
 	}
 
 	public function ajax_submit() {

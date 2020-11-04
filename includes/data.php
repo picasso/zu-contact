@@ -20,7 +20,6 @@ class zu_ContactData {
 	private $recaptcha_public_key;
 	private $recaptcha_private_key;
 
-
 	function __construct() {
 
 		$this->errors = [];
@@ -43,7 +42,6 @@ class zu_ContactData {
 		if($is_nonce_verified && empty($fdata)) $this->errors['_data'] = true;
 
 		if(!empty($fdata)) {
-
 			$this->post_id = isset($fdata['_post_id']) ? absint($fdata['_post_id']): null;
 			$this->post_link = $fdata['_post_link'] ?? null;
 			$this->form = zucontact()->get_form($fdata['_fname'] ?? false);
@@ -190,7 +188,7 @@ class zu_ContactData {
 		$values = json_decode(json_encode($this), true);
 		$fields = $this->form === false ? [] : $this->form->available_fields();
 		$values = array_merge($values, $fields, $this->attributes);
-_dbug('as_values', $values, $fields, $this->attributes);
+// _dbug('as_values', $values, $fields, $this->attributes);
 		unset($values['was_sent']);
 		unset($values['attributes']);
 		unset($values['form']);

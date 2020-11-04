@@ -63,8 +63,9 @@ trait zu_ContactForm {
 
 		if($form instanceof zu_ContactFields) {
 
-            // first added form will be default
+            // first added form or form with name 'default' will be default
 			if(empty($this->default_name)) $this->default_name = $form->name;
+            if($form->name === 'default') $this->default_name = $form->name;
 
 			if($form->carbon_copy) $form->insert_at(-1, 'carbon-copy', __('Send me a copy', 'zu-contact'), 'checkbox');
 			else $form->remove('carbon-copy');
@@ -87,32 +88,6 @@ trait zu_ContactForm {
 	public function recipients() {
 		return $this->option_value('notify');
 	}
-
-    // private function container($classes, $values, $errors, $name) {
-    //
-    //     $was_sent = isset($values['was_sent']) ? $values['was_sent'] : false;
-    //     $was_error = empty($errors) ? false : true;
-    //     $icon_error = function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : '';
-    //     $icon_ok = function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : '';
-    //     $subheading = isset($values['subheading']) ?
-    // sprintf('<h2 class="cplus-subheading before_posting">%s</h2>', $values['subheading']) : '';
-    //
-    //     return sprintf(
-    //         '<div id="cplus" class="%1$s">%4$s%7$s<div class="cplus-status%2$s">
-    //             <span class="icon-ok">%5$s</span>
-    //             <span class="icon-error">%6$s</span>
-    //             <span class="message" data-errmsg="%8$s">%3$s</span>
-    //         </div>',
-    //             zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
-    //             ($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
-    //             cplus_form_message($was_error, $name),
-    //             zu()->loader(1, 0.8),
-    //             $icon_ok,
-    //             $icon_error,
-    //             $subheading	,
-    //             $this->form_message(true, $name)
-    //     );
-    // }
 
     public function sprint_form($name, $values, $errors, $message = null, $classes = '') {
 
@@ -146,11 +121,9 @@ trait zu_ContactForm {
                     $css_prefix.'-container',
                     ($was_error || $was_sent) ? $css_prefix.'-processed': ''
                 ]),
-                // zu()->merge_classes([$classes, 'cplus-container', ($was_error || $was_sent) ? 'cplus-processed': '' ]),
                 ($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
                 $this->message($was_error ? null : $errors, $name),
-                $this->snippets('loader', 1, 0.8),
-                // zu()->loader(1, 0.8),
+                $this->snippets('loader', 0, 0.8),
                 $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
                 $values['icon_cancel'] ?? (function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : ''),
                 $subheading,
