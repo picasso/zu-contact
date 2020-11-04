@@ -6,7 +6,8 @@
 	var Cs_subheading = `${Cs_prefix}-subheading`;
 	var Cs_status = `${Cs_prefix}-status`;
 	var Cs_submit = `${Cs_prefix}-submit`;
-
+	// set 0 for production
+	var debugDelay = 0;
 
 	$(document).ready( function() {
 
@@ -105,23 +106,18 @@
 				removePrevErrors(false);
 
 				$.each(data.errors, function(name, value) {
-					// general errors
-					// if(name === 'nonce' || name === 'form') {
-					// 	$message.append(`<span>${value}</span>`);
-					// 	$container.addClass(`${Cs_prefix}-general-errors`);
-					// } else {
-
-					var $er_span = $form.find(`span[for="${Cs_prefix}-${name}"]`);
-					if($er_span.length) {
-						$er_span.html(value);
-						$er_span.closest(`.${Cs_prefix}-control`).addClass('error');
+					var $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`);
+					if($validated.length) {
+						$validated.html(value);
+						$validated.closest(`.${Cs_prefix}-control`).addClass('error');
 					}
 				});
 			}
-			ajaxCalled(false);
+			// we need to delay the form animation until the errors animation completes
+			setTimeout(function() { ajaxLoading(false); }, 300);
 		}
 
-		function ajaxCalled(initiated) {
+		function ajaxLoading(initiated) {
 			if(initiated) {
 				$subheading.removeClass('before_posting');
 				$button.attr('disabled', 'disabled');
@@ -131,11 +127,7 @@
 			$body.toggleClass('ajaxed', initiated);
 		}
 
-		$form.submit(function(e) {
-
-			e.preventDefault();
-			ajaxCalled(true);
-
+		function ajaxCall() {
 			$.ajax({
 				type: 'post',
 				dataType: 'json',
@@ -157,7 +149,13 @@
 						});
 					}
 				}
-			});
+			}); // end of $.ajax
+		}
+
+		$form.submit(function(e) {
+			e.preventDefault();
+			ajaxLoading(true);
+			setTimeout(ajaxCall, debugDelay);
 		});
 
 	}); // end of $(document).ready

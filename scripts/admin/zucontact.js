@@ -1,6 +1,6 @@
 // Zukit dependencies
 
-const { renderPlugin, toggleOption } = wp.zukit.render;
+const { renderPage, toggleOption } = wp.zukit.render;
 
 // Internal dependencies
 
@@ -32,7 +32,7 @@ const EditZucontact = ({
 	);
 };
 
-renderPlugin('zucontact', {
+renderPage('zucontact', {
 	edit: EditZucontact,
 	panels: zucontact.panels,
 });
