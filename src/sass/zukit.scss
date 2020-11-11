@@ -2,11 +2,13 @@
 
 // class prefixes -------------------------------------------------------------]
 
-$select-item-class: zukit-select-item;
+$selectitem-component-class: zukit-select-item;
+$listinput-component-class: zukit-list-input;
 $table-component-class: zukit-table;
 $divider-component-class: zukit-divider;
 
 @import "components/select-item";
+@import "components/list-input";
 @import "components/table";
 @import "components/divider";
 
@@ -37,10 +39,11 @@ $divider-component-class: zukit-divider;
 					margin-left: 10px;
 					padding: 3px 6px;
 					border-width: 0;
-					background-color: $admin-light-brown;
+					background-color: $admin-error-bg-color;
 					color: $admin-error-color;
 					pointer-events: none;
 					cursor: default;
+					font-weight: 400;
 				}
 			}
 
@@ -150,6 +153,10 @@ $divider-component-class: zukit-divider;
 
 			.block-editor-block-card .block-editor-block-icon {
 				margin-top: 1em;
+			}
+
+			.edit-post-sidebar h2 {
+				font-weight: 600;
 			}
 
 			.components-panel__body.is-opened {
