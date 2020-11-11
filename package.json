@@ -1,8 +1,8 @@
 {
     "name": "zucontact",
-    "version": "0.9.8",
+    "version": "0.9.9",
     "author": "Dmitry Rudakov",
-    "description": "Simple Ajax Contact Forms",
+    "description": "Simple but smart Ajax contact forms. With Gutenberg based settings page.",
     "license": "MIT",
     "repository": {
         "type": "git",

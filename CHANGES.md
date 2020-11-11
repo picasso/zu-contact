@@ -1,3 +1,14 @@
+#### 0.9.9 / 2020-11-11
+* refactoring front-end JS
+* improved error message handling
+* split `ajax` and `mailer` traits
+* support of `ajax` shortcode param
+* moving `css_prefix` to static property
+* updated to use new `extend...` methods
+* __Zukit__ updated
+* adapted to latest changes in __Zukit__
+* bug fixing and css improvements
+
 #### 0.9.8 / 2020-10-28
 * added admin JS to render settings page
 * included `Zukit` framework

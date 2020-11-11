@@ -1,8 +1,6 @@
 # Zu Contact
 
-Simple Ajax Contact Form.
-
-See [Dmitry Rudakov Coding](https://***REMOVED***.com/coding/) for complete docs and demos.
+Simple but smart Ajax contact forms. With Gutenberg based settings page.
 
 ## Install
 
