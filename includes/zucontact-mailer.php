@@ -27,7 +27,7 @@ trait zu_ContactMailer {
 	        'comment_author_url'	=> '',
 	    ]);
 
-	    // if it is spam then log as a comment
+	    // even if it is spam then log as a comment
 	    if(isset($comment_data['akismet_result']) && $comment_data['akismet_result'] === 'true') {
 			$comment_data['comment_approved'] = 'spam';
 			wp_insert_comment($comment_data);
@@ -37,37 +37,7 @@ trait zu_ContactMailer {
 			$cid = wp_insert_comment($comment_data);
 			$contact->spam = false;
 	    }
-
 	    return $contact;
-	}
-
-	public function php_mailer($phpmailer) {
-	/*
-	    $phpmailer->isSMTP();
-	    $phpmailer->Host = 'smtp.example.com';
-	    $phpmailer->SMTPAuth = true; // Force it to use Username and Password to authenticate
-	    $phpmailer->Port = 25;
-	    $phpmailer->Username = 'yourusername';
-	    $phpmailer->Password = 'yourpassword';
-	*/
-
-	    // Additional settings…
-	    //$phpmailer->SMTPSecure = "tls"; // Choose SSL or TLS, if necessary for your server
-	    //$phpmailer->From = "you@yourdomail.com";
-	    //$phpmailer->FromName = "Your Name";
-
-	/*
-		add_action( 'phpmailer_init', 'my_phpmailer_init' );
-		function my_phpmailer_init( PHPMailer $phpmailer ) {
-		    $phpmailer->Host = 'smtp.yourSMTPhost.net';
-		    $phpmailer->Port = 465; // could be different
-		    $phpmailer->Username = 'YOURUSERNAME'; // if required
-		    $phpmailer->Password = 'YOURPASSWORD'; // if required
-		    $phpmailer->SMTPAuth = true; // if required
-		    $phpmailer->SMTPSecure = 'ssl'; // enable if required, 'tls' is another possible value
-		    $phpmailer->IsSMTP();
-		}
-	*/
 	}
 
 	public function from_email() {
@@ -102,9 +72,7 @@ trait zu_ContactMailer {
 		$email_recipients = implode(',', $email_recipients);
 
 		// "From" email address
-		$send_from_email = $this->from_email();
-		$send_from_name = $site_name;
-		$send_from = sprintf('%1$s <%2$s>', $send_from_name, $send_from_email);
+		$send_from = sprintf('%1$s <%2$s>', $site_name, $this->from_email());
 
 		if(empty($email_recipients)) $email_recipients = [$this->admin_email()];
 
@@ -163,4 +131,32 @@ trait zu_ContactMailer {
 		}
 		return false;
 	}
+
+	// public function php_mailer($phpmailer) {
+	//
+	//     $phpmailer->isSMTP();
+	//     $phpmailer->Host = 'smtp.example.com';
+	//     $phpmailer->SMTPAuth = true; // Force it to use Username and Password to authenticate
+	//     $phpmailer->Port = 25;
+	//     $phpmailer->Username = 'yourusername';
+	//     $phpmailer->Password = 'yourpassword';
+	//
+	//
+	//     // Additional settings…
+	//     //$phpmailer->SMTPSecure = "tls"; // Choose SSL or TLS, if necessary for your server
+	//     //$phpmailer->From = "you@yourdomail.com";
+	//     //$phpmailer->FromName = "Your Name";
+	//
+	//
+	// 	add_action( 'phpmailer_init', 'my_phpmailer_init' );
+	// 	function my_phpmailer_init( PHPMailer $phpmailer ) {
+	// 	    $phpmailer->Host = 'smtp.yourSMTPhost.net';
+	// 	    $phpmailer->Port = 465; // could be different
+	// 	    $phpmailer->Username = 'YOURUSERNAME'; // if required
+	// 	    $phpmailer->Password = 'YOURPASSWORD'; // if required
+	// 	    $phpmailer->SMTPAuth = true; // if required
+	// 	    $phpmailer->SMTPSecure = 'ssl'; // enable if required, 'tls' is another possible value
+	// 	    $phpmailer->IsSMTP();
+	// 	}
+	// }
 }

@@ -16,6 +16,7 @@ class zu_Contact extends zukit_Plugin {
 	protected function construct_more() {
 		// init static messages
 		$this->setup_messages();
+		$this->debug = true;
     }
 
 	protected function config() {
@@ -95,7 +96,7 @@ class zu_Contact extends zukit_Plugin {
 
 	protected function js_data($is_frontend) {
 		return  $is_frontend ? $this->ajax_data() : [
-			'jsdata_name'	=> 'zucontact_settings',
+			// 'jsdata_name'	=> 'zucontact_settings',
 			'actions' 		=> [
 				[
 					'label'		=> __('Update Dominants', 'zumedia'),

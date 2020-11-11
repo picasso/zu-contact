@@ -11,7 +11,7 @@ const { __ } = wp.i18n;
 
 const options = {
 	use_recaptcha: {
-		label: 	__('Use Google recaptcha?', 'zucontact'),
+		label: 	__('Use Google reCAPTCHA?', 'zucontact'),
 		help:	__('Loads Google recaptcha script if required.', 'zucontact'),
 	},
 	client_validate: {
@@ -29,19 +29,21 @@ const options = {
 		// 2em -> margins above and under the divider
 		divider: 2,
 	},
-	notify: {
-		label: 	__('Notify emails', 'zucontact'),
-		help:	__('List of emails to be notified when an entry occurs (comma separated).', 'zucontact'),
-	},
+};
+
+const notify = {
+	label: 	__('Notify emails', 'zucontact'),
+	input: 	__('Enter an email to add to the list', 'zucontact'),
+	help:	__('List of emails to be notified when a form entry occurs.', 'zucontact'),
 };
 
 const panels = {
-	// folders: {
-	// 	value: true,
-	// 	label: 	__('Media Folders', 'zucontact'),
-	// 	// Это позволит исключить эту панель когда значение option is false
-	// 	depends: 'folders',
-	// },
+	recaptcha_keys: {
+		value: true,
+		label: 	__('Google reCAPTCHA API Keys', 'zucontact'),
+		// Это позволит исключить эту панель когда значение option is false
+		depends: 'use_recaptcha',
+	},
 	// sizes: {
 	// 	value: true,
 	// 	label: 	__('Media Sizes', 'zucontact'),
@@ -51,4 +53,5 @@ const panels = {
 export const zucontact = {
 	options,
 	panels,
+	notify,
 }
