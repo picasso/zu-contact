@@ -23,8 +23,6 @@ class zukit_Plugin extends zukit_Singleton {
 	protected $data = [];
 	protected $addons = [];
 
-	private static $registred = false;
-
 	// Admin basics, menu management and REST API support
 	use zukit_Admin, zukit_AdminMenu, zukit_Ajax;
 
@@ -60,43 +58,15 @@ class zukit_Plugin extends zukit_Singleton {
 		add_action('wp_enqueue_scripts', [$this, 'frontend_enqueue'], 10, 1);
 		add_action('wp_enqueue_scripts', function($hook) { $this->do_addons('enqueue', $hook); }, 11, 1);
 
+		// enqueue 'zukit' helpers & components and its CSS
+		add_action('admin_enqueue_scripts', [$this, 'zukit_enqueue'], 10, 1);
+
 		add_action('admin_enqueue_scripts', [$this, 'admin_enqueue'], 10, 1);
 		add_action('admin_enqueue_scripts', function($hook) { $this->do_addons('admin_enqueue', $hook); }, 11, 1);
 
 		$this->admin_config($file, $this->config['admin']);
 		$this->admin_menu_config();
 		$this->ajax_config();
-	}
-
-	protected function info() {
-		$more_info = apply_filters('zukit_plugin_info', (object) null);
-		return [
-			'version'		=> $this->version,
-			'title'			=> $this->data['Name'],
-			'author'		=> $this->data['AuthorName'],
-			'link'			=> preg_replace('/.*href="([^\"]+).*/ims', '$1', $this->data['Author']),
-			'description'	=> preg_replace('/<cite>.+<\/cite>/i', '', $this->data['Description']),
-			'icon'			=> $this->config['icon'],
-			'more' 			=> $more_info,
-		];
-	}
-
-	protected function debug_actions() {
-		$debug_actions = apply_filters('zukit_debug_actions', []);
-		return $debug_actions === false ? [] : array_merge([
-				[
-					'label'		=> __('Clear Debug Log', 'zu-plugin'),
-					'value'		=> 'clear_log',
-					'icon'		=> 'trash',
-					'color'		=> 'error',
-				],
-				[
-					'label'		=> __('Test Ajax', 'zu-plugin'),
-					'value'		=> 'test_ajax',
-					'icon'		=> 'dashboard',
-					'color'		=> 'green',
-				],
-			], $debug_actions);
 	}
 
 	// Нельзя! работать с 'options' в 'construct_more()', там 'options' еще не определены
@@ -257,13 +227,13 @@ class zukit_Plugin extends zukit_Singleton {
 
 	protected function js_params($is_frontend) {
 		return [
-			'deps'	=> $is_frontend ? [] : ['wp-api', 'wp-i18n', 'wp-components', 'wp-element'],
+			'deps'	=> $is_frontend ? [] : ['zukit'],
 			'data'	=> $this->get_js_data($is_frontend),
 		];
 	}
 	protected function css_params($is_frontend) {
 		return [
-			'deps'	=> $is_frontend ? [] : ['wp-edit-post'],
+			'deps'	=> $is_frontend ? [] : ['zukit'],
 		];
 	}
 	// Guarantees that if user did not include any requred keys or set it to 'null'
@@ -278,23 +248,31 @@ class zukit_Plugin extends zukit_Singleton {
 	}
 
 	protected function get_js_data($is_frontend) {
-		return $this->js_data($is_frontend, [
-			'jsdata_name'	=> 'zukit_settings',
+		$default_data = $is_frontend ? [
+			'ajaxurl'       => admin_url('admin-ajax.php'),
+			'nonce'     	=> $this->ajax_nonce(true),
+			'slug'			=> $this->snippets('get_slug'),
+		] : [
+			'jsdata_name'	=> $this->prefix_it('settings', '_'), //'zukit_settings',
+			'router'		=> $this->admin_slug(),
 			'options' 		=> $this->options,
 			'info'			=> $this->info(),
 			'debug'			=> $this->debug_actions(),
 			'actions' 		=> [],
-		]);
-	}
-	protected function merge_js_data($plugin_data = []) {
-		return array_merge([
-			'ajaxurl'       => admin_url('admin-ajax.php'),
-			'nonce'     	=> $this->ajax_nonce(true),
-			'slug'			=> $this->snippets('get_slug'),
-		], $plugin_data);
+		];
+		$custom_data = $this->js_data($is_frontend);
+		return array_merge($default_data, is_array($custom_data) ? $custom_data : []);
 	}
 
-	protected function js_data($is_frontend, $default_data) { return  $is_frontend ? [] : $default_data; }
+	// protected function merge_js_data($plugin_data = []) {
+	// 	return array_merge([
+	// 		'ajaxurl'       => admin_url('admin-ajax.php'),
+	// 		'nonce'     	=> $this->ajax_nonce(true),
+	// 		'slug'			=> $this->snippets('get_slug'),
+	// 	], $plugin_data);
+	// }
+
+	protected function js_data($is_frontend) {}
 	protected function should_load_css($is_frontend, $hook) { return false; }
 	protected function should_load_js($is_frontend, $hook) { return false; }
 	protected function enqueue_more($is_frontend, $hook) {}
@@ -305,17 +283,23 @@ class zukit_Plugin extends zukit_Singleton {
 		$this->enqueue_more(true, $hook);
 	}
 
-	public function admin_enqueue($hook) {
-
-		// enqueue 'zukit' helpers & components and its CSS
-		if(!self::$registred && $this->config['zukit'] && $this->should_load_js(false, $hook)) {
-			// redefine defaults to no data and 'zukit' handle
-			$zukit_params = ['data' => null, 'handle' => 'zukit'];
-			$this->admin_enqueue_style($this->get_zukit_filepath(true, 'zukit'), array_merge(self::css_params(false), $zukit_params));
-			$this->admin_enqueue_script($this->get_zukit_filepath(false, 'zukit'), array_merge(self::js_params(false), $zukit_params));
-			self::$registred = true;
+	public function zukit_enqueue($hook) {
+		if($this->is_zukit_slug($hook)) {
+			// dependencies for Zukit script & styles
+			$js_deps = ['wp-api', 'wp-i18n', 'wp-components', 'wp-element'];
+			$css_deps = ['wp-edit-post'];
+			// params for 'zukit' script
+			$zukit_params = [
+				'data'		=> null,
+				'deps'		=> $js_deps,
+				'handle'	=> 'zukit'
+			];
+			$this->admin_enqueue_script('!zukit', $zukit_params);
+			$this->admin_enqueue_style('!zukit', array_merge($zukit_params, ['deps'	=> $css_deps]));
 		}
+	}
 
+	public function admin_enqueue($hook) {
 		if($this->should_load_css(false, $hook)) $this->admin_enqueue_style(null, $this->css_params_validated(false));
 		if($this->should_load_js(false, $hook)) $this->admin_enqueue_script(null, $this->js_params_validated(false));
 		$this->enqueue_more(false, $hook);
@@ -352,34 +336,5 @@ class zukit_Plugin extends zukit_Singleton {
 		$snippets = zu_snippets();
 		if(method_exists($snippets, $func)) return call_user_func_array([$snippets, $func], $params);
 		else return null;
-	}
-}
-
-// A special version of the 'sprintf' function that removes the extra spaces
-// from the format string resulting from the 'human-readable' HTML template
-
-if(!function_exists('zu_sprintf')) {
-	function zu_sprintf($format, ...$params) {
-		// remove multiple space inside tags
-		if(preg_match_all('/(<[^>]+?>)/', $format, $matches)) {
-			  foreach($matches[1] as $tag) {
-			      $tag_compressed = preg_replace('/\s+/', ' ', $tag);
-			      $format = str_replace($tag, $tag_compressed, $format);
-			  }
-		  }
-		// remove empty space between tags
-		$format = preg_replace('/>\s+</', '><', $format);
-		// remove empty space after format directive and before opening tag
-		$format = preg_replace('/\$s\s+</', '$s<', $format);
-		// remove empty space after closing tag and before format directive
-		$format = preg_replace('/>\s+\%/', '>%', $format);
-
-		array_unshift($params, $format);
-		return call_user_func_array('sprintf', $params);
-	}
-
-	function zu_printf(...$params) {
-		$output = call_user_func_array('zu_sprintf', $params);
-		print($output);
 	}
 }
