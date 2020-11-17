@@ -3,13 +3,34 @@
 
 trait zu_ContactMailer {
 
-	// public static $spam_filter = 'zucontact_spam_filter';
+	private function init_mailer() {
+		$mailer = $this->get_option('mailer', null);
+		if(!empty($mailer)) {
+			add_action('phpmailer_init', [$this, 'php_mailer']);
+			add_action('wp_mail_failed', function($error) {
+			    return $this->log_error($error, 'wp_mail_failed!');
+			});
+		}
+	}
 
-	// private function init_mailer() {
-	//
-	// 	add_filter(self::$spam_filter, [$this, 'spam_filter']);
-	// 	// add_action('phpmailer_init', 'cplus_php_mailer');
-	// }
+	public function php_mailer($phpmailer) {
+
+		$mailer = $this->get_option('mailer', []);
+
+		$phpmailer->isSMTP();
+	    $phpmailer->Host = $mailer['server'] ?? '';
+		$phpmailer->Port = $mailer['port'] ?? 25;
+	    $phpmailer->Username = $mailer['username'] ?? 'username';
+	    $phpmailer->Password = $mailer['password'] ?? 'password';
+		// force it to use Username and Password to authenticate
+		$phpmailer->SMTPAuth = $mailer['auth'] ?? true;
+	    $phpmailer->SMTPSecure = ($mailer['ssl'] ?? false) ? 'ssl' : 'tls';
+		// set 'From' property only if 'from' key is presented in options
+		if(array_key_exists('from', $mailer)) $phpmailer->From = $mailer['from'];
+// $phpmailer->From = 'dmitry.travel@me.com';
+		$phpmailer->SMTPDebug = 1;
+		_dbug($phpmailer);
+	}
 
 	// this is used to weed out the spam.
 	// if Akismet plugin is enabled then it will be hooked into 'preprocess_comment' filter.
@@ -103,8 +124,7 @@ trait zu_ContactMailer {
 			if($data->form !== false) {
 
 				$this->spam_filter($data);
-				// apply_filters(zu_Contact::$spam_filter, $this);
-
+_dbug($data->spam);
 				if($data->spam === true) {
 					$data->was_sent = true;
 				} else {
@@ -121,6 +141,7 @@ trait zu_ContactMailer {
 						'post_link'		=> $data->post_link,
 					]);
 
+_dbug($data->was_sent);
 					if(in_array('carbon-copy', array_keys($data->attributes)) && $data->attributes['carbon-copy']) {
 						$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
 						$this->mailer($data->email, $data->email, $content, ['carbon_copy' => true]);
@@ -132,31 +153,4 @@ trait zu_ContactMailer {
 		return false;
 	}
 
-	// public function php_mailer($phpmailer) {
-	//
-	//     $phpmailer->isSMTP();
-	//     $phpmailer->Host = 'smtp.example.com';
-	//     $phpmailer->SMTPAuth = true; // Force it to use Username and Password to authenticate
-	//     $phpmailer->Port = 25;
-	//     $phpmailer->Username = 'yourusername';
-	//     $phpmailer->Password = 'yourpassword';
-	//
-	//
-	//     // Additional settings…
-	//     //$phpmailer->SMTPSecure = "tls"; // Choose SSL or TLS, if necessary for your server
-	//     //$phpmailer->From = "you@yourdomail.com";
-	//     //$phpmailer->FromName = "Your Name";
-	//
-	//
-	// 	add_action( 'phpmailer_init', 'my_phpmailer_init' );
-	// 	function my_phpmailer_init( PHPMailer $phpmailer ) {
-	// 	    $phpmailer->Host = 'smtp.yourSMTPhost.net';
-	// 	    $phpmailer->Port = 465; // could be different
-	// 	    $phpmailer->Username = 'YOURUSERNAME'; // if required
-	// 	    $phpmailer->Password = 'YOURPASSWORD'; // if required
-	// 	    $phpmailer->SMTPAuth = true; // if required
-	// 	    $phpmailer->SMTPSecure = 'ssl'; // enable if required, 'tls' is another possible value
-	// 	    $phpmailer->IsSMTP();
-	// 	}
-	// }
 }

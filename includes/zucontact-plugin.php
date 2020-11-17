@@ -17,6 +17,7 @@ class zu_Contact extends zukit_Plugin {
 		// init static messages
 		$this->setup_messages();
 		$this->debug = true;
+		$this->path_autocreated = true;
     }
 
 	protected function config() {
@@ -46,7 +47,7 @@ class zu_Contact extends zukit_Plugin {
 				'value'		=> $stats['forms'] ?? 0,
 				// 'depends' 	=> 'folders',
 			],
-			'commenst' 	=> empty($stats) ? null : [
+			'comments' 	=> empty($stats) ? null : [
 				'label'		=> __('Approved Comments', 'zu-contact'),
 				'value'		=> $stats['comments'] ?? 0,
 			],
@@ -76,6 +77,7 @@ class zu_Contact extends zukit_Plugin {
 
 		$this->init_ajax();
 		$this->init_shortcode();
+		$this->init_mailer();
 	}
 
 	// Custom menu position ---------------------------------------------------]
@@ -96,7 +98,6 @@ class zu_Contact extends zukit_Plugin {
 
 	protected function js_data($is_frontend) {
 		return  $is_frontend ? $this->ajax_data() : [
-			// 'jsdata_name'	=> 'zucontact_settings',
 			'actions' 		=> [
 				[
 					'label'		=> __('Update Dominants', 'zumedia'),
@@ -122,17 +123,17 @@ class zu_Contact extends zukit_Plugin {
 	}
 
 	protected function should_load_css($is_frontend, $hook) {
-		return $is_frontend ? $this->is_option('custom_css') : false;
+		return $is_frontend ? $this->is_option('custom_css') : $this->ends_with_slug($hook);
 	}
 
 	protected function should_load_js($is_frontend, $hook) {
 	    return $is_frontend ? true : $this->ends_with_slug($hook);
 	}
 
-	// We don't want the enqueue frontend script always, only when shortcode is used
+	// we don't want the enqueue frontend script always, only when shortcode is used
 	protected function js_params($is_frontend) {
 		return [
-			'deps'			=> $is_frontend ? ['jquery'] : null, // parent::js_params(false)['deps']
+			'deps'			=> $is_frontend ? ['jquery'] : null,
 			'register_only'	=> $is_frontend ? true : false,
 		];
 	}
@@ -147,11 +148,10 @@ class zu_Contact extends zukit_Plugin {
 
 		if($is_frontend) {
 
-			//	load Google recaptcha script if required
+			// load Google recaptcha script if required
 			if($this->is_option('use_recaptcha')) {
 				// if we use absolute path then $file should start with '!'
 				$absolute_path = '!https://www.google.com/recaptcha/api.js?hl=' . get_locale();
-		        // if we use absolute path then $file should start with '!'
 		        $this->enqueue_script($absolute_path, null, null, $this->prefix_it('recaptcha2'));
 			}
 
