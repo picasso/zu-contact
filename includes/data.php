@@ -144,9 +144,8 @@ class zu_ContactData {
 	}
 
 	public function get_message() {
-	    $was_error = empty($this->errors) && $this->was_sent ? false : true;
 		$fname = empty($this->form) ? null : $this->form->name;
-		return zucontact()->message($was_error ? $this->errors : null, $fname);
+		return zucontact()->message($this->errors, $fname, $this->was_sent);
 	}
 
 	// remove all general errors (like _nonce, _data etc.)

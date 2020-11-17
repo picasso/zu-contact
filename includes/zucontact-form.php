@@ -17,8 +17,6 @@ trait zu_ContactForm {
     private function setup_messages() {
         if(empty(self::$error_messages)) {
 
-            // self::$error_message = __('There was a problem with your submission. Errors have been highlighted below.', 'zu-contact');
-
             self::$error_messages = [
                 'basic'             => 	__('There was a problem with your submission.', 'zu-contact'),
                 'fields'            => 	__('Errors have been highlighted below.', 'zu-contact'),
@@ -28,13 +26,14 @@ trait zu_ContactForm {
             ];
 
             self::$success_messages = [
-        		'default'			=> 	__('Your Request Has Been Sent', 'zu-contact'),
-        		'contact'			=> 	__('Success! Your message was sent.', 'zu-contact'),
-        		'booking'			=>	__('Your Booking Request Has Been Sent', 'zu-contact'),
+        		'default'			=> 	__('Your Request Has Been Sent.', 'zu-contact'),
+        		'contact'			=> 	__('<b>Success!</b> Your message was sent.', 'zu-contact'),
+        		'booking'			=>	__('Your booking request has been sent.', 'zu-contact'),
         		'subscribe'			=>	[
-        			__('You Are Now subscribed to Our Newsletter', 'zu-contact'),
-        			__('You Are Now subscribed to My Newsletter', 'zu-contact')
+        			__('You Are Now subscribed to Our Newsletter.', 'zu-contact'),
+        			__('You Are Now subscribed to My Newsletter.', 'zu-contact')
         		],
+                'without_notify'    => __('<b>Attention!</b> No notification was sent to owner.', 'zu-contact'),
         	];
 
             self::$subheading_us = [
@@ -86,7 +85,7 @@ trait zu_ContactForm {
     }
 
 	public function recipients() {
-		return $this->option_value('notify');
+		return $this->get_option('notify');
 	}
 
     public function sprint_form($name, $values, $errors, $message = null, $classes = '') {
@@ -121,8 +120,8 @@ trait zu_ContactForm {
                     $css_prefix.'-container',
                     ($was_error || $was_sent) ? $css_prefix.'-processed': ''
                 ]),
-                ($was_error || $was_sent) ? ($was_error ? ' not-sent' : ' sent') : '',
-                $this->message($was_error ? null : $errors, $name),
+                $was_error ? ' was-error' : ($was_sent ? ' sent' : ''),
+                $this->message($errors, $name, $was_sent),
                 $this->snippets('loader', 0, 0.8),
                 $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
                 $values['icon_cancel'] ?? (function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : ''),
@@ -158,24 +157,9 @@ trait zu_ContactForm {
             $css_prefix
         );
 
-        // print($output);
-        // echo preg_replace('/\s+/', ' ', $output);
-        // $rows = isset($values['rows']) ? $values['rows'] : $form->rows_in_message;
-
         foreach($form->fields() as $field) {
-            // $field_id = $field['name'];
-            $output .= $form->sprint($field['name'], $values[$field['name']] ?? '', $errors, $values['_rows'] ?? null);
-
-            // $this->print_field(
-            //     $field_id,
-            //     $field['type'],
-            //     isset($values[$field_id]) ? $values[$field_id] : '',
-            //     $field['label'],
-            //     $errors,
-            //     $field['required'],
-            //     $field['placeholder'],
-            //     $field['type'] == 'textarea' ? $rows : 0
-            // );
+            $field_id = $field['name'];
+            $output .= $form->sprint($field_id, $values[$field_id] ?? '', $errors, $values['_rows'] ?? null);
         }
 
         $output .= sprintf('</form></div><!-- .%1$s --></div>', $name);
@@ -193,7 +177,7 @@ trait zu_ContactForm {
         if(($errors['_nonce'] ?? false) === true) $key = 'nonce';
         else if(($errors['_data'] ?? false) === true) $key = 'data';
         else if(($errors['_fname'] ?? false) === true) $key = 'name';
-        return sprintf('%1$s <i>%2$s</i>', self::$error_messages['basic'], self::$error_messages[$key]);
+        return sprintf('%1$s <b>%2$s</b>', self::$error_messages['basic'], self::$error_messages[$key]);
     }
 
     private function subheading($subheading, $key = null) {
@@ -203,13 +187,21 @@ trait zu_ContactForm {
         return $selected[$index] ?? $subheading;
     }
 
-    public function message($errors, $name) {
-        return empty($errors) ? $this->success_message($name) : $this->error_message($errors);
+    public function message($errors, $name, $was_sent = true) {
+        if(!empty($errors)) return $this->error_message($errors);
+        if($was_sent) return $this->success_message($name);
+        return sprintf('%1$s <span>%2$s</span>', $this->success_message($name), self::$success_messages['without_notify']);
     }
 
     private function stats() {
+        // NOTE: придумать как выбирать посты с формой...
+        $form_post_id = 1;
         return [
             'forms'     => count($this->forms),
+            'comments'  => get_comments([
+                'post_id'   => $form_post_id,
+                'count'     => true   // return only the count
+            ]),
         ];
     }
 }
