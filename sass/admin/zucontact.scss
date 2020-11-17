@@ -1,0 +1,15 @@
+$note-color: #bc2a8d;
+
+.zukit-settings {
+
+	// Media Folders ----------------------------------------------------------]
+
+	.__note {
+        padding: 1em;
+        line-height: 1.7;
+        border: 1px solid $note-color;
+        border-radius: 5px;
+        margin-bottom: 1em;
+        background-color: rgba($note-color, 0.2);
+	}
+}
