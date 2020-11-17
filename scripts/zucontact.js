@@ -2,10 +2,10 @@
 	// eslint-disable-next-line no-undef
 	var jsdata = (typeof zucontact_jsdata !== 'undefined' && zucontact_jsdata.data !== undefined) ? zucontact_jsdata.data : {};
 	var Cs_prefix = jsdata.prefix;
-	// var Cs_container = `${prefix}-container`;
-	var Cs_subheading = `${Cs_prefix}-subheading`;
-	var Cs_status = `${Cs_prefix}-status`;
-	var Cs_submit = `${Cs_prefix}-submit`;
+	var Ds_container = `.${Cs_prefix}-container`;
+	var Ds_subheading = `.${Cs_prefix}-subheading`;
+	var Ds_status = `.${Cs_prefix}-status`;
+	var Ds_submit = `#${Cs_prefix}-submit`;
 	// set 0 for production
 	var debugDelay = 0;
 
@@ -13,11 +13,11 @@
 
 		// Cache selectors
 		var $body = $('body'),
-		$container = $(`.${Cs_prefix}-container`),
-		$subheading = $container.find(`.${Cs_subheading}`),
-		$status = $container.find(`.${Cs_status}`),
+		$container = $(Ds_container),
+		$subheading = $container.find(Ds_subheading),
+		$status = $container.find(Ds_status),
 		$form = $container.find('form'),
-		$button = $form.find(`#${Cs_submit}`);
+		$button = $form.find(Ds_submit);
 
 		if($container.length) {
 			// add classes which could be used in others elements
@@ -78,16 +78,22 @@
 
 		function removePrevErrors(success) {
 			$form.find(`.${Cs_prefix}-control.error`).removeClass('error');
-			$status.removeClass('sent not-sent').addClass(success ? 'sent' : 'not-sent');
+			$status.removeClass('sent was-error').addClass(success ? 'sent' : 'was-error');
+		}
+
+		function formatMessage(msg) {
+			var msgLimit = 80;
+			if(msg.length > msgLimit) msg = `${msg.substring(0, msgLimit)}...`;
+			return `<span>${msg}</span>`;
 		}
 
 		function processPostData(data) {
-
 			var $message = $status.find('.message');
 			var msg = data.message === undefined ? $message.data('errmsg') : data.message;
+			var errors = data.errors || {};
 
 			// maybe we have general AJAX or server errors
-			if(data.errors && data.errors.ajax) msg = msg.replace(/<i>[^<]+/g, '<i>' + data.errors.ajax);
+			if(errors.ajax) msg = msg.replace(/<b>[^<]+/g, '<b>' + formatMessage(errors.ajax));
 			$message.html(msg);
 
 			$container.addClass(`${Cs_prefix}-processed`).removeClass(`${Cs_prefix}-general-errors`);
@@ -102,10 +108,10 @@
 				// 	}, 'slow');
 				// }
 			} else {
-				// remove previous errors and mark as 'not-sent'
+				// remove previous errors and mark as 'was-error'
 				removePrevErrors(false);
 
-				$.each(data.errors, function(name, value) {
+				$.each(errors, function(name, value) {
 					var $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`);
 					if($validated.length) {
 						$validated.html(value);
@@ -137,11 +143,14 @@
 
 				success: function(data) { processPostData(data.data); },
 				error: function(jqXHR, textStatus, errorThrown) {
+
+					var smtp = jqXHR.responseText.match(/SMTP Error:[^<]+/ig) || [];
+					var data = { ajax: smtp[0] ? smtp[0] : `${jqXHR.status} : ${errorThrown}.` };
 					processPostData({
 						is_valid: false,
-						errors: { ajax: `${jqXHR.status} : ${errorThrown}.` }
+						errors: data,
 					});
-					if(window.console && window.console.log) {
+					if(smtp.length === 0 && window.console && window.console.log) {
 						window.console.log({
 							textStatus: textStatus,
 							errorThrown: errorThrown,

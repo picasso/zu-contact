@@ -7,6 +7,7 @@ $zuc-placeholder-font-size: .875em !default;
 
 $zuc-ok-color: #8fcc8f !default; // #66cc52
 $zuc-error-color: #ff5533 !default;
+$zuc-warning-color: #fcbf00 !default;
 $zuc-error-border-color: #ff5533 !default;
 $zuc-required-color: #ff8066 !default;
 $zuc-required-color-pass: $zuc-ok-color !default;
@@ -130,7 +131,7 @@ $zuc-button-width: 200px !default;
 				display: none;
 			}
 		}
-		&.not-sent {
+		&.was-error {
 			opacity: 1;
 			color: $zuc-error-color;
 			.icon-error {
@@ -145,16 +146,17 @@ $zuc-button-width: 200px !default;
 				line-height: 0;
 				visibility: hidden;
 			}
-			// span {
-			// 	padding-top: 0.2em;
-			// }
+			span {
+				color: $zuc-warning-color;
+				padding-left: 1em;
+			}
 		}
 		svg {
 			width: 30px;
 			height: auto;
 			margin-right: $zuc-field-left-margin * 2;
 		}
-		i {
+		b {
 			font-style: normal;
 			font-weight: 600;
 		}
