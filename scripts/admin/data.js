@@ -1,9 +1,8 @@
 // WordPress dependencies
 
-// const { ExternalLink } = wp.components;
-
 // const { map, has } = lodash;
 const { __ } = wp.i18n;
+// const { ExternalLink } = wp.components;
 
 // Internal dependencies
 
@@ -37,6 +36,21 @@ const notify = {
 	help:	__('List of emails to be notified when a form entry occurs.', 'zucontact'),
 };
 
+const mailer = {
+	server: __('Enter SMTP server name', 'zucontact'),
+	ssl: __('SSL Required', 'zucontact'),
+	ssl_help: __('When switched on - SSL encryption system will be used (TLS instead).', 'zucontact'),
+	port: __('Server port', 'zucontact'),
+	auth: __('Authentication Required', 'zucontact'),
+	auth_help: __('If authentication required you should provide Username and Password.', 'zucontact'),
+	username: __('Username (this is usually your email address)', 'zucontact'),
+	password: __('Password', 'zucontact'),
+	from: __('"From" email address (usually you should own the domain you are sending from)', 'zucontact'),
+	note: __('In order for the notifications to work, you need to have transactional emails configured in your copy of WordPress. This is usually done by your ISP, but if notifications are not sent, then I strongly recommend that you use one of the plugins that can be easily found on the Internet (for example, $links). As a last resort, you can configure access to the SMPT server manually using the fields below, but you must understand exactly what you are doing. To avoid possible conflicts with the plugin, I recommend to reset all SMPT server settings with "Reset Server Settings" button.', 'zucontact'),
+	or: __('or', 'zucontact'),
+	resetAll: __('Reset Server Settings', 'zucontact'),
+};
+
 const panels = {
 	recaptcha_keys: {
 		value: true,
@@ -44,14 +58,15 @@ const panels = {
 		// Это позволит исключить эту панель когда значение option is false
 		depends: 'use_recaptcha',
 	},
-	// sizes: {
-	// 	value: true,
-	// 	label: 	__('Media Sizes', 'zucontact'),
-	// },
+	mailer: {
+		value: false,
+		label: 	__('Mail Server Settings', 'zucontact'),
+	},
 };
 
 export const zucontact = {
 	options,
 	panels,
 	notify,
+	mailer,
 }

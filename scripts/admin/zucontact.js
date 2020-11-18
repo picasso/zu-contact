@@ -5,12 +5,12 @@ const { useCallback } = wp.element;
 // Zukit dependencies
 
 const { renderPage, toggleOption } = wp.zukit.render;
-const { ListInput, ZukitPanel } = wp.zukit.components; // ZukitDivider
+const { ListInput, ZukitPanel } = wp.zukit.components;
 
 // Internal dependencies
 
 import { zucontact } from './data.js';
-// import ??Sizes from './sizes.js';
+import ZucontactMailer from './mailer.js';
 
 const EditZucontact = ({
 		// id,
@@ -25,14 +25,11 @@ const EditZucontact = ({
 }) => {
 
 
-	const { options: optionsData, notify } = zucontact;
+	const { options: optionsData, notify, mailer } = zucontact;
 
 	const onNotifyChange = useCallback(value => {
 		updateOptions({ notify: value })
 	}, [updateOptions]);
-
-// console.log(panels);
-// console.log(options);
 
 	return (
 		<>
@@ -47,6 +44,11 @@ const EditZucontact = ({
 					onChange={ onNotifyChange }
 				/>
 			</ZukitPanel>
+			<ZucontactMailer
+				data={ mailer }
+				options={ options }
+				updateOptions={ updateOptions }
+			/>
 		</>
 
 	);
