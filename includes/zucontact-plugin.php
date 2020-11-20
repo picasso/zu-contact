@@ -4,14 +4,19 @@
 // Includes all traits --------------------------------------------------------]
 
 include_once('zucontact-ajax.php');
-include_once('zucontact-mailer.php');
 include_once('zucontact-form.php');
+include_once('zucontact-mailer.php');
+include_once('zucontact-recaptcha.php');
 include_once('zucontact-shortcode.php');
 
 class zu_Contact extends zukit_Plugin {
 
-	// Form helpers, shortcode, ajax & mailer
-	use zu_ContactForm, zu_ContactShortcode, zu_ContactAjax, zu_ContactMailer;
+	// Form helpers, shortcode, ajax, mailer & ReCAPTCHA
+	use zu_ContactAjax,
+		zu_ContactForm,
+		zu_ContactMailer,
+		zu_ContactReCAPTCHA,
+		zu_ContactShortcode;
 
 	protected function construct_more() {
 		// init static messages
@@ -45,12 +50,12 @@ class zu_Contact extends zukit_Plugin {
 			'forms' => empty($stats) ? null : [
 				'label'		=> __('Available Forms', 'zu-contact'),
 				'value'		=> $stats['forms'] ?? 0,
-				// 'depends' 	=> 'folders',
 			],
 			'comments' 	=> empty($stats) ? null : [
 				'label'		=> __('Approved Comments', 'zu-contact'),
 				'value'		=> $stats['comments'] ?? 0,
 			],
+			'ReCAPTCHA' => $this->recaptcha_info(),
 		];
 	}
 
@@ -144,16 +149,10 @@ class zu_Contact extends zukit_Plugin {
 	}
 
 	protected function enqueue_more($is_frontend, $hook) {
-		return false;
-
 		if($is_frontend) {
-
 			// load Google recaptcha script if required
-			if($this->is_option('use_recaptcha')) {
-				// if we use absolute path then $file should start with '!'
-				$absolute_path = '!https://www.google.com/recaptcha/api.js?hl=' . get_locale();
-		        $this->enqueue_script($absolute_path, null, null, $this->prefix_it('recaptcha2'));
-			}
+			$this->register_recaptcha();
+return false;
 
 		    if($this->check_option('client_validate')) {
 				$this->enqueue_script('jquery.validate', null, ['jquery'], 'jquery-validate');

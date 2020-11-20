@@ -27,6 +27,7 @@ trait zu_ContactShortcode {
 
 		// if $ajax is true enqueue both css and script (null), otherwise css only (true)
 		$this->enqueue_only($ajax ? null : true);
+		$this->maybe_enqueue_recaptcha();
 
 		if(!in_array($form, $this->available_forms())) $form = 'contact';
 		if(!is_null($content)) $message = do_shortcode($content);

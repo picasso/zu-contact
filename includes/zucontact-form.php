@@ -131,34 +131,34 @@ trait zu_ContactForm {
                 $name
         );
 
-        $recaptcha = '';
-        // if(isset($errors['recaptcha'])) {
-        //     <div class="control-group form-group">
-        //     <p class="text-error"> echo $errors['recaptcha']; </p>
-        //     </div>
-        //  }
-// name="%2$s[%1$s]
+        // $recaptcha = $this->get_option('recaptcha', []);
+        // $sitekey = $recaptcha['sitekey'] ?? null;
+        // $recaptcha = empty($sitekey) ? '' : zu_sprintf(
+        //     '<div class="g-recaptcha" data-sitekey="%1$s" data-callback="verifyCaptcha"></div>
+        //     <div id="g-recaptcha-error"></div>',
+        //     $sitekey
+        // );
+
         // Add form container and FORM opening tags
         $output .= zu_sprintf(
-            '<div class="%7$s-form-container %2$s">
+            '<div class="%6$s-form-container %2$s">
                 %1$s
-                <form role="form" id="%7$s-form" name="%7$s" method="post" class="%7$s-form %2$s">
+                <form role="form" id="%6$s-form" name="%6$s" method="post" class="%6$s-form %2$s">
                 %3$s
-                <input type="hidden" name="%7$s[_fname]" value="%2$s"/>
-                <input type="hidden" name="%7$s[_post_link]" value="%5$s"/>
-                <input type="hidden" name="%7$s[_post_id]" value="%4$s"/>
-                %6$s',
+                <input type="hidden" name="%6$s[_fname]" value="%2$s"/>
+                <input type="hidden" name="%6$s[_post_link]" value="%5$s"/>
+                <input type="hidden" name="%6$s[_post_id]" value="%4$s"/>',
             empty($message) ? '' : sprintf('<p>%1$s</p>', $message),
             $name,
             wp_nonce_field($this->ajax_nonce(false), $css_prefix.'_nonce', true, false),
             get_the_ID(),
             trailingslashit($_SERVER['REQUEST_URI']),
-            $recaptcha,
             $css_prefix
         );
 
         foreach($form->fields() as $field) {
             $field_id = $field['name'];
+            if($field_id === 'submit') $output .= $this->get_recaptcha();
             $output .= $form->sprint($field_id, $values[$field_id] ?? '', $errors, $values['_rows'] ?? null);
         }
 

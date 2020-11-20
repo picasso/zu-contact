@@ -15,6 +15,7 @@ trait zu_ContactAjax {
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
+			'sitekey'	=> $this->get_sitekey(),
 		];
 	}
 
