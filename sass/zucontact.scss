@@ -52,6 +52,11 @@ $zuc-button-width: 200px !default;
     letter-spacing: .5pt;
 }
 
+%not_valid {
+	border: 1px solid rgba($zuc-error-border-color, 0.5);
+	box-shadow: 0 0 $zuc-input-focus-color-size $zuc-error-border-color;
+}
+
 %disabled {
 	background-color: rgba(black, 0.3);
 	color: rgba(black, 0.5);
@@ -197,9 +202,9 @@ $zuc-button-width: 200px !default;
 			    	color: $zuc-error-color;
 				}
 			}
-			input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]), textarea {
-			    border: 1px solid rgba($zuc-error-border-color, 0.5);
-			    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-error-border-color;
+			input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]),
+				textarea {
+					@extend %not_valid;
 			}
 			.validation {
 				color: $zuc-error-color;
@@ -221,14 +226,12 @@ $zuc-button-width: 200px !default;
 	    border-top: 2px solid rgba(white, 0.7);
 	    margin: ($zuc-field-top-margin * 4) 0;
 	}
-	.captcha {
-	    margin-left: 32%;
-		img {
-		    border: none !important;
-		    background: 0 0 !important;
-		    float: none !important;
-		    margin: 0 !important;
-		    padding: 0 !important;
+	.g-recaptcha {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		&.error > div {
+			@extend %not_valid;
 		}
 	}
 
