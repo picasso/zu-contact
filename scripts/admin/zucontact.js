@@ -11,6 +11,7 @@ const { ListInput, ZukitPanel } = wp.zukit.components;
 
 import { zucontact } from './data.js';
 import ZucontactMailer from './mailer.js';
+import ZucontactRecaptcha from './recaptcha.js';
 
 const EditZucontact = ({
 		// id,
@@ -25,7 +26,7 @@ const EditZucontact = ({
 }) => {
 
 
-	const { options: optionsData, notify, mailer } = zucontact;
+	const { options: optionsData, notify, mailer, recaptcha } = zucontact;
 
 	const onNotifyChange = useCallback(value => {
 		updateOptions({ notify: value })
@@ -44,6 +45,11 @@ const EditZucontact = ({
 					onChange={ onNotifyChange }
 				/>
 			</ZukitPanel>
+			<ZucontactRecaptcha
+				data={ recaptcha }
+				options={ options }
+				updateOptions={ updateOptions }
+			/>
 			<ZucontactMailer
 				data={ mailer }
 				options={ options }

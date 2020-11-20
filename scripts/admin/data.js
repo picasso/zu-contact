@@ -51,10 +51,22 @@ const mailer = {
 	resetAll: __('Reset Server Settings', 'zucontact'),
 };
 
+const recaptcha = {
+	sitekey: 	__('Site key', 'zucontact'),
+	secret: 	__('Secret key', 'zucontact'),
+	note:	__('For getting started, you need to register your site here: $links Choose the option "reCAPTCHA v2" which gives an "I’m not a robot" Checkbox. Once you entered all needed details you will get your Site key and Secret key.', 'zucontact'),
+	theme: __('The color theme of the reCAPTCHA widget', 'zucontact'),
+	size: __('The size of the reCAPTCHA widget', 'zucontact'),
+	themeOptions: [
+		{ value: 'light', label: __('Light Theme', 'zucontact') },
+		{ value: 'dark', label: __('Dark Theme', 'zucontact') },
+	],
+};
+
 const panels = {
 	recaptcha_keys: {
 		value: true,
-		label: 	__('Google reCAPTCHA API Keys', 'zucontact'),
+		label: 	__('Google reCAPTCHA', 'zucontact'),
 		// Это позволит исключить эту панель когда значение option is false
 		depends: 'use_recaptcha',
 	},
@@ -69,4 +81,5 @@ export const zucontact = {
 	panels,
 	notify,
 	mailer,
+	recaptcha,
 }
