@@ -5,23 +5,20 @@
 trait zu_ContactReCAPTCHA {
 
 	private $recaptcha_handle = null;
-
-	// static $siteVerifyUrl = 'https://www.google.com/recaptcha/api/siteverify?';
-
-	private function get_sitekey() {
-		$recaptcha = $this->get_option('recaptcha', []);
-		return $recaptcha['sitekey'] ?? null;
-	}
+	private static $verify_url = 'https://www.google.com/recaptcha/api/siteverify';
 
 	private function recaptcha_info() {
+		$recaptcha = $this->get_option('recaptcha', []);
 		return $this->is_option('use_recaptcha') ? [
 			'label'		=> __('Google reCAPTCHA', 'zu-contact'),
-			'value'		=> empty($this->get_sitekey()) ? __('Not Activated', 'zu-contact') : __('Activated', 'zu-contact'),
+			'value'		=> empty($recaptcha['sitekey']) ? __('Not Activated', 'zu-contact') : __('Activated', 'zu-contact'),
 			'depends' 	=> ['use_recaptcha', 'recaptcha.sitekey'],
 		] : null;
 	}
 
-	private function maybe_enqueue_recaptcha() {
+	private function maybe_enqueue_recaptcha($enabled = true) {
+		// only 'false' is taken into account, all other values are 'true'
+		if($enabled === false) return;
 		if($this->recaptcha_handle) $this->enqueue_only(false, $this->recaptcha_handle);
 	}
 
@@ -41,14 +38,14 @@ trait zu_ContactReCAPTCHA {
 		}
 	}
 
-	private function get_recaptcha() {
+	private function get_recaptcha($enabled = true) {
 
-		$errors = [
-			'invalid'	=> __('Are you a robot? Please solve reCAPTCHA correctly.', 'zu-contact'),
-			'expired'	=> __('Verification expired. Check the checkbox again.', 'zu-contact'),
-			'network'	=> __('Network connectivity is lost and reCAPTCHA cannot continue until connectivity is restored.', 'zu-contact'),
-		];
+		// only 'false' is taken into account, all other values are 'true'
+		if($enabled === false) return '';
+
+		$errors = $this->recaptcha_error_messages(null, true);
 		$recaptcha = $this->get_option('recaptcha', []);
+
 		return empty($recaptcha['sitekey'] ?? null) ? '' : zu_sprintf(
 			'<div
 				class="g-recaptcha"
@@ -68,72 +65,46 @@ trait zu_ContactReCAPTCHA {
 		);
 	}
 
-	// private function recaptcha_messages($key) {
-	// 	$msg = [
-	// 		'invalid'	=> __('Are you a robot? Please solve Captcha correctly!', 'zu-contact'),
-	// 		'expired'	=> __('Captcha expired', 'zu-contact'),
-	// 	];
-	//
-	// 	return array_key_exists($key, $msg) ? $msg[$key] : $msg['invalid'];
-	// }
+	private function recaptcha_error_messages($key = null, $as_array = false) {
+		$errors = [
+			'invalid'	=> __('Are you a robot? Please solve reCAPTCHA correctly to continue.', 'zu-contact'),
+			'expired'	=> __('Verification expired. Check the checkbox again.', 'zu-contact'),
+			'failed'	=> __('Robot verification failed, please try again.', 'zu-contact'),
+			'network'	=> __('Network connectivity is lost and reCAPTCHA cannot continue until connectivity is restored.', 'zu-contact'),
+		];
+		return $as_array ? $errors : (array_key_exists($key, $errors) ? $errors[$key] : $errors['invalid']);
+	}
 
-	 // * Encodes the given data into a query string format.
-	// static function EncodeQS($data) {
-	// 	$req = "";
-	// 	foreach ($data as $key => $value) {
-	// 		$req .= $key . '=' . urlencode(stripslashes($value)) . '&';
-	// 	}
-	// 	// Cut the last '&'
-	// 	$req = substr($req, 0, strlen($req) - 1);
-	//
-	// 	return $req;
-	// }
+	private function check_recaptcha($data) {
 
-	 // * Submits an HTTP GET to a reCAPTCHA server.
-	 // *
-	 // * @param string $path url path to recaptcha server.
-	 // * @param array $data array of parameters to be sent.
-	// static function SubmitHTTPGet($path, $data) {
-	// 	$req      = self::EncodeQS($data);
-	// 	$response = file_get_contents($path . $req);
-	//
-	// 	return $response;
-	// }
+		if($data instanceof zu_ContactData) {
+			$recaptcha = $this->get_option('recaptcha', []);
+			$secret = $recaptcha['secret'] ?? null;
+			$response = $data->recaptcha;
 
+			// check recaptcha but only if we have private key
+			if(!empty($secret) && !empty($response)) {
+				$check = $this->verify_response($secret, $response);
+				if(!$check) $data->errors['recaptcha'] = $this->recaptcha_error_messages('failed');
+				else return true;
+			}
+		}
+		return false;
+	}
 
+	// Calls the reCAPTCHA '$verify_url' API to verify
+	// whether the user passes CAPTCHA test
+	private function verify_response($secret, $response) {
 
-	 // * Calls the reCAPTCHA siteverify API to verify whether the user passes
-	 // * CAPTCHA test.
-	 // *
-	 // * @param string $remoteIp IP address of end user.
-	 // * @param string $secret google recaptcha secret key.
-	 // * @param string $response response string from recaptcha verification.
-	// static function VerifyResponse($remoteIp, $secret, $response) {
-	// 	// Discard empty solution submissions
-	// 	if($response == null || strlen($response) == 0) {
-	// 		$recaptchaResponse             = new cplus_ReCaptchaResponseV2();
-	// 		$recaptchaResponse->success    = false;
-	// 		$recaptchaResponse->errorCodes = 'missing-input';
-	//
-	// 		return $recaptchaResponse;
-	// 	}
-	// 	$getResponse       = self::SubmitHttpGet(
-	// 		self::$siteVerifyUrl,
-	// 		[
-	// 			'secret'   		=> 	$secret,
-	// 			'remoteip' 	=> 	$remoteIp,
-	// 			'response' 	=> 	$response
-	// 		]
-	// 	);
-	// 	$answers           = json_decode($getResponse, true);
-	// 	$recaptchaResponse = new cplus_ReCaptchaResponseV2();
-	// 	if(trim($answers ['success']) == true) {
-	// 		$recaptchaResponse->success = true;
-	// 	} else {
-	// 		$recaptchaResponse->success    = false;
-	// 		$recaptchaResponse->errorCodes = $answers ['error-codes'];
-	// 	}
-	//
-	// 	return $recaptchaResponse;
-	// }
+		// encodes the given params into a query string format
+		$query = add_query_arg(urlencode_deep([
+			'secret'   	=> $secret,
+			'remoteip' 	=> $_SERVER['REMOTE_ADDR'],
+			'response' 	=> $response,
+		]), self::$verify_url);
+
+		$verify_response = file_get_contents($query);
+		$data = json_decode($verify_response);
+		return $data->success;
+	}
 }

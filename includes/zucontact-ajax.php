@@ -15,7 +15,6 @@ trait zu_ContactAjax {
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
-			'sitekey'	=> $this->get_sitekey(),
 		];
 	}
 
@@ -29,6 +28,7 @@ trait zu_ContactAjax {
 			'errors'	=> $contact->get_errors(),
 		];
 
+		if($contact->has_recaptcha()) $this->check_recaptcha($contact);
 	    if($result['is_valid']) $result['sent'] = $this->send_mail($contact);
 	    $result['message'] = $contact->get_message();
 

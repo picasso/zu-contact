@@ -11,14 +11,13 @@ class zu_ContactData {
 	public $post_link;
 	public $spam;
 	public $was_sent;
+	public $recaptcha;
 
 	public $attributes;
 	public $errors;
 	public $form;
 
 	private $prefix;
-	private $recaptcha_public_key;
-	private $recaptcha_private_key;
 
 	function __construct() {
 
@@ -27,19 +26,16 @@ class zu_ContactData {
 		$this->form = false;
 		$this->prefix = zu_ContactFields::$css_prefix;
 
-		// if(??::UseRecaptcha()) {
-		// 	$this->recaptcha_public_key  = ??::PublicKey();
-		// 	$this->recaptcha_private_key = ??::PrivateKey();
-		// }
-
-		$is_post = $_SERVER['REQUEST_METHOD'] == 'POST' ? true : false;
+		$is_post = $_SERVER['REQUEST_METHOD'] === 'POST' ? true : false;
 
 		$form_nonce = $_POST[$this->prefix.'_nonce'] ?? null;
 		$is_nonce_verified = ($is_post && wp_verify_nonce($form_nonce, zucontact()->ajax_nonce(false))) ? true : false;
 		$fdata = $_POST[$this->prefix] ?? null;
+		$this->recaptcha = $_POST['g-recaptcha-response'] ?? false;
 
 		if($is_post && !$is_nonce_verified) $this->errors['_nonce'] = true;
 		if($is_nonce_verified && empty($fdata)) $this->errors['_data'] = true;
+		if($is_post && $this->recaptcha !== false && strlen($this->recaptcha) === 0) $this->errors['_recaptcha'] = true;
 
 		if(!empty($fdata)) {
 			$this->post_id = isset($fdata['_post_id']) ? absint($fdata['_post_id']): null;
@@ -84,10 +80,6 @@ class zu_ContactData {
 		return null;
 	}
 
-	public function is_recaptcha() {
-		return (!empty($this->recaptcha_public_key) && !empty($this->recaptcha_private_key)) ? true : false;
-	}
-
 	public function is_valid() {
 
 		if(!empty($this->errors) || $this->form === false) return false;
@@ -101,46 +93,38 @@ class zu_ContactData {
 				// convert required message from Array or String
 				$this->form->get_required($field['required'], $required, $required_valid);
 				//email || email invalid address
-				if($field_type == 'email') {
-					if(strlen($value) == 0) $this->errors[$field_id] = $required;
+				if($field_type === 'email') {
+					if(strlen($value) === 0) $this->errors[$field_id] = $required;
 					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_EMAIL)) $this->errors[$field_id] = $required_valid;
 				}
 				//name, message & general text fields - should at least 3 chars
-				if($field_type == 'text' || $field_type == 'textarea') {
+				if($field_type === 'text' || $field_type === 'textarea') {
 					if(strlen($value) < 3) $this->errors[$field_id] = $required;
 				}
 				// numbers should be great than 0
-				if($field_type == 'number') {
+				if($field_type === 'number') {
 					if(intval($value) <= 0) $this->errors[$field_id] = $required;
 				}
 				// phone should be at least 8 digits
-				if($field_type == 'tel') {
+				if($field_type === 'tel') {
 					if(strlen($value) < 8) $this->errors[$field_id] = $required;
 				}
 				// url || invalid url
-				if($field_type == 'url') {
-					if(strlen($value) == 0) $this->errors[$field_id] = $required;
+				if($field_type === 'url') {
+					if(strlen($value) === 0) $this->errors[$field_id] = $required;
 					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_URL)) $this->errors[$field_id] = $required_valid;
 				}
 				//checkbox which should checked - like "I agree with terms & conditions"
-				if($field_type == 'checkbox') {
+				if($field_type === 'checkbox') {
 					if(strlen($value) !== true) $this->errors[$field_id] = $required;
 				}
 			}
 		}
+		return count($this->errors) === 0 ? true : false;
+	}
 
-		//check recaptcha but only if we have keys
-
-		// if($this->is_recaptcha()) {
-		//
-		// 	$resp = RecaptchaV2::VerifyResponse($_SERVER['REMOTE_ADDR'], $this->recaptcha_private_key, $_POST['g-recaptcha-response']);
-		//
-		// 	if(!$resp->success) {
-		// 		$this->errors['recaptcha'] = __('Please solve the recaptcha to continue.', 'zu-contact');
-		// 	}
-		// }
-
-		return count($this->errors) == 0 ? true : false;
+	public function has_recaptcha() {
+		return $this->recaptcha !== false && strlen($this->recaptcha) > 0;
 	}
 
 	public function get_message() {
@@ -155,44 +139,19 @@ class zu_ContactData {
 		}, ARRAY_FILTER_USE_KEY);
 	}
 
-	// public function send_mail() {
-	//
-	// 	$this->was_sent = false;
-	//
-	// 	if($this->form !== false) {
-	//
-	// 		apply_filters(zu_Contact::$spam_filter, $this);
-	//
-	// 		if($this->spam === true) return ($this->was_sent = true);
-	//
-	// 		$subject = __('New entry was submitted at', 'zu-contact');
-	// 		$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
-	//
-	// 		foreach($this->attributes as $field_id => $value) {
-	// 			$field = $this->form->get($field_id);
-	// 			$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
-	// 			$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
-	// 		}
-	// 		$this->was_sent = cplus_mailer($this->email, zucontact()->recipients(), $content, false, $this->post_id, $this->post_link);
-	//
-	// 		if(in_array('carbon-copy', array_keys($this->attributes)) && $this->attributes['carbon-copy']) {
-	// 			$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
-	// 			cplus_mailer($this->email, $this->email, $content, true);
-	// 		}
-	// 	}
-	// 	return $this->was_sent;
-	// }
-
 	public function as_values() {
 		$values = json_decode(json_encode($this), true);
-		$fields = $this->form === false ? [] : $this->form->available_fields();
-		$values = array_merge($values, $fields, $this->attributes);
-// _dbug('as_values', $values, $fields, $this->attributes);
-		unset($values['was_sent']);
-		unset($values['attributes']);
-		unset($values['form']);
-		unset($values['errors']);
+		// $fields = $this->form === false ? [] : $this->form->available_fields();
+		$values = array_merge($values, $this->attributes);
+		$public_props = ['was_sent', 'attributes', 'form', 'errors', 'recaptcha', 'spam'];
+		foreach($public_props as $val) unset($values[$val]);
 
+		// unset($values['was_sent']);
+		// unset($values['attributes']);
+		// unset($values['form']);
+		// unset($values['errors']);
+		// unset($values['recaptcha']);
+// _dbug('after', $values);
 		return $values;
 	}
 }
