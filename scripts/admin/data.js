@@ -2,7 +2,6 @@
 
 // const { map, has } = lodash;
 const { __ } = wp.i18n;
-// const { ExternalLink } = wp.components;
 
 // Internal dependencies
 
@@ -13,10 +12,10 @@ const options = {
 		label: 	__('Use Google reCAPTCHA?', 'zucontact'),
 		help:	__('Loads Google recaptcha script if required.', 'zucontact'),
 	},
-	client_validate: {
-		label: 	__('Use client validation instead of server?', 'zucontact'),
-		help:	__('Add scripts for validation on client (without AJAX).', 'zucontact'),
-	},
+	// client_validate: {
+	// 	label: 	__('Use client validation instead of server?', 'zucontact'),
+	// 	help:	__('Add scripts for validation on client (without AJAX).', 'zucontact'),
+	// },
 	custom_css: {
 		label: 	__('Use plugin CSS?', 'zucontact'),
 		help:	__('If switched off the plugin stylesheet won\'t be loaded.', 'zucontact'),
@@ -55,11 +54,15 @@ const recaptcha = {
 	sitekey: 	__('Site key', 'zucontact'),
 	secret: 	__('Secret key', 'zucontact'),
 	note:	__('For getting started, you need to register your site here: $links Choose the option "reCAPTCHA v2" which gives an "I’m not a robot" Checkbox. Once you entered all needed details you will get your Site key and Secret key.', 'zucontact'),
-	theme: __('The color theme of the reCAPTCHA widget', 'zucontact'),
-	size: __('The size of the reCAPTCHA widget', 'zucontact'),
+	theme: __('The color theme of the widget', 'zucontact'),
+	size: __('The size of the widget', 'zucontact'),
 	themeOptions: [
 		{ value: 'light', label: __('Light Theme', 'zucontact') },
 		{ value: 'dark', label: __('Dark Theme', 'zucontact') },
+	],
+	sizeOptions: [
+		{ value: 'compact', label: __('Compact Widget Size', 'zucontact') },
+		{ value: 'normal', label: __('Normal Widget Size', 'zucontact') },
 	],
 };
 

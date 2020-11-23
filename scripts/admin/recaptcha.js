@@ -52,11 +52,18 @@ const ZucontactRecaptcha = ({
 					onChange={ value => updateRecaptchaOptions({ secret: value }) }
 				/>
 				<SelectControl
-					// id={ id }
+					className="__block_label"
 					label={ data.theme }
 					value={ settings.theme || 'light' }
 					onChange={ value => updateRecaptchaOptions({ theme: value }) }
 					options={ data.themeOptions }
+				/>
+				<SelectControl
+					className="__block_label"
+					label={ data.size }
+					value={ settings.size || 'normal' }
+					onChange={ value => updateRecaptchaOptions({ size: value }) }
+					options={ data.sizeOptions }
 				/>
 				<ZukitDivider size={ 2 }/>
 				<div className="__flex __right">

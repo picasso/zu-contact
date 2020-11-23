@@ -22,7 +22,8 @@ trait zu_ContactForm {
                 'fields'            => 	__('Errors have been highlighted below.', 'zu-contact'),
                 'nonce'				=>	__('Nonce failed - is not correct or expired.', 'zu-contact'),
                 'data'              =>	__('Form data not found.', 'zu-contact'),
-                'name'              =>	__('Form name not found.', 'zu-contact'),
+                'fname'             =>	__('Form name not found.', 'zu-contact'),
+                'recaptcha'         => $this->recaptcha_error_messages(),
             ];
 
             self::$success_messages = [
@@ -97,10 +98,11 @@ trait zu_ContactForm {
         $css_prefix = zu_ContactFields::$css_prefix;
         $was_sent = $values['_was_sent'] ?? false;
         $was_error = !empty($errors);
-
-        $subheading = empty($values['_subheading']) ? '' : sprintf(
+_dbug($was_sent, $_POST);
+        $subheading = $this->subheading($values['_subheading'], $name);
+        $subheading = empty($subheading) ? '' : sprintf(
             '<h2 class="%2$s-subheading before_posting">%1$s</h2>',
-            $this->subheading($values['_subheading'], $name),
+            $subheading,
             $css_prefix
         );
 
@@ -158,12 +160,19 @@ trait zu_ContactForm {
 
         foreach($form->fields() as $field) {
             $field_id = $field['name'];
-            if($field_id === 'submit') $output .= $this->get_recaptcha();
+            if($field_id === 'submit') $output .= $this->get_recaptcha($values['_recaptcha'] ?? null);
             $output .= $form->sprint($field_id, $values[$field_id] ?? '', $errors, $values['_rows'] ?? null);
         }
 
         $output .= sprintf('</form></div><!-- .%1$s --></div>', $name);
         return $output;
+    }
+
+    private function subheading($subheading, $form_key = null) {
+        if(is_string($subheading)) return $subheading;
+        $index = self::$subheading_form[$form_key] ?? 'contact';
+        $selected = $this->is_option('me_or_us') ? self::$subheading_me : self::$subheading_us;
+        return $selected[$index];
     }
 
     private function success_message($key = null) {
@@ -174,17 +183,17 @@ trait zu_ContactForm {
 
     private function error_message($errors) {
         $key = 'fields';
-        if(($errors['_nonce'] ?? false) === true) $key = 'nonce';
-        else if(($errors['_data'] ?? false) === true) $key = 'data';
-        else if(($errors['_fname'] ?? false) === true) $key = 'name';
+        $reserved_keys = ['_nonce', '_data', '_fname', '_recaptcha'];
+        foreach($reserved_keys as $val) {
+            if(array_key_exists($val, $errors)) {
+                $key = ltrim($val, '_');
+                break;
+            }
+        }
+        // if(($errors['_nonce'] ?? false) === true) $key = 'nonce';
+        // else if(($errors['_data'] ?? false) === true) $key = 'data';
+        // else if(($errors['_fname'] ?? false) === true) $key = 'name';
         return sprintf('%1$s <b>%2$s</b>', self::$error_messages['basic'], self::$error_messages[$key]);
-    }
-
-    private function subheading($subheading, $key = null) {
-        $key = self::$subheading_form[$key] ?? null;
-        $index = empty($key) ? $subheading : $key;
-        $selected = $this->is_option('me_or_us') ? self::$subheading_me : self::$subheading_us;
-        return $selected[$index] ?? $subheading;
     }
 
     public function message($errors, $name, $was_sent = true) {
