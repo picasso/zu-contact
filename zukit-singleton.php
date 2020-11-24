@@ -20,6 +20,9 @@ class zukit_Singleton {
     // store its location in a static property so that we can access its JS and CSS files later.
     private static $zukit_file = __FILE__;
 
+    // We needed the ability to async or defer our scripts
+    private $async_defer = [];
+
     // The zukit_Singleton's constructor should always be private to prevent direct
     // construction calls with the `new` operator.
     private function __construct($params) {
@@ -31,6 +34,9 @@ class zukit_Singleton {
         $this->debug = false;
         $this->config_singleton($params);
         $this->construct_more();
+
+        // maybe add attributes for asynchronously loading or deferring scripts.
+        add_filter('script_loader_tag', [$this, 'modify_tag'], 10, 2);
     }
 
     // singleton should not be cloneable.
@@ -65,7 +71,8 @@ class zukit_Singleton {
 
     public function log_error($error, $context = null) {
         $log = PHP_EOL.'* * * without context';
-		if(!empty($context)) $log = preg_replace(
+        if(is_string($context)) $log = PHP_EOL.'* * * '.$context;
+		else if(!empty($context)) $log = preg_replace(
             '/\)/', '',
             preg_replace(
                 '/array\s*\(/i', '',
@@ -78,6 +85,7 @@ class zukit_Singleton {
                 )
             )
         );
+        $log .= PHP_EOL.str_repeat('=', strlen($log) - 1);
         $log .= PHP_EOL.var_export($error, true);
 		error_log($log);
 	}
@@ -97,36 +105,10 @@ class zukit_Singleton {
 	}
 
     public function get_version($filename = '') {
+        if(is_null($filename)) return null; // if set to null, no version is added
     	if($this->debug) return $this->filename_version($filename);
     	return $this->version;
     }
-
-	// public function enqueue_script($file, $data = null, $deps = [], $bottom = true, $handle = null) {
-	// 	return $this->enqueue_script_with_data(true, $file, $data, $deps, $bottom, $handle);
-	// }
-    //
-	// public function enqueue_style($file, $deps = [], $handle = null) {
-	// 	return $this->enqueue_style_or_script(true, true, $file, $deps, $handle);
-	// }
-    //
-    // public function admin_enqueue_script($file, $data = null, $deps = [], $bottom = true, $handle = null) {
-	// 	return $this->enqueue_script_with_data(false, $file, $data, $deps, $bottom, $handle);
-	// }
-    //
-	// public function admin_enqueue_style($file, $deps = [], $handle = null) {
-	// 	return $this->enqueue_style_or_script(true, false, $file, $deps, $handle);
-	// }
-    //
-    // private function register_style_or_script($is_style, $is_frontend, $file = null, $deps = [], $handle = null, $bottom = true) {
-    //     return $this->style_or_script($is_style, $is_frontend, $file, $deps, $handle, $bottom, true);
-    // }
-    //
-    // private function enqueue_style_or_script($is_style, $is_frontend, $file = null, $deps = [], $handle = null, $bottom = true) {
-    //     return $this->style_or_script($is_style, $is_frontend, $file, $deps, $handle, $bottom, false);
-    // }
-
-
-
 
     public function enqueue_style($file, $params = []) {
         return $this->style_or_script(true, true, array_merge($params, ['file' => $file]));
@@ -160,6 +142,14 @@ class zukit_Singleton {
         return $info[0];
     }
 
+    public function modify_tag($tag, $handle) {
+        if(in_array($handle, array_keys($this->async_defer))) {
+            $attributes = sprintf(' %1$s></', $this->async_defer[$handle]);
+            $tag = str_replace('></', $attributes, $tag);
+         }
+        return $tag;
+    }
+
     private function style_or_script($is_style, $is_frontend, $params) {
 
         $params = array_merge([
@@ -169,6 +159,9 @@ class zukit_Singleton {
             'bottom'        => true,
             'data'          => null,
             'register_only' => false,
+            'absolute'      => false,
+            'async'         => false,
+            'defer'         => false,
             'media'         => 'all',
 		], $params);
 
@@ -177,15 +170,15 @@ class zukit_Singleton {
         if(is_null($handle)) $handle = $this->create_handle($file);
         if(is_null($file)) $file = $this->prefix;
 
-        // if we use absolute path then $file should start with '!'
-        $is_absolute = substr($file, 0, 1) === '!';
+        // if we use absolute path then $file should start with '!' or $absolute should be 'true'
+        $is_absolute = $absolute === true || substr($file, 0, 1) === '!';
         $file = str_replace('!', '', $file);
 
         extract($this->get_filepath_and_src($is_absolute, $is_style, $is_frontend, $file), EXTR_OVERWRITE);
 
 // _dbug(static::class, $is_absolute, $handle, $register_only, $data, $filepath, $src, $deps, $bottom);
 
-		if(file_exists($filepath)) {
+		if(is_null($filepath) || file_exists($filepath)) {
 			$version = $this->get_version($filepath);
             if($register_only) {
                 if($is_style) wp_register_style($handle, $src, $deps, $version, $media);
@@ -195,12 +188,18 @@ class zukit_Singleton {
     			else wp_enqueue_script($handle, $src, $deps, $version, $bottom);
             }
 
-            // by wrapping our $data values inside an inner array we prevent integer and boolean values to be interpreted as strings
+            // by wrapping our $data values inside an inner array we prevent integer
+            // and boolean values to be interpreted as strings
             // https://wpbeaches.com/using-wp_localize_script-and-jquery-values-including-strings-booleans-and-integers/
             if(!$is_style && !empty($data)) {
                 $jsdata_name = $data['jsdata_name'] ?? $this->prefix.'_jsdata';
                 if(isset($data['jsdata_name'])) unset($data['jsdata_name']);
                 wp_localize_script($handle, $jsdata_name, ['data' => $data]);
+            }
+
+            // async and defer functionality for WordPress
+            if(!$is_style && ($async || $defer)) {
+                $this->async_defer[$handle] = implode(' ', array_keys(array_filter(compact('async', 'defer'))));
             }
 
 		} else {
@@ -214,6 +213,7 @@ class zukit_Singleton {
                 '$src'          => $src,
                 '$handle'       => $handle,
 
+                'async_defer'   => $this->async_defer,
                 'prefix'        => $this->prefix,
                 'dir'           => $this->dir,
             ], ['enqueue_style_or_script' => 'No file found to enqueue!']);
@@ -224,37 +224,30 @@ class zukit_Singleton {
     private function get_filepath_and_src($is_absolute, $is_style, $is_frontend, $file) {
 
         $filepath = $src = null;
-        if($is_absolute) {
-            $filename = str_replace($this->dir, '', $file);
-            if($file === 'zukit') {
-                $filepath = $this->get_zukit_filepath($is_style, $file, false);
-                $src = plugin_dir_url(self::$zukit_file).str_replace(plugin_dir_path(self::$zukit_file), '', $filepath);
-            }
+        // if path starts with 'http' or 'https' then treat it as external
+        if(substr($file, 0, 4) === 'http') {
+            $filepath = null;
+            $src = $file;
         } else {
-            $filename = $this->get_filepath($is_style, $is_frontend, $file, true);
-        }
+            if($is_absolute) {
+                $filename = str_replace($this->dir, '', $file);
+                if($file === 'zukit') {
+                    $filepath = $this->get_zukit_filepath($is_style, $file, false);
+                    $src = plugin_dir_url(self::$zukit_file).str_replace(plugin_dir_path(self::$zukit_file), '', $filepath);
+                }
+            } else {
+                $filename = $this->get_filepath($is_style, $is_frontend, $file, true);
+            }
 
-        $filepath = empty($filepath) ? $this->dir.$filename : $filepath;
-        $src = empty($src) ? $this->uri.$filename : $src;
+            $filepath = empty($filepath) ? $this->dir.$filename : $filepath;
+            $src = empty($src) ? $this->uri.$filename : $src;
+        }
 
         return [
             'filepath'  => $filepath,
             'src'       => $src,
         ];
     }
-
-    // private function enqueue_script_with_data($is_frontend, $file, $data = null, $deps = [], $bottom = true, $handle = null) {
-    //
-    //     $handle = $this->enqueue_style_or_script(false, $is_frontend, $file, $deps, $handle, $bottom);
-    //     // by wrapping our $data values inside an inner array we prevent integer and boolean values to be interpreted as strings
-    //     // https://wpbeaches.com/using-wp_localize_script-and-jquery-values-including-strings-booleans-and-integers/
-    //     if(!empty($data)) {
-    //         $jsdata_name = $data['jsdata_name'] ?? $this->prefix.'_jsdata';
-    //         if(isset($data['jsdata_name'])) unset($data['jsdata_name']);
-    //         wp_localize_script($handle, $jsdata_name, ['data' => $data]);
-    //     }
-    //     return $handle;
-    // }
 
     private function filename_version($filename) {
     	if(file_exists($filename)) return filemtime($filename);

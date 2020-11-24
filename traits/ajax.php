@@ -55,6 +55,7 @@ trait zukit_Ajax {
 				'permission'	=> 'edit_posts',
 			],
 			// set options for requested 'keys'
+			// if value for 'key' is 'null' then this option will be deleted
 			'options'		=> [
 				'methods' 		=> WP_REST_Server::CREATABLE,
 				'callback'		=> 'set_options_ajax',
@@ -190,21 +191,6 @@ trait zukit_Ajax {
 		}
 	}
 
-	public function ajax_test() {
-		return $this->create_notice('info', sprintf(
-			'Plugin <strong>"%2$s"</strong> (%3$s) was available via Ajax on <span>%1$s</span>',
-			date('H:i d.m.y',  $this->timestamp()),
-			$this->data['Name'],
-			$this->version
-		));
-	}
-
-	public function ajax_empty_log() {
-		return $this->create_notice('warning',
-			sprintf( 'empty_log is not implemented yet! (Plugin "%1$s")', $this->data['Name'])
-		);
-	}
-
 	public function ajax_reset_options() {
 		$options = $this->reset_options();
 		return $this->create_notice('infodata', // combine 'info' with 'data'
@@ -235,16 +221,17 @@ trait zukit_Ajax {
 					$result = $router->create_notice('data', null, $router->info());
 					break;
 
-				case 'clear_log':
-					$result = $router->ajax_empty_log();
-					break;
-
 				case 'reset_options':
 					$result = $router->ajax_reset_options();
 					break;
 
+				// default debug actions
+				case 'clear_log':
+					$result = $router->debug_empty_log();
+					break;
+
 				case 'test_ajax':
-					$result = $router->ajax_test();
+					$result = $router->debug_ajax_test();
 					break;
 
 				default:
@@ -282,12 +269,17 @@ trait zukit_Ajax {
 
 		// instead of $this, should use $router, because it defines the active plugin
 		$router = $this->get_router($params);
-		$result = true;
+		$result = is_null($router) ? false : true;
 
-		foreach($keys as $key) {
-			// with set_option 'null' will be ignored, 'false' considered as failure
-			$return = is_null($router) ? false : $router->set_option($key, $values[$key] ?? null);
-			if($return === false) $result = false;
+		if($result) {
+			foreach($keys as $key) {
+				// if value for 'key' is 'null' then call 'del_option' instead of 'set_option'
+				if(array_key_exists($key, $values) && $values[$key] === null) $return = $router->del_option($key);
+				// with set_option 'null' will be ignored, 'false' considered as failure
+				else $return = $router->set_option($key, $values[$key] ?? null);
+
+				if($return === false) $result = false;
+			}
 		}
 		// if $result is false - something went wrong - then return null
 		return rest_ensure_response($result || (object) null);

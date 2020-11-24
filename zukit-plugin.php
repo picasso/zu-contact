@@ -7,6 +7,7 @@ require_once('zukit-table.php');
 require_once('traits/admin.php');
 require_once('traits/admin-menu.php');
 require_once('traits/ajax.php');
+require_once('traits/debug.php');
 
 if(!function_exists('zu_snippets')) {
 	require_once('snippets/hub.php');
@@ -20,11 +21,12 @@ class zukit_Plugin extends zukit_Singleton {
 
 	protected $options_key;
 	protected $options = null;
+	protected $path_autocreated = false;
 	protected $data = [];
 	protected $addons = [];
 
 	// Admin basics, menu management and REST API support
-	use zukit_Admin, zukit_AdminMenu, zukit_Ajax;
+	use zukit_Admin, zukit_AdminMenu, zukit_Ajax, zukit_Debug;
 
 	function config_singleton($file) {
 		if(isset($file)) {
@@ -38,7 +40,11 @@ class zukit_Plugin extends zukit_Singleton {
 		$this->config = array_merge([
 			'prefix' 	=> 'zuplugin',
 			'admin' 	=> [],
-			'icon'		=> $this->snippets('insert_svg_from_file', $this->dir, 'logo', true, true),
+			'icon'		=> $this->snippets('insert_svg_from_file', $this->dir, 'logo', [
+	            'preserve_ratio'	=> true,
+	            'strip_xml'			=> true,
+	            'subdir'			=> 'images/',
+			]),
 		], $this->config());
 		$this->prefix = $this->config['prefix'] ?? $this->prefix;
 		$this->options_key = $this->config['options_key'] ?? $this->prefix.'_options';
@@ -67,9 +73,11 @@ class zukit_Plugin extends zukit_Singleton {
 		$this->admin_config($file, $this->config['admin']);
 		$this->admin_menu_config();
 		$this->ajax_config();
+		$this->debug_config();
 	}
 
-	// Нельзя! работать с 'options' в 'construct_more()', там 'options' еще не определены
+	// Should not use the functions for 'options' in construct_more(),
+	// since the 'options' there are not yet synchronized with the class properties
 	protected function construct_more() {}
 
 	protected function config() { return []; }
@@ -121,9 +129,8 @@ class zukit_Plugin extends zukit_Singleton {
 	}
 
 	// Options management -----------------------------------------------------]
+	// !! Should not use these functions in construct_more() !!
 	//
-	// Нельзя использовать эти функции в 'construct_more()',
-	// там options еще не определены
 	public function options() {
 		$options = get_option($this->options_key);
 // _dbug('get options', $options);
@@ -147,8 +154,25 @@ class zukit_Plugin extends zukit_Singleton {
 		return $this->options;
 	}
 
-	// Если меняем только часть опций принадлежащих addon, то не обновляем опции - addon об этом позаботится
+	// If we remove from the options belonging to the add-on, then after the operation
+	// we do not update the options - add-on will take care of this
+	public function del_option($key, $addon_options = null) {
+		$result = true;
+		$options = is_null($addon_options) ? $this->options : $addon_options;
+		if(array_key_exists($key, $options)) {
+			unset($options[$key]);
+			if(is_null($addon_options)) {
+				$this->options = $options;
+				$result = $this->update_options();
+			}
+		}
+		return $result === false ? false : $options;
+	}
+
 	// If 'key' contains 'path' - then resolve it before update
+	// When $this->path_autocreated is true then if a portion of path doesn't exist, it's created
+	// If we set value for the options belonging to the add-on, then after the operation
+	// we do not update the options - add-on will take care of this
 	public function set_option($key, $value, $rewrite_array = false, $addon_options = null) {
 
 		// $value cannot be undefined or null!
@@ -168,10 +192,16 @@ class zukit_Plugin extends zukit_Singleton {
 				$current = &$options;
 				foreach($pathParts as $pathKey) {
 					if($pathKey === $lastKey) break;
-					if(!is_array($current)) return false;
+					if(!is_array($current)) {
+						if($this->path_autocreated) $current = [];
+						else return false;
+					}
 					$current = &$current[$pathKey];
 				}
-				if(!is_array($current)) return false;
+				if(!is_array($current)) {
+					if($this->path_autocreated) $current = [];
+					else return false;
+				}
 				$current[$lastKey] = $value;
 			}
 		}
@@ -183,24 +213,39 @@ class zukit_Plugin extends zukit_Singleton {
 		return $result === false ? false : $options;
 	}
 
+	// If 'key' contains 'path' - then resolve it before get
 	public function get_option($key, $default = '', $addon_options = null) {
 		$options = is_null($addon_options) ? $this->options : $addon_options;
-		if(!isset($options[$key])) return $default;
+
+		// gets a value in a nested array based on path (if presented)
+		$pathParts = explode('.', $key);
+		$set = $options;
+		if(count($pathParts) > 1) {
+			$key = $pathParts[count($pathParts)-1];
+			foreach($pathParts as $pathKey) {
+				if($pathKey === $key) break;
+				if(!is_array($set)) return $default;
+				$set = $set[$pathKey] ?? null;
+			}
+		}
+
+		if(!isset($set[$key])) return $default;
 
 		// return and cast to default value type
-		if(is_bool($default)) return filter_var($options[$key], FILTER_VALIDATE_BOOLEAN);
-		if(is_int($default)) return intval($options[$key]);
-		if(is_string($default))	return strval($options[$key]);
+		if(is_bool($default)) return filter_var($set[$key], FILTER_VALIDATE_BOOLEAN);
+		if(is_int($default)) return intval($set[$key]);
+		if(is_string($default))	return strval($set[$key]);
 
-		return $options[$key];
+		return $set[$key];
 	}
 
 	public function is_option($key, $check_value = true, $addon_options = null) {
 		$value = $this->get_option($key, $this->def_value($check_value), $addon_options);
 
-		// if(is_bool($check_value)) $value = filter_var($this->get_option($key, false, $addon_options), FILTER_VALIDATE_BOOLEAN);
-		// else if(is_int($check_value)) $value = intval($this->get_option($key, 0, $addon_options));
-		// else $value = strval($this->get_option($key, '', $addon_options));
+// NOTE: delete
+// if(is_bool($check_value)) $value = filter_var($this->get_option($key, false, $addon_options), FILTER_VALIDATE_BOOLEAN);
+// else if(is_int($check_value)) $value = intval($this->get_option($key, 0, $addon_options));
+// else $value = strval($this->get_option($key, '', $addon_options));
 
 		return $value === $check_value;
 	}
@@ -253,24 +298,16 @@ class zukit_Plugin extends zukit_Singleton {
 			'nonce'     	=> $this->ajax_nonce(true),
 			'slug'			=> $this->snippets('get_slug'),
 		] : [
-			'jsdata_name'	=> $this->prefix_it('settings', '_'), //'zukit_settings',
+			'jsdata_name'	=> $this->prefix_it('settings', '_'),
 			'router'		=> $this->admin_slug(),
 			'options' 		=> $this->options,
 			'info'			=> $this->info(),
-			'debug'			=> $this->debug_actions(),
+			'debug'			=> $this->debug_data(),
 			'actions' 		=> [],
 		];
 		$custom_data = $this->js_data($is_frontend);
 		return array_merge($default_data, is_array($custom_data) ? $custom_data : []);
 	}
-
-	// protected function merge_js_data($plugin_data = []) {
-	// 	return array_merge([
-	// 		'ajaxurl'       => admin_url('admin-ajax.php'),
-	// 		'nonce'     	=> $this->ajax_nonce(true),
-	// 		'slug'			=> $this->snippets('get_slug'),
-	// 	], $plugin_data);
-	// }
 
 	protected function js_data($is_frontend) {}
 	protected function should_load_css($is_frontend, $hook) { return false; }

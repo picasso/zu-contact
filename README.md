@@ -56,7 +56,7 @@ protected function construct_more() {
     add_filter('attachment_fields_to_edit', [$this, 'add_attachment_field'], 10, 2);
 
     // you should avoid ‘options’ getter and setter here!!
-    //
+    // wrong!!!
     // if($this->is_option('option1')) {
     //     add_action('pre_get_posts', [$this, 'pre_get_attachments']);
     // }
@@ -68,14 +68,14 @@ protected function construct_more() {
 ```php
 protected function config() {
     return  [
-        'prefix'			=> 'myplugin',
+        'prefix'    => 'myplugin',
         // set true if 'Zukit' script & CSS should be loaded
-        'zukit'				=> true,         
+        'zukit'     => true,         
         // default values for plugin options
-        'options'			=> [
-            'option1'           => true,
-            'option2'           => false,
-            'option3'           => 'somevalue',
+        'options'   => [
+            'option1'   => true,
+            'option2'   => false,
+            'option3'   => 'somevalue',
         ],
     ];
 }
@@ -84,7 +84,14 @@ protected function config() {
 #### Options
 - methods `options` and `update_options` are used to get __options__ and update them
 - the `reset_options` method is used to reset __options__ to default values. On the settings page, a button is automatically created that calls this method via AJAX
-- the `set_option` method is used to set the __options__ value for a given key and then update `options` in WordPress. If argument `$key` contains *path* (dots separated keys) then the required key will be found in nested options
+- the `get_option` method is used to get the __options__ value for a given key. If argument `$key` contains *path* (dots separated keys) then the value will be get from nested options
+- the `set_option` method is used to set the __options__ value for a given key and then update `options` in WordPress. Option `$value` cannot be `undefined` or `null`! Use `del_option` method to remove option by key. If argument `$key` contains *path* (dots separated keys) then the required key will be found in nested options. By default, if a path to a nonexistent object is given, then nothing will happen and the option value will not be saved. To change this behavior, you need to set the internal variable `path_autocreated` to` true` before using the `set_option` method. Then, if a portion of path doesn't exist, it's created:
+```php
+protected function construct_more() {
+    // some other logic...
+    $this->path_autocreated = true;
+}
+```
 - the `is_option` method is used to compare the value by the given key with the second argument of the method. For types `bool`, `int` and` string`, a cast to required value type occurs
 ```php
 if($this->is_option('option1')) {
@@ -131,7 +138,7 @@ protected function should_load_js($is_frontend, $hook) {
 
 - To load styles, you need to override the `should_load_css` method. The arguments and logic are the same as with scripts. For styles loaded on the front-end it will be the file `css/<prefix>.css`, and for the admin pages it will be the file `admin/css/<prefix>.css`.
 
-- Все остальные параметры загрузки скрипта можно задать переопределив методы `js_params` для скрипта или `css_params` для стилей. Если массив не содержит ключа или значение ключа равно *null*, то значение по умолчанию будет использовано. По умолчанию an array of dependencies is empty for front-end and `['zukit']` for admin script and styles. Примеры задания параметров для скриптов и стилей:
+- All other script loading parameters can be set by overriding the `js_params` methods for the script or `css_params` for the styles. If the array does not contain a key or the key value is *null*, then the default value will be used. By default, an array of dependencies is empty for front-end and `['zukit']` for admin script and styles. With parameters, you can also specify `defer` and `async` attributes for the script if needed. Examples of setting parameters for scripts and styles:
 
 ```php
 // redefine dependencies for scripts and 'in-footer' param
@@ -140,6 +147,18 @@ protected function js_params($is_frontend) {
         'deps'	     => $is_frontend ? ['jquery'] : null,
         'bottom'     => $is_frontend ? true : false,
     ];
+}
+
+// params to enqueue Google reCAPTCHA script
+private function enqueue_recaptcha() {
+	$absolute_path = 'https://www.google.com/recaptcha/api.js?hl='.get_locale();
+	$this->enqueue_script($absolute_path, [
+		'handle'        => 'recaptcha2',
+		'bottom'        => false,
+		'absolute'		=> true,
+		'async'         => true,
+		'defer'         => true,
+	]);
 }
 
 // redefine dependencies for styles and handle
@@ -179,7 +198,7 @@ protected function js_data($is_frontend) {
 }
 ```
 
-- Если требуется загрузить больше, чем один файл для script and styles, то нужно переопределить метод `enqueue_more`. У него тоже два аргумента: `$is_frontend` and `$hook`. Для удобства можно воспользоваться helper методами `sprintf_dir` и `sprintf_uri` которые работают аналогично функции `sprintf`, но добавляют в начало создаваемой строки plugin directory or uri соответственно. Также есть helper методы `enqueue_style` и `enqueue_script` для добавления файлов на front-end страницах и `admin_enqueue_style` и `admin_enqueue_script` для добавления файлов на админ страницах:
+- If you need to load more than one file for script and styles, then you need to override the `enqueue_more` method. It also has two arguments: `$is_frontend` and `$ hook`. For convenience, you can use the helper methods `sprintf_dir` and `sprintf_uri`, which work similarly to the `sprintf` function, but add plugin directory or *uri* to the beginning of the generated line, respectively. Also there are helper methods `enqueue_style` and `enqueue_script` for adding files on front-end pages and `admin_enqueue_style` and `admin_enqueue_script` for adding files on admin pages:
 ```php
 protected function enqueue_more($is_frontend, $hook) {
     if($is_frontend) {
@@ -246,7 +265,7 @@ public function gallery_shortcode($atts, $content = null) {
 }
 ```
 
-#### Addons
+#### Add-ons
 
 > &#x2757; Description required
 
@@ -260,8 +279,7 @@ public function gallery_shortcode($atts, $content = null) {
 
 #### Snippets
 
-*Snippets* is a collection of various functions that I have accumulated during my work with WordPress. They are combined into one class for ease of use.
-You can view all available functions in the source codes, which for convenience are grouped in traits that are located in the __snippets__ folder. There is a special helper method for using "snippet" functions in a plugin or add-on:
+*Snippets* is a collection of various functions that I have accumulated during my work with WordPress. They are combined into one class for ease of use. You can view all available functions in the source codes, which for convenience are grouped in *traits* that are located in the __snippets__ folder. There is a special helper method for using "snippet" function in a plugin or add-on:
 ```php
     // add class to BODY in admin mode
     $this->snippets('add_admin_body_class', 'zukit-settings');
@@ -280,7 +298,7 @@ You can view all available functions in the source codes, which for convenience 
 ------------------------------------------------------
 ### Options Page With Gutenberg Components
 
-In order to create the `options` page for the plugin (theme), you need to create a JS script that will be loaded in the WordPress admin mode. All Gutenberg components are based on [React](https://reactjs.org), so without knowing this library it will be very difficult. But first, you can just copy the example. Even using the default parameters, you will get a page displaying your plugin (theme) options and can easily change them:
+In order to create the `options` page for the plugin/theme, you need to create a JS script that will be loaded in the WordPress admin mode. All Gutenberg components are based on [React](https://reactjs.org), so without knowing this library it will be very difficult. But first, you can just copy the example. Even using the default parameters, you will get a page displaying your plugin/theme options and can easily change them:
 ```js
 // WordPress dependencies
 
@@ -291,7 +309,7 @@ const { PanelBody } = wp.components;
 
 const { renderPage, toggleOption, selectOption } = wp.zukit.render;
 
-// Options labels
+// Options labels and descriptions
 
 const optionsData = {
 	option1: {
@@ -332,22 +350,29 @@ const EditMyplugin = ({
 }) => {
 
 	return (
-			<PanelBody title={ title }>
-				{ toggleOption(optionsData, options, updateOptions) }
-                { selectOption(options[selectData.id], selectData, updateOptions) }
-			</PanelBody>
+        <PanelBody title={ title }>
+            { toggleOption(optionsData, options, updateOptions) }
+            { selectOption(options[selectData.id], selectData, updateOptions) }
+        </PanelBody>
 	);
 };
 
 renderPage('myplugin', {
-	edit: EditMyplugin,
+    edit: EditMyplugin,
 });
 ```
 This example will work provided that the `prefix` key is defined in the `config` method as `myplugin`.
 
+#### Edit Params
+
+> &#x2757; Description required
+
+Описать про updateOptions (и то что при передаче value=null произойдет удаление option)
+описать про ajaxAction, noticeOperations,
+
 #### Sidebar info
 
-The "Plugin info" section displays information about the plugin version and its author. Additional information can be added there. To do this, you need to override the `extend_info` method in which to return an array, each element of the array describes a information string: `label` and `value`. If you also specify the `depends` key, then when you change the value of this option, additional information will be re-requested from the server via AJAX (this is needed when some information depends on the options configuration). Also, if value is `null`, then the information string will be skipped when displayed:
+The "__Plugin info__" section displays information about the plugin version and its author. Additional information can be added there. To do this, you need to override the `extend_info` method in which to return an array, each element of the array describes a information string: `label` and `value`. If you also specify the `depends` key, then when you change the value of this option, additional information will be re-requested from the server via AJAX (this is needed when some information depends on the options configuration). Can use path as key for the `depends` array. Also, if value is `null`, then the information string will be skipped when displayed:
 ```php
 protected function extend_info() {
     return [
@@ -370,17 +395,17 @@ protected function extend_info() {
 
 #### Sidebar actions
 
-You can define some actions that will be executed from the `options` page via AJAX. To do this, you need to override the `js_data` method in which to return an array describing the actions that should be displayed in the sidebar. The `depends` key determines as usual whether the button is shown or not, depending on the value of the given option. If you specify the option name with an exclamation mark at the beginning, the button will be displayed when option value is `false` and will be hidden if `true`. If `depends` is `false` then the button will not be displayed:
+You can define some actions that will be executed from the `options` page via AJAX. To do this, you need to override the `js_data` method in which to return an array describing the actions that should be displayed in the sidebar. The `depends` key determines as usual whether the button is shown or not, depending on the value of the given option. If you specify the option name with an exclamation mark at the beginning (`!option`), the button will be displayed when option value is `false` and will be hidden if `true`. If `depends` is `false` then the button will not be displayed:
 ```php
 protected function js_data($is_frontend) {
-    return  $is_frontend ? $this->ajax_data() : [
+    return  $is_frontend ? [] : [
         'actions' 		=> [
             [
                 'label'		=> __('Update Galleries', 'myplugin'),
                 'value'		=> 'myplugin_update_galleries',
                 'icon'		=> 'admin-customizer',
                 'color'		=> 'gold',
-                'help'		=> __('Galleries will be updated for all existing images', 'myplugin'),
+                'help'		=> __('Galleries will be updated for all images', 'myplugin'),
             ],
             [
                 'label'		=> __('Convert Galleries', 'myplugin'),
@@ -393,7 +418,7 @@ protected function js_data($is_frontend) {
                 'value'		=> 'myplugin_reset_cached',
                 'icon'		=> 'dismiss',
                 'color'		=> 'magenta',
-                'help'		=> __('Clear all cached data referenced to attachments and galleries', 'myplugin'),
+                'help'		=> __('Clear all cached data referenced to galleries', 'myplugin'),
                 'depends'	=> '!disable_cache',
             ],
         ],
@@ -417,9 +442,14 @@ public function reset_cached() {
 }
 ```
 
+#### Debug Plugin
+
+> &#x2757; Description required
+Описать про про Debug options and actions
+
 #### Panels
 
-It is recommended to use the built-in panel control mechanism to create groups of options or sections to display settings and data. To do this, you need to use the `ZukitPanel` component instead of the `Panel` component that is included in Gutenberg. You also need to pass the `panels` object to the `renderPage` function when creating the page. The object should contain the panel title, default value and panel dependency on plugin/theme option (optional). If the dependency is specified, the panel will be automatically hidden if the option value is false. Using the panel mechanism will allow you to hide and show panels using toggles in the sidebar and also store their state in the database:
+It is recommended to use the built-in panel control mechanism to create groups of options or sections to display settings and data. To do this, you need to use the `ZukitPanel` component instead of the `Panel` component that is included in Gutenberg. You also need to pass the `panels` object to the `renderPage` function when creating the page. The object should contain the panel title, default value and panel dependency on plugin/theme option (optional). If the dependency is specified, the panel will be automatically hidden if the option value is `false`. Using the panel mechanism will allow you to hide and show panels with toggles in the sidebar and also store their state in the database:
 ```js
 // WordPress dependencies
 
@@ -435,7 +465,7 @@ const panelsData = {
 	section1: {
 		value: true,
 		label: __('Section One', 'myplugin'),
-		// This will exclude this panel when option is false
+		// This will hide this panel when option is false
 		depends: 'option2',
 	},
 	section2: {
@@ -450,25 +480,25 @@ const EditMyplugin = ({
 }) => {
 
 	return (
-			<>
-				<ZukitPanel id="section1" initialOpen={ false }>
-                    <RangeControl
-    					label={ __('Tree Animation Speed, ms', 'myplugin') }
-    					value={ options.anim_speed }
-    					onChange={ value => updateOptions({ anim_speed: value }) }
-    					step={ 100 }
-    					min={ 200 }
-    					max={ 600 }
-    				/>
-                </ZukitPanel>
-                <ZukitPanel id="section2">
-                    <ToggleControl
-        				label={ __('Something small', 'myplugin') }
-        				checked={ !!options.small }
-        				onChange={ () => updateOptions({ small: !options.small }) }
-        			/>
-                </ZukitPanel>
-			</>
+        <>
+            <ZukitPanel id="section1" initialOpen={ false }>
+                <RangeControl
+                    label={ __('Tree Animation Speed, ms', 'myplugin') }
+                    value={ options.anim_speed }
+                    onChange={ value => updateOptions({ anim_speed: value }) }
+                    step={ 100 }
+                    min={ 200 }
+                    max={ 600 }
+                />
+            </ZukitPanel>
+            <ZukitPanel id="section2">
+                <ToggleControl
+                    label={ __('Something small', 'myplugin') }
+                    checked={ !!options.small }
+                    onChange={ () => updateOptions({ small: !options.small }) }
+                />
+            </ZukitPanel>
+        </>
 	);
 };
 
@@ -492,47 +522,46 @@ const { useState, useEffect, useCallback } = wp.element;
 const { ZukitPanel, SelectItem } = wp.zukit.components;
 
 const MypluginSection = ({
-        options,
-        updateOptions,
-        ajaxAction,
-		setUpdateHook,
+    options,
+    updateOptions,
+    ajaxAction,
+    setUpdateHook,
 }) => {
 
     const [icons, setIcons] = useState(null);
 
     const onToggle = useCallback(() => {
-		if(icons === null) {
-			ajaxAction('myplugin_get_icons', data => {
-				const iconset = get(data, 'icons', []);
-				if(iconset.length) setIcons(iconset);
-			});
-		}
-	}, [ajaxAction, icons]);
+        if(icons === null) {
+            ajaxAction('myplugin_get_icons', data => {
+                const iconset = get(data, 'icons', []);
+                if(iconset.length) setIcons(iconset);
+            });
+        }
+    }, [ajaxAction, icons]);
 
     // reset icons set when 'icons' or 'more_icons' option is updated
-	useEffect(() => {
-		setUpdateHook(['icons', 'more_icons'], () => {
-			setIcons(null);
-		});
-	}, [setIcons, setUpdateHook]);
+    useEffect(() => {
+        setUpdateHook(['icons', 'more_icons'], () => {
+            setIcons(null);
+        });
+    }, [setIcons, setUpdateHook]);
 
 	return (
-            <ZukitPanel id="icons" initialOpen={ false } onToggle={ onToggle }>
-                <SelectItem
-                    columns={ 3 }
-                    label={ __('Select Icon', 'myplugin') }
-                    options={ icons }
-                    selectedItem={ options.icon }
-                    onClick={ value => updateOptions({ icon: value }) }
-                    transformValue={ value => (<div className={ `dashicons ${value}` }></div>) }
-                />
-            </ZukitPanel>
+        <ZukitPanel id="icons" initialOpen={ false } onToggle={ onToggle }>
+            <SelectItem
+                columns={ 3 }
+                label={ __('Select Icon', 'myplugin') }
+                options={ icons }
+                selectedItem={ options.icon }
+                onClick={ value => updateOptions({ icon: value }) }
+                transformValue={ value => (<div className={ `dashicons ${value}` }></div>) }
+            />
+        </ZukitPanel>
 	);
 };
 
 export default MypluginSection;
 ```
-
 
 #### Tables
 

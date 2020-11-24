@@ -4,6 +4,7 @@
 
 $selectitem-component-class: zukit-select-item;
 $listinput-component-class: zukit-list-input;
+$advtext-component-class: zukit-text-control;
 $table-component-class: zukit-table;
 $divider-component-class: zukit-divider;
 
@@ -11,6 +12,7 @@ $divider-component-class: zukit-divider;
 @import "components/list-input";
 @import "components/table";
 @import "components/divider";
+@import "components/adv-text-control";
 
 .zukit-settings {
 
@@ -53,10 +55,11 @@ $divider-component-class: zukit-divider;
 				border: 1px solid $settings-border-color;
 				border-top-width: 0;
 				border-bottom-width: 0;
-				box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+				box-shadow: 0 1px 1px rgba(black, 0.04);
 			}
 
-			.components-base-control, .components-button:not(.zukit-select-item__button) {
+			.components-base-control,
+				.components-button:not(.zukit-select-item__button):not(.__plugin_actions):not(.__exclude) {
 				font-size: $basic-font-size;
 				color: $admin-grey-blue-color;
 			}
@@ -94,6 +97,12 @@ $divider-component-class: zukit-divider;
 			.__select_label {
 				display: block;
 				margin-bottom: 4px;
+			}
+			.__block_label {
+				label {
+					display: block;
+					margin-bottom: 4px;
+				}
 			}
 			.__select_block {
 				display: flex;
@@ -168,6 +177,24 @@ $divider-component-class: zukit-divider;
 
 		// Settings Common Rules ----------------------------------------------]
 
+		.__flex {
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+			& > * { margin-right: 1em; }
+			&.__right {
+				justify-content: flex-end;
+				& > * {
+					margin-left: 1em;
+					margin-right: 0;
+				}
+			}
+			&.__side {
+				justify-content: space-between;
+				& > * { margin: 0; }
+			}
+		}
+
 		.components-button:not(.zukit-select-item__button) {
 			&.__plugin_actions {
 				position: relative;
@@ -190,6 +217,9 @@ $divider-component-class: zukit-divider;
 				&.is-loading {
 					color: rgba(white, 0.5);
 					pointer-events: none;
+				}
+				&.__auto {
+					width: auto;
 				}
 				.components-spinner {
 					position: absolute;
