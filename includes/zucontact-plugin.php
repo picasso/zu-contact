@@ -1,6 +1,4 @@
 <?php
-// define('CPLUS_VALIDATE_VERSION', '1.11.0');
-
 // Includes all traits --------------------------------------------------------]
 
 include_once('zucontact-ajax.php');
@@ -21,7 +19,6 @@ class zu_Contact extends zukit_Plugin {
 	protected function construct_more() {
 		// init static messages
 		$this->setup_messages();
-		$this->debug = true;
 		$this->path_autocreated = true;
     }
 
@@ -59,15 +56,23 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	protected function extend_debug_actions($actions) {
-		$actions[] = [
-			'label'		=> __('Check Existed Terms', 'zumedia'),
-			'value'		=> 'zumedia_check_terms',
-			'icon'		=> 'warning',
-			'color'		=> 'gold',
+	protected function extend_debug_options() {
+		return [
+			'smtp'	=> [
+				'label'		=> __('Debug SMTP mailer', 'zu-contact'),
+				'value'		=> false,
+			],
 		];
-
-		return $actions;
+	}
+	protected function extend_debug_actions() {
+		return [
+			[
+				'label'		=> __('Check Existed Terms', 'zumedia'),
+				'value'		=> 'zumedia_check_terms',
+				'icon'		=> 'warning',
+				'color'		=> 'gold',
+			]
+		];
 	}
 
 	public function init() {
@@ -148,31 +153,13 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
+	// register Google recaptcha script if required
 	protected function enqueue_more($is_frontend, $hook) {
 		if($is_frontend) {
-			// load Google recaptcha script if required
 			$this->register_recaptcha();
-return false;
-
-		    if($this->check_option('client_validate')) {
-				$this->enqueue_script('jquery.validate', null, ['jquery'], 'jquery-validate');
-	// 	        wp_enqueue_script('jquery-validate', __ROOT__ . '/js/jquery.validate.min.js', ['jquery'], _VALIDATE_VERSION, true);
-	// 	        wp_enqueue_script('cplus-validate');
-		    }
 		}
 	}
-
 }
-
-// class CPLUS_Admin extends zuplus_Admin {
-//
-// 	public function validate_options($input) {
-//
-// 		$new_values = parent::validate_options($input);
-// 		$new_values['notify'] = $this->validate_emails($input, 'notify'); 	// validate e-mails
-// 		return $new_values;
-// 	}
-// }
 
 // Entry Point ----------------------------------------------------------------]
 

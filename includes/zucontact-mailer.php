@@ -1,6 +1,6 @@
 <?php
 // WP Mailer helpers ----------------------------------------------------------]
-
+//
 trait zu_ContactMailer {
 
 	private function init_mailer() {
@@ -27,14 +27,12 @@ trait zu_ContactMailer {
 	    $phpmailer->SMTPSecure = ($mailer['ssl'] ?? false) ? 'ssl' : 'tls';
 		// set 'From' property only if 'from' key is presented in options
 		if(array_key_exists('from', $mailer)) $phpmailer->From = $mailer['from'];
-// $phpmailer->From = 'dmitry.travel@me.com';
-		$phpmailer->SMTPDebug = 1;
-		_dbug($phpmailer);
+		$phpmailer->SMTPDebug = $this->is_debug_option('smtp') ? 1 : 0;
 	}
 
-	// this is used to weed out the spam.
+	// This is used to weed out the spam.
 	// if Akismet plugin is enabled then it will be hooked into 'preprocess_comment' filter.
-	public function spam_filter($contact) {
+	public function send_with_spam_filter($contact) {
 
 	  	if(!($contact instanceof zu_ContactData)) return $contact;
 
@@ -51,14 +49,19 @@ trait zu_ContactMailer {
 	    // even if it is spam then log as a comment
 	    if(isset($comment_data['akismet_result']) && $comment_data['akismet_result'] === 'true') {
 			$comment_data['comment_approved'] = 'spam';
-			wp_insert_comment($comment_data);
+			$cid = wp_insert_comment($comment_data);
 			$contact->spam = true;
+			$contact->add_error('spam');
 	    } else {
 			$comment_data['comment_approved'] = 0;
 			$cid = wp_insert_comment($comment_data);
 			$contact->spam = false;
 	    }
-	    return $contact;
+
+		if($cid === false) $contact->add_error('comment');
+		$contact->was_sent = $cid !== false;
+
+	    return $contact->was_sent && !$contact->spam;
 	}
 
 	public function from_email() {
@@ -117,17 +120,13 @@ trait zu_ContactMailer {
 		return $result;
 	}
 
-	public function send_mail($data) {
+	public function send_with_notify($data) {
 
 		if($data instanceof zu_ContactData) {
-			$data->was_sent = false;
 			if($data->form !== false) {
-
-				$this->spam_filter($data);
-_dbug($data->spam);
-				if($data->spam === true) {
-					$data->was_sent = true;
-				} else {
+				$is_ok = $this->send_with_spam_filter($data);
+// _dbug($data->spam, $data->was_sent, $is_ok);
+				if($is_ok) {
 					$subject = __('New entry was submitted at', 'zu-contact');
 					$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
 
@@ -136,12 +135,11 @@ _dbug($data->spam);
 						$value = is_bool($value) ? sprintf('%1$s', $value ? 'YES' :'NO') : $value;
 						$content .= sprintf('<p><strong>%1$s</strong>: %2$s</p>', $field['label'], $value);
 					}
-					$data->was_sent = $this->mailer($data->email, $this->recipients(), $content, [
+					$data->was_notified = $this->mailer($data->email, $this->recipients(), $content, [
 						'post_id'		=> $data->post_id,
 						'post_link'		=> $data->post_link,
 					]);
-
-_dbug($data->was_sent);
+// _dbug($data->was_notified);
 					if(in_array('carbon-copy', array_keys($data->attributes)) && $data->attributes['carbon-copy']) {
 						$content = str_replace($subject, __('You sent it at', 'zu-contact'), $content);
 						$this->mailer($data->email, $data->email, $content, ['carbon_copy' => true]);
@@ -152,5 +150,4 @@ _dbug($data->was_sent);
 		}
 		return false;
 	}
-
 }
