@@ -23,6 +23,8 @@ trait zu_ContactForm {
                 'nonce'				=>	__('Nonce failed - is not correct or expired.', 'zu-contact'),
                 'data'              =>	__('Form data not found.', 'zu-contact'),
                 'fname'             =>	__('Form name not found.', 'zu-contact'),
+                'comment'           =>	__('Failed to insert a comment into the database.', 'zu-contact'),
+                'spam'              =>	__('Message content rejected due to suspected spam.', 'zu-contact'),
                 'recaptcha'         => $this->recaptcha_error_messages(),
             ];
 
@@ -85,6 +87,10 @@ trait zu_ContactForm {
         return array_keys($this->forms);
     }
 
+    public function available_errors() {
+        return array_keys(self::$error_messages);
+    }
+
 	public function recipients() {
 		return $this->get_option('notify');
 	}
@@ -97,8 +103,9 @@ trait zu_ContactForm {
         // Format container output
         $css_prefix = zu_ContactFields::$css_prefix;
         $was_sent = $values['_was_sent'] ?? false;
+        $was_notified = $values['_was_notified'] ?? false;
         $was_error = !empty($errors);
-_dbug($was_sent, $_POST);
+
         $subheading = $this->subheading($values['_subheading'], $name);
         $subheading = empty($subheading) ? '' : sprintf(
             '<h2 class="%2$s-subheading before_posting">%1$s</h2>',
@@ -123,7 +130,7 @@ _dbug($was_sent, $_POST);
                     ($was_error || $was_sent) ? $css_prefix.'-processed': ''
                 ]),
                 $was_error ? ' was-error' : ($was_sent ? ' sent' : ''),
-                $this->message($errors, $name, $was_sent),
+                $this->message($errors, $name, $was_notified),
                 $this->snippets('loader', 0, 0.8),
                 $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
                 $values['icon_cancel'] ?? (function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : ''),
@@ -132,14 +139,6 @@ _dbug($was_sent, $_POST);
                 $css_prefix,
                 $name
         );
-
-        // $recaptcha = $this->get_option('recaptcha', []);
-        // $sitekey = $recaptcha['sitekey'] ?? null;
-        // $recaptcha = empty($sitekey) ? '' : zu_sprintf(
-        //     '<div class="g-recaptcha" data-sitekey="%1$s" data-callback="verifyCaptcha"></div>
-        //     <div id="g-recaptcha-error"></div>',
-        //     $sitekey
-        // );
 
         // Add form container and FORM opening tags
         $output .= zu_sprintf(
@@ -183,22 +182,20 @@ _dbug($was_sent, $_POST);
 
     private function error_message($errors) {
         $key = 'fields';
-        $reserved_keys = ['_nonce', '_data', '_fname', '_recaptcha'];
+        $reserved_keys = $this->snippets('array_prefix', $this->available_errors(), '_');
         foreach($reserved_keys as $val) {
             if(array_key_exists($val, $errors)) {
                 $key = ltrim($val, '_');
                 break;
             }
         }
-        // if(($errors['_nonce'] ?? false) === true) $key = 'nonce';
-        // else if(($errors['_data'] ?? false) === true) $key = 'data';
-        // else if(($errors['_fname'] ?? false) === true) $key = 'name';
-        return sprintf('%1$s <b>%2$s</b>', self::$error_messages['basic'], self::$error_messages[$key]);
+        $template = $key === 'fields' ? '%1$s <b>%2$s</b>' : '%1$s <b><span>%2$s</span></b>';
+        return sprintf($template, self::$error_messages['basic'], self::$error_messages[$key]);
     }
 
-    public function message($errors, $name, $was_sent = true) {
+    public function message($errors, $name, $was_notified = true) {
         if(!empty($errors)) return $this->error_message($errors);
-        if($was_sent) return $this->success_message($name);
+        if($was_notified) return $this->success_message($name);
         return sprintf('%1$s <span>%2$s</span>', $this->success_message($name), self::$success_messages['without_notify']);
     }
 

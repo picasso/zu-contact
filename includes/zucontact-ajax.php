@@ -1,6 +1,6 @@
 <?php
 // AJAX & WP Mailer helpers ---------------------------------------------------]
-
+//
 trait zu_ContactAjax {
 
 	private $ajax_action = 'zucontact-submit';
@@ -22,16 +22,9 @@ trait zu_ContactAjax {
 
 	    $contact = new zu_ContactData;
 
-		$result = [
-			'sent'		=> false,
-			'is_valid'	=> $contact->is_valid(),
-			'errors'	=> $contact->get_errors(),
-		];
-
 		if($contact->has_recaptcha()) $this->check_recaptcha($contact);
-	    if($result['is_valid']) $result['sent'] = $this->send_mail($contact);
-	    $result['message'] = $contact->get_message();
+	    if($contact->is_valid()) $this->send_with_notify($contact);
 
-		wp_send_json_success($result);
+		wp_send_json_success($contact->as_response());
 	}
 }

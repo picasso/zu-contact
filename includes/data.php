@@ -1,5 +1,4 @@
 <?php
-
 // Class for holding and validating data captured from the contact form
 //
 class zu_ContactData {
@@ -11,6 +10,7 @@ class zu_ContactData {
 	public $post_link;
 	public $spam;
 	public $was_sent;
+	public $was_notified;
 	public $recaptcha;
 
 	public $attributes;
@@ -18,6 +18,8 @@ class zu_ContactData {
 	public $form;
 
 	private $prefix;
+	private $available_errors;
+	private $was_checked;
 
 	function __construct() {
 
@@ -25,6 +27,7 @@ class zu_ContactData {
 		$this->attributes = [];
 		$this->form = false;
 		$this->prefix = zu_ContactFields::$css_prefix;
+		$this->available_errors = zucontact()->available_errors();
 
 		$is_post = $_SERVER['REQUEST_METHOD'] === 'POST' ? true : false;
 
@@ -33,15 +36,15 @@ class zu_ContactData {
 		$fdata = $_POST[$this->prefix] ?? null;
 		$this->recaptcha = $_POST['g-recaptcha-response'] ?? false;
 
-		if($is_post && !$is_nonce_verified) $this->errors['_nonce'] = true;
-		if($is_nonce_verified && empty($fdata)) $this->errors['_data'] = true;
-		if($is_post && $this->recaptcha !== false && strlen($this->recaptcha) === 0) $this->errors['_recaptcha'] = true;
+		if($is_post && !$is_nonce_verified) $this->add_error('nonce');
+		if($is_nonce_verified && empty($fdata)) $this->add_error('data');
+		if($is_post && $this->recaptcha !== false && strlen($this->recaptcha) === 0) $this->add_error('recaptcha');
 
 		if(!empty($fdata)) {
 			$this->post_id = isset($fdata['_post_id']) ? absint($fdata['_post_id']): null;
 			$this->post_link = $fdata['_post_link'] ?? null;
 			$this->form = zucontact()->get_form($fdata['_fname'] ?? false);
-			if($this->form === false) $this->errors['_fname'] = true;
+			if($this->form === false) $this->add_error('fname');
 
 			if($this->form !== false) {
 				foreach($this->form->fields() as $field) {
@@ -60,8 +63,10 @@ class zu_ContactData {
 			unset($_POST[$this->prefix]);
 		}
 
-		$this->spam = false;
 		$this->was_sent = false;
+		$this->spam = false;
+		$this->was_notified = false;
+		$this->was_checked = -1;
 	}
 
 	private function validate_field($field, $form) {
@@ -80,9 +85,12 @@ class zu_ContactData {
 		return null;
 	}
 
-	public function is_valid() {
+	public function is_valid($force_repeat = false) {
 
 		if(!empty($this->errors) || $this->form === false) return false;
+
+		// avoid repeat check if was not requested
+		if($force_repeat === false && $this->was_checked !== -1) return $this->was_checked;
 
 		foreach($this->form->fields() as $field) {
 
@@ -94,33 +102,39 @@ class zu_ContactData {
 				$this->form->get_required($field['required'], $required, $required_valid);
 				//email || email invalid address
 				if($field_type === 'email') {
-					if(strlen($value) === 0) $this->errors[$field_id] = $required;
-					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_EMAIL)) $this->errors[$field_id] = $required_valid;
+					if(strlen($value) === 0) $this->add_error($field_id, $required);
+					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_EMAIL)) $this->add_error($field_id, $required_valid);
 				}
 				//name, message & general text fields - should at least 3 chars
 				if($field_type === 'text' || $field_type === 'textarea') {
-					if(strlen($value) < 3) $this->errors[$field_id] = $required;
+					if(strlen($value) < 3) $this->add_error($field_id, $required);
 				}
 				// numbers should be great than 0
 				if($field_type === 'number') {
-					if(intval($value) <= 0) $this->errors[$field_id] = $required;
+					if(intval($value) <= 0) $this->add_error($field_id, $required);
 				}
 				// phone should be at least 8 digits
 				if($field_type === 'tel') {
-					if(strlen($value) < 8) $this->errors[$field_id] = $required;
+					if(strlen($value) < 8) $this->add_error($field_id, $required);
 				}
 				// url || invalid url
 				if($field_type === 'url') {
-					if(strlen($value) === 0) $this->errors[$field_id] = $required;
-					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_URL)) $this->errors[$field_id] = $required_valid;
+					if(strlen($value) === 0) $this->add_error($field_id, $required);
+					if(strlen($value) > 0 && !filter_var($value, FILTER_VALIDATE_URL)) $this->add_error($field_id, $required_valid);
 				}
 				//checkbox which should checked - like "I agree with terms & conditions"
 				if($field_type === 'checkbox') {
-					if(strlen($value) !== true) $this->errors[$field_id] = $required;
+					if(strlen($value) !== true) $this->add_error($field_id, $required);
 				}
 			}
 		}
-		return count($this->errors) === 0 ? true : false;
+		$this->was_checked = count($this->errors) === 0;
+		return $this->was_checked;
+	}
+
+	public function add_error($key, $message = null) {
+		if(!empty($message)) $this->errors[$key] = $message;
+		else if(in_array($key, $this->available_errors)) $this->errors['_'.$key] = true;
 	}
 
 	public function has_recaptcha() {
@@ -129,7 +143,7 @@ class zu_ContactData {
 
 	public function get_message() {
 		$fname = empty($this->form) ? null : $this->form->name;
-		return zucontact()->message($this->errors, $fname, $this->was_sent);
+		return zucontact()->message($this->errors, $fname, $this->was_notified);
 	}
 
 	// remove all general errors (like _nonce, _data etc.)
@@ -139,18 +153,21 @@ class zu_ContactData {
 		}, ARRAY_FILTER_USE_KEY);
 	}
 
+	public function as_response() {
+		return [
+			'sent'		=> $this->was_sent,
+			'notified'	=> $this->was_notified,
+			'is_valid'	=> $this->is_valid(),
+			'errors'	=> $this->get_errors(),
+			'message'	=> $this->get_message(),
+		];
+	}
+
 	public function as_values() {
 		$values = json_decode(json_encode($this), true);
-		// $fields = $this->form === false ? [] : $this->form->available_fields();
 		$values = array_merge($values, $this->attributes);
-		$public_props = ['was_sent', 'attributes', 'form', 'errors', 'recaptcha', 'spam'];
+		$public_props = ['was_sent', 'was_notified', 'attributes', 'form', 'errors', 'recaptcha', 'spam'];
 		foreach($public_props as $val) unset($values[$val]);
-
-		// unset($values['was_sent']);
-		// unset($values['attributes']);
-		// unset($values['form']);
-		// unset($values['errors']);
-		// unset($values['recaptcha']);
 // _dbug('after', $values);
 		return $values;
 	}

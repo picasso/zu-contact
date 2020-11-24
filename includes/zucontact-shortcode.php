@@ -14,17 +14,6 @@ trait zu_ContactShortcode {
 		return $this->shortcode(array_merge(['form' => 'booking'], $atts), $content);
 	}
 
-	private function cast($values, $types) {
-		if(is_array($types) && is_array($values)) {
-			foreach($types as $key => $type) {
-				if(array_key_exists($key, $values)) {
-					if($type === 'bool') $values[$key] = to_bool($values[$key]);
-				}
-			}
-		}
-		return $values;
-	}
-
 	public function shortcode($atts, $content = null) {
 
 		extract($this->snippets('shortcode_atts_with_cast', $atts, [
@@ -50,12 +39,13 @@ trait zu_ContactShortcode {
 		if(!is_null($content)) $message = do_shortcode($content);
 
 	    $contact = new zu_ContactData;
-_dbug($contact);
+// _dbug($contact);
 		if($contact->has_recaptcha()) $this->check_recaptcha($contact);
-	    if($contact->is_valid()) $this->send_mail($contact);
+	    if($contact->is_valid()) $this->send_with_notify($contact);
 
 		$values = $contact->as_values();
 		$values['_was_sent'] = $contact->was_sent;
+		$values['_was_notified'] = $contact->was_notified;
 		$values['_subheading'] = $subheading;
 		$values['_recaptcha'] = $recaptcha;
 		if($rows !== -1) $values['_rows'] = absint($rows);

@@ -1,7 +1,6 @@
 <?php
-
 // Google reCAPTCHA V2 helpers ------------------------------------------------]
-
+//
 trait zu_ContactReCAPTCHA {
 
 	private $recaptcha_handle = null;
@@ -39,7 +38,6 @@ trait zu_ContactReCAPTCHA {
 	}
 
 	private function get_recaptcha($enabled = true) {
-
 		// only 'false' is taken into account, all other values are 'true'
 		if($enabled === false) return '';
 
@@ -85,7 +83,7 @@ trait zu_ContactReCAPTCHA {
 			// check recaptcha but only if we have private key
 			if(!empty($secret) && !empty($response)) {
 				$check = $this->verify_response($secret, $response);
-				if(!$check) $data->errors['recaptcha'] = $this->recaptcha_error_messages('failed');
+				if(!$check) $data->add_error('recaptcha', $this->recaptcha_error_messages('failed'));
 				else return true;
 			}
 		}

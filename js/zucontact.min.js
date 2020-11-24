@@ -77,6 +77,10 @@
 
 			if(errMessage) message = message.replace(/<b>[^<]+/g, `<b>${errMessage}`);
 			$message.html(message);
+			if(errors.recaptcha && errors.recaptcha.length) {
+				markReCaptcha(true);
+				resetReCaptcha();
+			}
 		}
 
 		function switchHeading(isHeading, isError, isSuccess) {
@@ -194,6 +198,11 @@
 				errorMessages.expired = $recaptcha.data('expired');
 				errorMessages.network = $recaptcha.data('network');
 			}
+		}
+
+		function resetReCaptcha() {
+			// eslint-disable-next-line no-undef
+			if(typeof grecaptcha !== 'undefined') grecaptcha.reset();
 		}
 
 		function needsReCaptcha() {

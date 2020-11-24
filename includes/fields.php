@@ -1,5 +1,4 @@
 <?php
-
 // Class for holding and manage contact form fields
 //
 class zu_ContactFields {
