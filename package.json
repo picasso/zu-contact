@@ -1,6 +1,6 @@
 {
     "name": "zucontact",
-    "version": "0.9.9",
+    "version": "1.0.0",
     "author": "Dmitry Rudakov",
     "description": "Simple but smart Ajax contact forms. With Gutenberg based settings page.",
     "license": "MIT",

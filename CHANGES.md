@@ -1,3 +1,16 @@
+#### 1.0.0 / 2020-11-24
+* adapted to `shortcode_atts_with_cast` snippet
+* added support for Google `reCAPTCHA`
+* added `ZucontactRecaptcha` panel to manage `reCAPTCHA Settings`
+* added `ZucontactMailer` panel to manage `Mail Server Settings`
+* added support for SMTP error processing
+* added `Debug SMTP mailer` option
+* refactoring error processing
+* __Zukit__ updated
+* improved contact form messages
+* added `zucontact` admin css
+* cleaning and bug fixing
+
 #### 0.9.9 / 2020-11-11
 * refactoring front-end JS
 * improved error message handling
