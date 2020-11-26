@@ -1,5 +1,6 @@
 // WordPress dependencies
 
+const { isFunction } = lodash;
 const { useCallback } = wp.element;
 
 // Zukit dependencies
@@ -25,8 +26,10 @@ const EditZucontact = ({
 		// noticeOperations,
 }) => {
 
+	const { options: optionsData, notify, mailer, recaptcha, tests } = zucontact;
 
-	const { options: optionsData, notify, mailer, recaptcha } = zucontact;
+	// init 'tests' if found
+	if(isFunction(tests)) tests();
 
 	const onNotifyChange = useCallback(value => {
 		updateOptions({ notify: value })

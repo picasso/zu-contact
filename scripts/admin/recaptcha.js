@@ -6,10 +6,8 @@ const { useCallback } = wp.element;
 
 // Zukit dependencies
 
+const { restoreButton } = wp.zukit.render;
 const { ZukitDivider, ZukitPanel, AdvTextControl } = wp.zukit.components;
-
-// NOTE: delete after tests
-import { recaptchaTest } from './tests.js';
 
 const ZucontactRecaptcha = ({
 		data,
@@ -26,6 +24,8 @@ const ZucontactRecaptcha = ({
 	}, [updateOptions]);
 
 	const [beforeLinks = '', afterLinks = ''] = split(data.note, '$links');
+
+	const restore = restoreButton('RestoreRecaptcha', updateOptions);
 
 	return (
 			<ZukitPanel id="recaptcha_keys" initialOpen={ false }>
@@ -62,22 +62,13 @@ const ZucontactRecaptcha = ({
 				/>
 				<ZukitDivider size={ 2 }/>
 				<div className="__flex __right">
-
-					<Button
-						isSecondary
-						className="__plugin_actions __auto magenta"
-						icon="lightbulb"
-						onClick={ () => updateOptions({ recaptcha: recaptchaTest }) }
-					>
-						{ 'Restore Settings' }
-					</Button>
-
+					{ restore }
 					<Button
 						isSecondary
 						isLarge
-						className="__plugin_actions __auto admin-blue"
+						className="__plugin_actions __auto magenta"
 						label={ data.resetAll }
-						icon="trash"
+						icon="image-rotate"
 						onClick={ () => updateOptions({ recaptcha: null }) }
 					>
 						{ data.resetAll }

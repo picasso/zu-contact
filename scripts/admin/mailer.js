@@ -6,18 +6,14 @@ const { useCallback } = wp.element;
 
 // Zukit dependencies
 
+const { restoreButton } = wp.zukit.render;
 const { ZukitDivider, ZukitPanel, AdvTextControl } = wp.zukit.components;
-
-// NOTE: delete after tests
-import { mailerTest } from './tests.js';
 
 const ZucontactMailer = ({
 		data,
 		options,
 		updateOptions,
 }) => {
-
-// Zubug.data({options});
 
 	const settings = get(options, 'mailer') || {};
 	const updateMailerOptions = useCallback(update => {
@@ -26,6 +22,8 @@ const ZucontactMailer = ({
 	}, [updateOptions]);
 
 	const [beforeLinks = '', afterLinks = ''] = split(data.note, '$links');
+
+	const restore = restoreButton('RestoreMailer', updateOptions);
 
 	return (
 			<ZukitPanel id="mailer" initialOpen={ false }>
@@ -41,7 +39,6 @@ const ZucontactMailer = ({
 					label={ data.server }
 					value={ settings.server || '' }
 					onChange={ value => updateMailerOptions({ server: value }) }
-					// onKeyDown={ onKeyDown }
 				/>
 				<AdvTextControl
 					strict="number"
@@ -85,22 +82,13 @@ const ZucontactMailer = ({
 				/>
 				<ZukitDivider size={ 2 }/>
 				<div className="__flex __right">
-
-					<Button
-						isSecondary
-						className="__plugin_actions __auto magenta"
-						icon="lightbulb"
-						onClick={ () => updateOptions({ mailer: mailerTest }) }
-					>
-						{ 'Restore Pepipost Settings' }
-					</Button>
-
+					{ restore }
 					<Button
 						isSecondary
 						isLarge
-						className="__plugin_actions __auto admin-blue"
+						className="__plugin_actions __auto magenta"
 						label={ data.resetAll }
-						icon="trash"
+						icon="image-rotate"
 						onClick={ () => updateOptions({ mailer: null }) }
 					>
 						{ data.resetAll }
