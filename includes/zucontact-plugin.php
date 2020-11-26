@@ -27,14 +27,21 @@ class zu_Contact extends zukit_Plugin {
 			'prefix'			=> 'zucontact',
 			// load 'Zukit' script & CSS
 			'zukit'				=> true,
-
+			// translations
+			'path'				=> 'lang',
+			'domain'			=> 'zu-contact',
+			// appearance
+			'colors'			=> [
+				'backdrop'			=> '#f0f2f1',
+				'header'			=> '#b1eed5',
+				'title'				=> '#016760',
+			],
 			'options'			=> [
-				'use_recaptcha' 	=>	false,
-				'client_validate'	=>	false,
-				'custom_css'		=>	true,
+				'use_recaptcha' 	=> false,
+				'custom_css'		=> true,
 				// if true - use 'Me' in subheading, otherwise 'Us'
-				'me_or_us'			=>	false,
-				'notify'			=>	'',
+				'me_or_us'			=> false,
+				'notify'			=> '',
 			],
 		];
 	}
