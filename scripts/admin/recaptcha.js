@@ -6,7 +6,7 @@ const { useCallback } = wp.element;
 
 // Zukit dependencies
 
-const { restoreButton } = wp.zukit.render;
+const { testComponentWithUpdate } = wp.zukit.render;
 const { ZukitDivider, ZukitPanel, AdvTextControl } = wp.zukit.components;
 
 const ZucontactRecaptcha = ({
@@ -25,7 +25,7 @@ const ZucontactRecaptcha = ({
 
 	const [beforeLinks = '', afterLinks = ''] = split(data.note, '$links');
 
-	const restore = restoreButton('RestoreRecaptcha', updateOptions);
+	const restore = testComponentWithUpdate('RestoreRecaptcha', updateOptions);
 
 	return (
 			<ZukitPanel id="recaptcha_keys" initialOpen={ false }>
