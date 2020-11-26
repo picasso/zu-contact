@@ -1,8 +1,6 @@
 <?php
-require_once('data.php');
-
 // Shortcode helpers ----------------------------------------------------------]
-
+//
 trait zu_ContactShortcode {
 
 	private function init_shortcode() {
@@ -49,6 +47,8 @@ trait zu_ContactShortcode {
 		$values['_subheading'] = $subheading;
 		$values['_recaptcha'] = $recaptcha;
 		if($rows !== -1) $values['_rows'] = absint($rows);
+
+		$this->update_stats($contact);
 
 		return $this->sprint_form($form, $values, $contact->errors, $message, $class);
 	}

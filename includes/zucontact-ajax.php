@@ -25,6 +25,8 @@ trait zu_ContactAjax {
 		if($contact->has_recaptcha()) $this->check_recaptcha($contact);
 	    if($contact->is_valid()) $this->send_with_notify($contact);
 
+		$this->update_stats($contact);
+		
 		wp_send_json_success($contact->as_response());
 	}
 }

@@ -51,13 +51,17 @@ class zu_Contact extends zukit_Plugin {
 	protected function extend_info() {
 		$stats = $this->stats();
 		return [
-			'forms' => empty($stats) ? null : [
+			'forms' => empty($stats['forms']) ? null : [
 				'label'		=> __('Available Forms', 'zu-contact'),
-				'value'		=> $stats['forms'] ?? 0,
+				'value'		=> $stats['forms'],
 			],
-			'comments' 	=> empty($stats) ? null : [
-				'label'		=> __('Approved Comments', 'zu-contact'),
-				'value'		=> $stats['comments'] ?? 0,
+			'comments' 	=> empty($stats['comments']) ? null : [
+				'label'		=> __('Saved Entries', 'zu-contact'),
+				'value'		=> $stats['comments'],
+			],
+			'approved' 	=> empty($stats['comments']) ? null : [
+				'label'		=> __('Approved Entries', 'zu-contact'),
+				'value'		=> $stats['approved'],
 			],
 			'ReCAPTCHA' => $this->recaptcha_info(),
 		];

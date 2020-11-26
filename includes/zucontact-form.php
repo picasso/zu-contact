@@ -1,5 +1,6 @@
 <?php
 require_once('fields.php');
+require_once('data.php');
 
 // Form helpers ---------------------------------------------------------------]
 
@@ -199,14 +200,36 @@ trait zu_ContactForm {
         return sprintf('%1$s <span>%2$s</span>', $this->success_message($name), self::$success_messages['without_notify']);
     }
 
+    private function get_used_ids() {
+        $stats = $this->get_option('stats', []);
+        return wp_parse_id_list($stats);
+    }
+
+    private function update_stats($contact) {
+        if($contact instanceof zu_ContactData) {
+            // update stats only if entry was sent
+            if(!$contact->was_sent) return;
+
+            $stats = $this->get_used_ids();
+            if(!in_array($contact->post_id, $stats)) {
+                $stats[] = $contact->post_id;
+                $this->set_option('stats', implode(',', $stats));
+            }
+		}
+    }
+
     private function stats() {
-        // NOTE: придумать как выбирать посты с формой...
-        $form_post_id = 1;
+        $stats = $this->get_used_ids();
         return [
             'forms'     => count($this->forms),
-            'comments'  => get_comments([
-                'post_id'   => $form_post_id,
-                'count'     => true   // return only the count
+            'comments'  => empty($stats) ? null : get_comments([
+                'post__in'  => $stats,
+                'count'     => true     // return only the count
+            ]),
+            'approved'  => empty($stats) ? null : get_comments([
+                'post__in'  => $stats,
+                'status'    => 1,       // 'approve' (comment_status=1)
+                'count'     => true
             ]),
         ];
     }
