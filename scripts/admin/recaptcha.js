@@ -15,8 +15,6 @@ const ZucontactRecaptcha = ({
 		updateOptions,
 }) => {
 
-// Zubug.data({options});
-
 	const settings = get(options, 'recaptcha') || {};
 	const updateRecaptchaOptions = useCallback(update => {
 		const mailerUpdate = mapKeys(update, (_, key) => `recaptcha.${key}`);

@@ -26,7 +26,21 @@ trait zu_ContactAjax {
 	    if($contact->is_valid()) $this->send_with_notify($contact);
 
 		$this->update_stats($contact);
-		
+
 		wp_send_json_success($contact->as_response());
+	}
+
+	public function ajax_more($action, $value) {
+	    if($action === 'zucontact_test_mail') return $this->send_test_email();
+	    else return null;
+	}
+
+	public function send_test_email() {
+	    $was_sent = $this->test_smtp();
+		$error = $this->get_ajax_error();
+	    return $error !== false ? $error : $this->create_notice(
+			'success',
+			__('Test mail was successfully sent.', 'zu-contact')
+		);
 	}
 }

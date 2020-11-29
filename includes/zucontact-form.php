@@ -92,10 +92,6 @@ trait zu_ContactForm {
         return array_keys(self::$error_messages);
     }
 
-	public function recipients() {
-		return $this->get_option('notify');
-	}
-
     public function sprint_form($name, $values, $errors, $message = null, $classes = '') {
 
         $form = $this->get_form($name);

@@ -3,11 +3,14 @@
 //
 trait zu_ContactMailer {
 
+	private $last_smtp_error;
+
 	private function init_mailer() {
 		$mailer = $this->get_option('mailer', null);
 		if(!empty($mailer)) {
 			add_action('phpmailer_init', [$this, 'php_mailer']);
 			add_action('wp_mail_failed', function($error) {
+				$this->last_smtp_error = $error;
 			    return $this->log_error($error, 'wp_mail_failed!');
 			});
 		}
@@ -46,7 +49,7 @@ trait zu_ContactMailer {
 	        'comment_author_url'	=> '',
 	    ]);
 
-	    // even if it is spam then log as a comment
+	    // even if it is spam, save it as a comment
 	    if(isset($comment_data['akismet_result']) && $comment_data['akismet_result'] === 'true') {
 			$comment_data['comment_approved'] = 'spam';
 			$cid = wp_insert_comment($comment_data);
@@ -77,7 +80,13 @@ trait zu_ContactMailer {
 		return get_option('admin_email');
 	}
 
-	public function mailer($contact_email, $notify_email, $content, $params) {
+	public function recipients() {
+		return $this->get_option('notify');
+	}
+
+	public function mailer($contact_email, $notify_email, $content, $params = []) {
+
+		$this->last_smtp_error = null;
 
 		$params = array_merge([
             'carbon_copy'		=> false,
@@ -89,11 +98,7 @@ trait zu_ContactMailer {
 		extract($params, EXTR_OVERWRITE);
 
 		// Notification recipients
-		$email_recipients = sanitize_text_field($notify_email);
-		$email_recipients = explode(',', $email_recipients);
-		$email_recipients = array_map('trim', $email_recipients);
-		$email_recipients = array_map('sanitize_email', $email_recipients);
-		$email_recipients = implode(',', $email_recipients);
+		$email_recipients = $this->sanitize_emails($notify_email);
 
 		// "From" email address
 		$send_from = sprintf('%1$s <%2$s>', $site_name, $this->from_email());
@@ -127,8 +132,7 @@ trait zu_ContactMailer {
 				$is_ok = $this->send_with_spam_filter($data);
 // _dbug($data->spam, $data->was_sent, $is_ok);
 				if($is_ok) {
-					$subject = __('New entry was submitted at', 'zu-contact');
-					$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
+					$content = $this->email_content();
 
 					foreach($data->attributes as $field_id => $value) {
 						$field = $data->form->get($field_id);
@@ -149,5 +153,27 @@ trait zu_ContactMailer {
 			return $data->was_sent;
 		}
 		return false;
+	}
+
+	private function sanitize_emails($emails) {
+		$emails = sanitize_text_field($emails);
+		$emails = explode(',', $emails);
+		$emails = array_map('trim', $emails);
+		$emails = array_map('sanitize_email', $emails);
+		return implode(',', $emails);
+	}
+
+	private function email_content($is_test = false) {
+		$subject = __('New entry was submitted at', 'zu-contact');
+		$content = sprintf('<p>%2$s <strong>%1$s</strong></p>', date('d.m H:i'), $subject);
+		if($is_test) $content .= '<p><strong>* * * TEST * * *</strong></p>';
+		return $content;
+	}
+
+	private function test_smtp() {
+		$content = $this->email_content(true);
+		$was_sent = $this->mailer($this->admin_email(), $this->recipients(), $content);
+		$this->ajax_error($this->last_smtp_error, 'wp_mail_failed', 'SMTP Error');
+		return $was_sent;
 	}
 }

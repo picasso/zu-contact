@@ -28,7 +28,7 @@ class zu_Contact extends zukit_Plugin {
 			// load 'Zukit' script & CSS
 			'zukit'				=> true,
 			// translations
-			'path'				=> 'lang',
+			// 'path'				=> 'lang',
 			'domain'			=> 'zu-contact',
 			// appearance
 			'colors'			=> [
@@ -78,9 +78,9 @@ class zu_Contact extends zukit_Plugin {
 	protected function extend_debug_actions() {
 		return [
 			[
-				'label'		=> __('Check Existed Terms', 'zumedia'),
-				'value'		=> 'zumedia_check_terms',
-				'icon'		=> 'warning',
+				'label'		=> __('Send Test Mail', 'zu-contact'),
+				'value'		=> 'zucontact_test_mail',
+				'icon'		=> 'email-alt',
 				'color'		=> 'gold',
 			]
 		];
@@ -118,29 +118,7 @@ class zu_Contact extends zukit_Plugin {
 	// Script enqueue ---------------------------------------------------------]
 
 	protected function js_data($is_frontend) {
-		return  $is_frontend ? $this->ajax_data() : [
-			'actions' 		=> [
-				[
-					'label'		=> __('Update Dominants', 'zumedia'),
-					'value'		=> 'zumedia_update_dominants',
-					'icon'		=> 'admin-customizer',
-					'color'		=> 'gold',
-					'help'		=> 'Dominant Colors will be updated for all existing images'
-										.' in Media Library if you press this button.',
-					// the button will be visible only if this option is 'true'
-					'depends'	=> 'dominant',
-				],
-				[
-					'label'		=> __('Clean Invalid Media', 'zumedia'),
-					'value'		=> 'zumedia_cleanup_media',
-					'icon'		=> 'trash',
-					'color'		=> 'red',
-					'help'		=> 'Removes all files which are no longer referenced to attachment.'
-										.' Not dangerous for the valid attachments... maybe.',
-					'depends'	=> false,
-				],
-			],
-		];
+		return  $is_frontend ? $this->ajax_data() : null;
 	}
 
 	protected function should_load_css($is_frontend, $hook) {
