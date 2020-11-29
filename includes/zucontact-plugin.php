@@ -28,7 +28,7 @@ class zu_Contact extends zukit_Plugin {
 			// load 'Zukit' script & CSS
 			'zukit'				=> true,
 			// translations
-			// 'path'				=> 'lang',
+			'path'				=> 'lang',
 			'domain'			=> 'zu-contact',
 			// appearance
 			'colors'			=> [
