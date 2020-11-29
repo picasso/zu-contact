@@ -1,10 +1,11 @@
+#, fuzzy
 msgid ""
 msgstr ""
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Zu Contact\n"
 "POT-Creation-Date: 2020-11-29 11:55+0100\n"
-"PO-Revision-Date: 2020-11-29 12:47+0100\n"
+"PO-Revision-Date: 2020-11-29 11:47+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -17,8 +18,6 @@ msgstr ""
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
 "esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
-"Last-Translator: \n"
-"Language: ru_RU\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.min.js\n"
 "X-Poedit-SearchPathExcluded-1: node_modules\n"
@@ -28,307 +27,299 @@ msgstr ""
 
 #: includes/forms/booking.php:11 includes/forms/default.php:11
 msgid "Name"
-msgstr "Имя"
+msgstr ""
 
 #: includes/forms/booking.php:13 includes/forms/default.php:13
 msgid "Please give your name."
-msgstr "Пожалуйста, укажите свое имя."
+msgstr ""
 
 #: includes/forms/booking.php:14 includes/forms/default.php:14
 msgid "Your Name"
-msgstr "Ваше имя"
+msgstr ""
 
 #: includes/forms/booking.php:19 includes/forms/default.php:19
 msgid "Email"
-msgstr "Эл. адрес"
+msgstr ""
 
 #: includes/forms/booking.php:21 includes/forms/default.php:21
 msgid "Please give your email address."
-msgstr "Укажите адрес своей электронной почты."
+msgstr ""
 
 #: includes/forms/booking.php:21 includes/forms/default.php:21
 msgid "Please enter a valid email address."
-msgstr "Пожалуйста, введите действительный адрес электронной почты."
+msgstr ""
 
 #: includes/forms/booking.php:22 includes/forms/default.php:22
 msgid "Your Email Address"
-msgstr "Ваш адрес электронной почты"
+msgstr ""
 
 #: includes/forms/booking.php:27
 msgid "Phone"
-msgstr "Телефон"
+msgstr ""
 
 #: includes/forms/booking.php:30
 msgid "Your Phone Number eg. +49-541-754-3010"
-msgstr "Ваш номер телефона, например +7-495-754-3010"
+msgstr ""
 
 #: includes/forms/booking.php:35
 msgid "City"
-msgstr "Город"
+msgstr ""
 
 #: includes/forms/booking.php:38
 msgid "Your City"
-msgstr "Ваш город"
+msgstr ""
 
 #: includes/forms/booking.php:43
 msgid "Places"
-msgstr "Количество мест"
+msgstr ""
 
 #: includes/forms/booking.php:45
 msgid "Please give the amount of places to book for you."
-msgstr "Пожалуйста, укажите количество мест для бронирования."
+msgstr ""
 
 #: includes/forms/booking.php:46
 msgid "How Many Places?"
-msgstr "Сколько мест?"
+msgstr ""
 
 #: includes/forms/booking.php:51 includes/forms/default.php:27
 msgid "Message"
-msgstr "Сообщение"
+msgstr ""
 
 #: includes/forms/booking.php:54 includes/forms/default.php:30
 msgid "Your Message"
-msgstr "Ваше сообщение"
+msgstr ""
 
 #: includes/forms/booking.php:59
 msgid "Book"
-msgstr "Бронировать"
+msgstr ""
 
 #: includes/forms/default.php:29
 msgid "Please give a message."
-msgstr "Пожалуйста, введите сообщение."
+msgstr ""
 
 #: includes/forms/default.php:35
 msgid "Send Message"
-msgstr "Отправить сообщение"
+msgstr ""
 
 #: includes/zucontact-ajax.php:43
 msgid "Test mail was successfully sent."
-msgstr "Тестовое письмо было успешно отправлено."
+msgstr ""
 
 #: includes/zucontact-form.php:22
 msgid "There was a problem with your submission."
-msgstr "С отправкой формы возникли проблемы."
+msgstr ""
 
 #: includes/zucontact-form.php:23
 msgid "Errors have been highlighted below."
-msgstr "Ошибки выделены ниже."
+msgstr ""
 
 #: includes/zucontact-form.php:24
 msgid "Nonce failed - is not correct or expired."
-msgstr "Проверка nonce не удалась - nonce неверен или срок его действия истек."
+msgstr ""
 
 #: includes/zucontact-form.php:25
 msgid "Form data not found."
-msgstr "Данные для формы не найдены."
+msgstr ""
 
 #: includes/zucontact-form.php:26
 msgid "Form name not found."
-msgstr "Форма с таким именем не найдена."
+msgstr ""
 
 #: includes/zucontact-form.php:27
 msgid "Failed to insert a comment into the database."
-msgstr "Не удалось добавить сообщение в базу данных."
+msgstr ""
 
 #: includes/zucontact-form.php:28
 msgid "Message content rejected due to suspected spam."
-msgstr "Содержание сообщения отклонено из-за подозрения на спам."
+msgstr ""
 
 #: includes/zucontact-form.php:33
 msgid "Your Request Has Been Sent."
-msgstr "Ваш запрос был успешно отправлен."
+msgstr ""
 
 #: includes/zucontact-form.php:34
 msgid "<b>Success!</b> Your message was sent."
-msgstr "<b>Отлично!</b> Ваше сообщение было отправлено."
+msgstr ""
 
 #: includes/zucontact-form.php:35
 msgid "Your booking request has been sent."
-msgstr "Ваш запрос на бронирование был успешно отправлен."
+msgstr ""
 
 #: includes/zucontact-form.php:37
 msgid "You Are Now subscribed to Our Newsletter."
-msgstr "Отлично! Теперь Вы подписаны на наши новости."
+msgstr ""
 
 #: includes/zucontact-form.php:38
 msgid "You Are Now subscribed to My Newsletter."
-msgstr "Отлично! Теперь Вы подписаны на мои новости."
+msgstr ""
 
 #: includes/zucontact-form.php:40
 msgid "<b>Attention!</b> No notification was sent to owner."
-msgstr "<b>Внимание!</b> Уведомление не удалось отправить владельцу."
+msgstr ""
 
 #: includes/zucontact-form.php:44
 msgid "Contact Us"
-msgstr "Свяжитесь с нами"
+msgstr ""
 
 #: includes/zucontact-form.php:45
 msgid "Write Us"
-msgstr "Напишите нам"
+msgstr ""
 
 #: includes/zucontact-form.php:46 includes/zucontact-form.php:53
 msgid "Book Your Place"
-msgstr "Забронируйте место"
+msgstr ""
 
 #: includes/zucontact-form.php:47
 msgid "Subscribe to Our Newsletter"
-msgstr "Подпишитесь на наши новости"
+msgstr ""
 
 #: includes/zucontact-form.php:51
 msgid "Contact Me"
-msgstr "Связаться со мной"
+msgstr ""
 
 #: includes/zucontact-form.php:52
 msgid "Write To Me"
-msgstr "Напишите мне"
+msgstr ""
 
 #: includes/zucontact-form.php:54
 msgid "Subscribe to My Newsletter"
-msgstr "Подпишитесь на мои новости"
+msgstr ""
 
 #: includes/zucontact-form.php:73
 msgid "Send me a copy"
-msgstr "Прислать мне копию"
+msgstr ""
 
 #: includes/zucontact-mailer.php:148
 msgid "You sent it at"
-msgstr "Вы отправили это в"
+msgstr ""
 
 #: includes/zucontact-mailer.php:167
 msgid "New entry was submitted at"
-msgstr "Новая форма была отправлена в"
+msgstr ""
 
 #: includes/zucontact-plugin.php:55
 msgid "Available Forms"
-msgstr "Доступные Формы"
+msgstr ""
 
 #: includes/zucontact-plugin.php:59
 msgid "Saved Entries"
-msgstr "Сохраненные Сообщения"
+msgstr ""
 
 #: includes/zucontact-plugin.php:63
 msgid "Approved Entries"
-msgstr "Одобренные Сообщения"
+msgstr ""
 
 #: includes/zucontact-plugin.php:73
 msgid "Debug SMTP mailer"
-msgstr "Отладка SMTP почты"
+msgstr ""
 
 #: includes/zucontact-plugin.php:81
 msgid "Send Test Mail"
-msgstr "Отправить Тестовый Mail"
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:12 scripts/admin/data.js:73
 msgid "Google reCAPTCHA"
-msgstr "Google reCAPTCHA"
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:13
 msgid "Not Activated"
-msgstr "Не активирована"
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:13
 msgid "Activated"
-msgstr "Активирована"
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:68
 msgid "Are you a robot? Please solve reCAPTCHA correctly to continue."
-msgstr "Вы робот? Пожалуйста, решите reCAPTCHA правильно чтобы продолжить."
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:69
 msgid "Verification expired. Check the checkbox again."
-msgstr "Срок действия проверки истек. Кликните на чекбокс еще раз."
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:70
 msgid "Robot verification failed, please try again."
-msgstr "Проверка на не-робота не удалась, пожалуйста, попробуйте еще раз."
+msgstr ""
 
 #: includes/zucontact-recaptcha.php:71
 msgid ""
 "Network connectivity is lost and reCAPTCHA cannot continue until "
 "connectivity is restored."
 msgstr ""
-"Сетевое соединение потеряно, и reCAPTCHA не может продолжить работу, пока "
-"соединение не будет восстановлено."
 
 #: scripts/admin/data.js:12
 msgid "Use Google reCAPTCHA?"
-msgstr "Использовать Google reCAPTCHA?"
+msgstr ""
 
 #: scripts/admin/data.js:13
 msgid "Loads Google recaptcha script if required."
-msgstr "При необходимости загружает скрипты для Google reCAPTCHA."
+msgstr ""
 
 #: scripts/admin/data.js:20
 msgid "Use plugin CSS?"
-msgstr "Использовать CSS стили плагина?"
+msgstr ""
 
 #: scripts/admin/data.js:21
 msgid "If switched off the plugin stylesheet won't be loaded."
-msgstr "Если выключено, то CSS стили плагина не будут загружены."
+msgstr ""
 
 #: scripts/admin/data.js:25
 msgid "Use \"Me\" instead of \"Us\"?"
-msgstr "Использовать “Мне” вместо \"Нам”?"
+msgstr ""
 
 #: scripts/admin/data.js:26
 msgid "If switched off - \"Us\" will be used in the form subheading."
-msgstr "Если выключено - в подзаголовке формы будет использоваться “Мы”."
+msgstr ""
 
 #: scripts/admin/data.js:33
 msgid "Notify emails"
-msgstr "Адреса для уведомлений"
+msgstr ""
 
 #: scripts/admin/data.js:34
 msgid "Enter an email to add to the list"
-msgstr "Введите email адрес, чтобы добавить в список"
+msgstr ""
 
 #: scripts/admin/data.js:35
 msgid "List of emails to be notified when a form entry occurs."
 msgstr ""
-"Список адресов электронной почты, которые должны быть уведомлены при "
-"получении сообщений/заявок."
 
 #: scripts/admin/data.js:39
 msgid "Enter SMTP server name"
-msgstr "Введите имя SMTP сервера"
+msgstr ""
 
 #: scripts/admin/data.js:40
 msgid "SSL Required"
-msgstr "Требуется SSL"
+msgstr ""
 
 #: scripts/admin/data.js:41
 msgid "When switched on - SSL encryption system will be used (TLS instead)."
 msgstr ""
-"При включении будет использоваться система шифрования SSL (в противном "
-"случае TLS)."
 
 #: scripts/admin/data.js:42
 msgid "Server port"
-msgstr "Порт сервера"
+msgstr ""
 
 #: scripts/admin/data.js:43
 msgid "Authentication Required"
-msgstr "Требуется авторизация"
+msgstr ""
 
 #: scripts/admin/data.js:44
 msgid "If authentication required you should provide Username and Password."
 msgstr ""
-"Если требуется аутентификация, вы должны задать Имя Пользователя и Пароль."
 
 #: scripts/admin/data.js:45
 msgid "Username (this is usually your email address)"
-msgstr "Имя пользователя (обычно это ваш адрес электронной почты)"
+msgstr ""
 
 #: scripts/admin/data.js:46
 msgid "Password"
-msgstr "Пароль"
+msgstr ""
 
 #: scripts/admin/data.js:47
 msgid ""
 "\"From\" email address (usually you should own the domain you are sending "
 "from)"
 msgstr ""
-"\"От\" адрес (как правило, вы должны владеть доменом с которого отправляете)"
 
 #: scripts/admin/data.js:48
 msgid ""
@@ -341,31 +332,22 @@ msgid ""
 "you are doing. To avoid possible conflicts with the plugin, I recommend to "
 "reset all SMPT server settings with \"Reset Server Settings\" button."
 msgstr ""
-"Чтобы уведомления работали, вам необходимо настроить транзакционные "
-"электронные письма в вашей копии WordPress. Обычно это делает ваш интернет-"
-"провайдер, но если уведомления не отправляются, я настоятельно рекомендую "
-"вам использовать один из плагинов, которые можно легко найти в Интернете "
-"(например, $ links). В крайнем случае вы можете настроить доступ к SMPT-"
-"серверу вручную, используя поля ниже, но вы должны точно понимать, что вы "
-"делаете. Чтобы избежать возможных конфликтов с почтовым плагином, я "
-"рекомендую сбросить все настройки SMPT-сервера (ваших экспериментов) с "
-"помощью кнопки ”Сбросить Настройки”."
 
 #: scripts/admin/data.js:49
 msgid "or"
-msgstr "или"
+msgstr ""
 
 #: scripts/admin/data.js:50
 msgid "Reset Settings"
-msgstr "Сбросить Настройки"
+msgstr ""
 
 #: scripts/admin/data.js:54
 msgid "Site key"
-msgstr "Site key (Ключ сайта)"
+msgstr ""
 
 #: scripts/admin/data.js:55
 msgid "Secret key"
-msgstr "Secret key (Секретный ключ)"
+msgstr ""
 
 #: scripts/admin/data.js:56
 msgid ""
@@ -373,58 +355,52 @@ msgid ""
 "option \"reCAPTCHA v2\" which gives an \"I’m not a robot\" Checkbox. Once "
 "you entered all needed details you will get your Site key and Secret key."
 msgstr ""
-"Для начала, вам нужно зарегистрировать свой сайт здесь: $links Выберите "
-"вариант \"reCAPTCHA v2\", который предложит вам чекбокс \"Я не робот\". "
-"После того, как вы введете все необходимые данные, вы получите Site key и "
-"Secret key."
 
 #: scripts/admin/data.js:57
 msgid "The color theme of the widget"
-msgstr "Цветовая тема виджета"
+msgstr ""
 
 #: scripts/admin/data.js:58
 msgid "The size of the widget"
-msgstr "Размер виджета"
+msgstr ""
 
 #: scripts/admin/data.js:60
 msgid "Light Theme"
-msgstr "Светлая тема"
+msgstr ""
 
 #: scripts/admin/data.js:61
 msgid "Dark Theme"
-msgstr "Темная тема"
+msgstr ""
 
 #: scripts/admin/data.js:64
 msgid "Compact Widget Size"
-msgstr "Компактный размер виджета"
+msgstr ""
 
 #: scripts/admin/data.js:65
 msgid "Normal Widget Size"
-msgstr "Нормальный размер виджета"
+msgstr ""
 
 #: scripts/admin/data.js:79
 msgid "Mail Server Settings"
-msgstr "Настройки почтового сервера"
+msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "Zu Contact"
-msgstr "Zu Контакт"
+msgstr ""
 
 #. Plugin URI of the plugin/theme
 msgid "https://github.com/picasso/zu-contact"
-msgstr "https://github.com/picasso/zu-contact"
+msgstr ""
 
 #. Description of the plugin/theme
 msgid ""
 "Simple but smart Ajax contact forms. With Gutenberg based settings page."
 msgstr ""
-"Простые, но умные формы обратной связи на Ajax. Со страницей настроек на "
-"основе Gutenberg."
 
 #. Author of the plugin/theme
 msgid "Dmitry Rudakov"
-msgstr "Дмитрий Рудаков"
+msgstr ""
 
 #. Author URI of the plugin/theme
 msgid "https://***REMOVED***.com/about/"
-msgstr "https://***REMOVED***.ru/about/"
+msgstr ""

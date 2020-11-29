@@ -1,196 +1,422 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: contact-plus\n"
-"POT-Creation-Date: 2018-05-12 12:04+0200\n"
-"PO-Revision-Date: 2018-05-12 12:45+0200\n"
-"Last-Translator: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Project-Id-Version: Zu Contact\n"
+"POT-Creation-Date: 2020-11-29 11:55+0100\n"
+"PO-Revision-Date: 2020-11-29 12:49+0100\n"
 "Language-Team: \n"
-"Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: zu-contact.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Poedit-KeywordsList: __:1,2c;_e:1,2c;_n:1,2,4c;_x:1,2,3c;_ex:1,3c;"
-"_nx:4c,1,2;esc_attr__:1,2c;esc_attr_e:1,2c;esc_attr_x:1,3c;esc_html__:1,2c;"
-"esc_html_e:1,2c;esc_html_x:1,3c;_n_noop:1,2;_nx_noop:3c,1,2;"
-"__ngettext_noop:1,2\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"Last-Translator: \n"
+"Language: en_US\n"
 "X-Poedit-SearchPath-0: .\n"
-"X-Poedit-SearchPathExcluded-0: *.js\n"
-"X-Poedit-SearchPathExcluded-1: admin\n"
-"X-Poedit-SearchPathExcluded-2: bower_components\n"
-"X-Poedit-SearchPathExcluded-3: fonts\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: node_modules\n"
+"X-Poedit-SearchPathExcluded-2: zukit\n"
+"X-Poedit-SearchPathExcluded-3: sources\n"
 "X-Poedit-SearchPathExcluded-4: images\n"
-"X-Poedit-SearchPathExcluded-5: js\n"
-"X-Poedit-SearchPathExcluded-6: node_modules\n"
-"X-Poedit-SearchPathExcluded-7: public\n"
-"X-Poedit-SearchPathExcluded-8: sass\n"
-"X-Poedit-SearchPathExcluded-9: scripts\n"
-"X-Poedit-SearchPathExcluded-10: sources\n"
-"X-Poedit-SearchPathExcluded-11: *.json\n"
-"X-Poedit-SearchPathExcluded-12: *.css\n"
 
-#: includes/cplus-contact.php:39
-msgid "Nonce failed - is not correct or expired"
-msgstr "Nonce failed - is not correct or expired."
-
-#: includes/cplus-contact.php:40
-msgid "Form data not found"
-msgstr "Form data not found."
-
-#: includes/cplus-contact.php:46
-msgid "Form name not found"
-msgstr "Form name not found."
-
-#: includes/cplus-contact.php:153
-msgid "New entry was submitted at"
-msgstr "New entry was submitted at"
-
-#: includes/cplus-contact.php:164
-msgid "You sent it at"
-msgstr "You sent it at"
-
-#: includes/cplus-form-booking.php:11 includes/cplus-form-default.php:11
+#: includes/forms/booking.php:11 includes/forms/default.php:11
 msgid "Name"
 msgstr "Name"
 
-#: includes/cplus-form-booking.php:13 includes/cplus-form-default.php:13
+#: includes/forms/booking.php:13 includes/forms/default.php:13
 msgid "Please give your name."
 msgstr "Please give your name."
 
-#: includes/cplus-form-booking.php:14 includes/cplus-form-default.php:14
+#: includes/forms/booking.php:14 includes/forms/default.php:14
 msgid "Your Name"
 msgstr "Your Name"
 
-#: includes/cplus-form-booking.php:19 includes/cplus-form-default.php:19
+#: includes/forms/booking.php:19 includes/forms/default.php:19
 msgid "Email"
 msgstr "Email"
 
-#: includes/cplus-form-booking.php:21 includes/cplus-form-default.php:21
+#: includes/forms/booking.php:21 includes/forms/default.php:21
 msgid "Please give your email address."
 msgstr "Please give your email address."
 
-#: includes/cplus-form-booking.php:21 includes/cplus-form-default.php:21
+#: includes/forms/booking.php:21 includes/forms/default.php:21
 msgid "Please enter a valid email address."
 msgstr "Please enter a valid email address."
 
-#: includes/cplus-form-booking.php:22 includes/cplus-form-default.php:22
+#: includes/forms/booking.php:22 includes/forms/default.php:22
 msgid "Your Email Address"
 msgstr "Your Email Address"
 
-#: includes/cplus-form-booking.php:27
+#: includes/forms/booking.php:27
 msgid "Phone"
 msgstr "Phone"
 
-#: includes/cplus-form-booking.php:30
+#: includes/forms/booking.php:30
 msgid "Your Phone Number eg. +49-541-754-3010"
 msgstr "Your Phone Number eg. +49-541-754-3010"
 
-#: includes/cplus-form-booking.php:35
+#: includes/forms/booking.php:35
 msgid "City"
 msgstr "City"
 
-#: includes/cplus-form-booking.php:38
+#: includes/forms/booking.php:38
 msgid "Your City"
 msgstr "Your City"
 
-#: includes/cplus-form-booking.php:43
+#: includes/forms/booking.php:43
 msgid "Places"
-msgstr "Number of Places"
+msgstr "Places"
 
-#: includes/cplus-form-booking.php:45
+#: includes/forms/booking.php:45
 msgid "Please give the amount of places to book for you."
 msgstr "Please give the amount of places to book for you."
 
-#: includes/cplus-form-booking.php:46
+#: includes/forms/booking.php:46
 msgid "How Many Places?"
 msgstr "How Many Places?"
 
-#: includes/cplus-form-booking.php:51 includes/cplus-form-default.php:27
+#: includes/forms/booking.php:51 includes/forms/default.php:27
 msgid "Message"
 msgstr "Message"
 
-#: includes/cplus-form-booking.php:54 includes/cplus-form-default.php:30
+#: includes/forms/booking.php:54 includes/forms/default.php:30
 msgid "Your Message"
 msgstr "Your Message"
 
-#: includes/cplus-form-booking.php:59
+#: includes/forms/booking.php:59
 msgid "Book"
 msgstr "Book"
 
-#: includes/cplus-form-booking.php:63
-msgid "Your Booking Request Has Been Sent"
-msgstr "Success! Your Booking Request Has Been Sent."
-
-#: includes/cplus-form-booking.php:64
-msgid "Your Request Has Been Sent"
-msgstr "Success! Your Request Has Been Sent."
-
-#: includes/cplus-form-booking.php:65
-msgid "You Are Now subscribed to Our Newsletter"
-msgstr "Success! You Are Now subscribed to Our Newsletter."
-
-#: includes/cplus-form-booking.php:66
-msgid "You Are Now subscribed to My Newsletter"
-msgstr "Success! You Are Now subscribed to My Newsletter."
-
-#: includes/cplus-form-default.php:29
+#: includes/forms/default.php:29
 msgid "Please give a message."
 msgstr "Please give a message."
 
-#: includes/cplus-form-default.php:35
+#: includes/forms/default.php:35
 msgid "Send Message"
 msgstr "Send Message"
 
-#: includes/cplus-functions.php:66
-msgid ""
-"There was a problem with your submission. Errors have been highlighted below."
-msgstr ""
-"There was a problem with your submission. Errors have been highlighted below."
+#: includes/zucontact-ajax.php:43
+msgid "Test mail was successfully sent."
+msgstr "Test mail was successfully sent."
 
-#: includes/cplus-functions.php:67
-msgid "Success! Your message was sent."
-msgstr "Success! Your message was sent."
+#: includes/zucontact-form.php:22
+msgid "There was a problem with your submission."
+msgstr "There was a problem with your submission."
 
-#: includes/cplus-loaded.php:76
-msgid "Send me a copy"
-msgstr "Send me a copy"
+#: includes/zucontact-form.php:23
+msgid "Errors have been highlighted below."
+msgstr "Errors have been highlighted below."
 
-#: includes/cplus-loaded.php:93
+#: includes/zucontact-form.php:24
+msgid "Nonce failed - is not correct or expired."
+msgstr "Nonce failed - is not correct or expired."
+
+#: includes/zucontact-form.php:25
+msgid "Form data not found."
+msgstr "Form data not found."
+
+#: includes/zucontact-form.php:26
+msgid "Form name not found."
+msgstr "Form name not found."
+
+#: includes/zucontact-form.php:27
+msgid "Failed to insert a comment into the database."
+msgstr "Failed to insert a comment into the database."
+
+#: includes/zucontact-form.php:28
+msgid "Message content rejected due to suspected spam."
+msgstr "Message content rejected due to suspected spam."
+
+#: includes/zucontact-form.php:33
+msgid "Your Request Has Been Sent."
+msgstr "Your Request Has Been Sent."
+
+#: includes/zucontact-form.php:34
+msgid "<b>Success!</b> Your message was sent."
+msgstr "<b>Success!</b> Your message was sent."
+
+#: includes/zucontact-form.php:35
+msgid "Your booking request has been sent."
+msgstr "Your booking request has been sent."
+
+#: includes/zucontact-form.php:37
+msgid "You Are Now subscribed to Our Newsletter."
+msgstr "You Are Now subscribed to Our Newsletter."
+
+#: includes/zucontact-form.php:38
+msgid "You Are Now subscribed to My Newsletter."
+msgstr "You Are Now subscribed to My Newsletter."
+
+#: includes/zucontact-form.php:40
+msgid "<b>Attention!</b> No notification was sent to owner."
+msgstr "<b>Attention!</b> No notification was sent to owner."
+
+#: includes/zucontact-form.php:44
 msgid "Contact Us"
 msgstr "Contact Us"
 
-#: includes/cplus-loaded.php:94
+#: includes/zucontact-form.php:45
 msgid "Write Us"
 msgstr "Write Us"
 
-#: includes/cplus-loaded.php:95 includes/cplus-loaded.php:102
+#: includes/zucontact-form.php:46 includes/zucontact-form.php:53
 msgid "Book Your Place"
 msgstr "Book Your Place"
 
-#: includes/cplus-loaded.php:96
+#: includes/zucontact-form.php:47
 msgid "Subscribe to Our Newsletter"
 msgstr "Subscribe to Our Newsletter"
 
-#: includes/cplus-loaded.php:100
+#: includes/zucontact-form.php:51
 msgid "Contact Me"
 msgstr "Contact Me"
 
-#: includes/cplus-loaded.php:101
+#: includes/zucontact-form.php:52
 msgid "Write To Me"
 msgstr "Write To Me"
 
-#: includes/cplus-loaded.php:103
+#: includes/zucontact-form.php:54
 msgid "Subscribe to My Newsletter"
 msgstr "Subscribe to My Newsletter"
 
-#~ msgid "Please give your phone number."
-#~ msgstr "Please give your phone number."
+#: includes/zucontact-form.php:73
+msgid "Send me a copy"
+msgstr "Send me a copy"
 
-#~ msgid "Please give the city where you live."
-#~ msgstr "Please give the city where you live."
+#: includes/zucontact-mailer.php:148
+msgid "You sent it at"
+msgstr "You sent it at"
 
-#~ msgid "Subscribe"
-#~ msgstr "Subscribe"
+#: includes/zucontact-mailer.php:167
+msgid "New entry was submitted at"
+msgstr "New entry was submitted at"
+
+#: includes/zucontact-plugin.php:55
+msgid "Available Forms"
+msgstr "Available Forms"
+
+#: includes/zucontact-plugin.php:59
+msgid "Saved Entries"
+msgstr "Saved Entries"
+
+#: includes/zucontact-plugin.php:63
+msgid "Approved Entries"
+msgstr "Approved Entries"
+
+#: includes/zucontact-plugin.php:73
+msgid "Debug SMTP mailer"
+msgstr "Debug SMTP mailer"
+
+#: includes/zucontact-plugin.php:81
+msgid "Send Test Mail"
+msgstr "Send Test Mail"
+
+#: includes/zucontact-recaptcha.php:12 scripts/admin/data.js:73
+msgid "Google reCAPTCHA"
+msgstr "Google reCAPTCHA"
+
+#: includes/zucontact-recaptcha.php:13
+msgid "Not Activated"
+msgstr "Not Activated"
+
+#: includes/zucontact-recaptcha.php:13
+msgid "Activated"
+msgstr "Activated"
+
+#: includes/zucontact-recaptcha.php:68
+msgid "Are you a robot? Please solve reCAPTCHA correctly to continue."
+msgstr "Are you a robot? Please solve reCAPTCHA correctly to continue."
+
+#: includes/zucontact-recaptcha.php:69
+msgid "Verification expired. Check the checkbox again."
+msgstr "Verification expired. Check the checkbox again."
+
+#: includes/zucontact-recaptcha.php:70
+msgid "Robot verification failed, please try again."
+msgstr "Robot verification failed, please try again."
+
+#: includes/zucontact-recaptcha.php:71
+msgid ""
+"Network connectivity is lost and reCAPTCHA cannot continue until "
+"connectivity is restored."
+msgstr ""
+"Network connectivity is lost and reCAPTCHA cannot continue until "
+"connectivity is restored."
+
+#: scripts/admin/data.js:12
+msgid "Use Google reCAPTCHA?"
+msgstr "Use Google reCAPTCHA?"
+
+#: scripts/admin/data.js:13
+msgid "Loads Google recaptcha script if required."
+msgstr "Loads Google recaptcha script if required."
+
+#: scripts/admin/data.js:20
+msgid "Use plugin CSS?"
+msgstr "Use plugin CSS?"
+
+#: scripts/admin/data.js:21
+msgid "If switched off the plugin stylesheet won't be loaded."
+msgstr "If switched off the plugin stylesheet won't be loaded."
+
+#: scripts/admin/data.js:25
+msgid "Use \"Me\" instead of \"Us\"?"
+msgstr "Use \"Me\" instead of \"Us\"?"
+
+#: scripts/admin/data.js:26
+msgid "If switched off - \"Us\" will be used in the form subheading."
+msgstr "If switched off - \"Us\" will be used in the form subheading."
+
+#: scripts/admin/data.js:33
+msgid "Notify emails"
+msgstr "Notify emails"
+
+#: scripts/admin/data.js:34
+msgid "Enter an email to add to the list"
+msgstr "Enter an email to add to the list"
+
+#: scripts/admin/data.js:35
+msgid "List of emails to be notified when a form entry occurs."
+msgstr "List of emails to be notified when a form entry occurs."
+
+#: scripts/admin/data.js:39
+msgid "Enter SMTP server name"
+msgstr "Enter SMTP server name"
+
+#: scripts/admin/data.js:40
+msgid "SSL Required"
+msgstr "SSL Required"
+
+#: scripts/admin/data.js:41
+msgid "When switched on - SSL encryption system will be used (TLS instead)."
+msgstr "When switched on - SSL encryption system will be used (TLS instead)."
+
+#: scripts/admin/data.js:42
+msgid "Server port"
+msgstr "Server port"
+
+#: scripts/admin/data.js:43
+msgid "Authentication Required"
+msgstr "Authentication Required"
+
+#: scripts/admin/data.js:44
+msgid "If authentication required you should provide Username and Password."
+msgstr "If authentication required you should provide Username and Password."
+
+#: scripts/admin/data.js:45
+msgid "Username (this is usually your email address)"
+msgstr "Username (this is usually your email address)"
+
+#: scripts/admin/data.js:46
+msgid "Password"
+msgstr "Password"
+
+#: scripts/admin/data.js:47
+msgid ""
+"\"From\" email address (usually you should own the domain you are sending "
+"from)"
+msgstr ""
+"\"From\" email address (usually you should own the domain you are sending "
+"from)"
+
+#: scripts/admin/data.js:48
+msgid ""
+"In order for the notifications to work, you need to have transactional "
+"emails configured in your copy of WordPress. This is usually done by your "
+"ISP, but if notifications are not sent, then I strongly recommend that you "
+"use one of the plugins that can be easily found on the Internet (for "
+"example, $links). As a last resort, you can configure access to the SMPT "
+"server manually using the fields below, but you must understand exactly what "
+"you are doing. To avoid possible conflicts with the plugin, I recommend to "
+"reset all SMPT server settings with \"Reset Server Settings\" button."
+msgstr ""
+"In order for the notifications to work, you need to have transactional "
+"emails configured in your copy of WordPress. This is usually done by your "
+"ISP, but if notifications are not sent, then I strongly recommend that you "
+"use one of the plugins that can be easily found on the Internet (for "
+"example, $links). As a last resort, you can configure access to the SMPT "
+"server manually using the fields below, but you must understand exactly what "
+"you are doing. To avoid possible conflicts with the plugin, I recommend to "
+"reset all SMPT server settings with \"Reset Server Settings\" button."
+
+#: scripts/admin/data.js:49
+msgid "or"
+msgstr "or"
+
+#: scripts/admin/data.js:50
+msgid "Reset Settings"
+msgstr "Reset Settings"
+
+#: scripts/admin/data.js:54
+msgid "Site key"
+msgstr "Site key"
+
+#: scripts/admin/data.js:55
+msgid "Secret key"
+msgstr "Secret key"
+
+#: scripts/admin/data.js:56
+msgid ""
+"For getting started, you need to register your site here: $links Choose the "
+"option \"reCAPTCHA v2\" which gives an \"I’m not a robot\" Checkbox. Once "
+"you entered all needed details you will get your Site key and Secret key."
+msgstr ""
+"For getting started, you need to register your site here: $links Choose the "
+"option \"reCAPTCHA v2\" which gives an \"I’m not a robot\" Checkbox. Once "
+"you entered all needed details you will get your Site key and Secret key."
+
+#: scripts/admin/data.js:57
+msgid "The color theme of the widget"
+msgstr "The color theme of the widget"
+
+#: scripts/admin/data.js:58
+msgid "The size of the widget"
+msgstr "The size of the widget"
+
+#: scripts/admin/data.js:60
+msgid "Light Theme"
+msgstr "Light Theme"
+
+#: scripts/admin/data.js:61
+msgid "Dark Theme"
+msgstr "Dark Theme"
+
+#: scripts/admin/data.js:64
+msgid "Compact Widget Size"
+msgstr "Compact Widget Size"
+
+#: scripts/admin/data.js:65
+msgid "Normal Widget Size"
+msgstr "Normal Widget Size"
+
+#: scripts/admin/data.js:79
+msgid "Mail Server Settings"
+msgstr "Mail Server Settings"
+
+#. Plugin Name of the plugin/theme
+msgid "Zu Contact"
+msgstr "Zu Contact"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/picasso/zu-contact"
+msgstr "https://github.com/picasso/zu-contact"
+
+#. Description of the plugin/theme
+msgid ""
+"Simple but smart Ajax contact forms. With Gutenberg based settings page."
+msgstr ""
+"Simple but smart Ajax contact forms. With Gutenberg based settings page."
+
+#. Author of the plugin/theme
+msgid "Dmitry Rudakov"
+msgstr "Dmitry Rudakov"
+
+#. Author URI of the plugin/theme
+msgid "https://***REMOVED***.com/about/"
+msgstr "https://***REMOVED***.com/about/"
