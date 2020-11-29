@@ -3,32 +3,32 @@
 
 Simple but smart Ajax contact forms. With Gutenberg based settings page.
 
-![Zu Contact, a simple but smart Ajax contact forms.](https://user-images.githubusercontent.com/399395/100541246-b6246180-3242-11eb-9a5f-3d9d16a68f72.png)
+[![Zu Contact, a simple but smart Ajax contact forms.](https://user-images.githubusercontent.com/399395/100541246-b6246180-3242-11eb-9a5f-3d9d16a68f72.png)](https://github.com/picasso/zu-contact/)
 
 > &#x2757; Plugin not yet fully tested on different versions of WordPress and PHP.
 
 ## Description
 
-Unfortunately WordPress does not come with built-in functionality for a simple contact form. Although, there are a bunch of plugins that allow you to create various forms of any configuration and complexity. But for me the problem with all these plugins is that they are too huge and functional. When the site needs only one simple (but convenient) feedback form, then a multifunctional monster is too much for me. That's why I wrote this plugin. And then, when Gutenberg appeared, I decided to rewrite the settings page using React components ... it turned out very conveniently.
+Unfortunately WordPress does not come with built-in functionality for a simple contact form. Although, there are a bunch of plugins that allow you to create various forms of any configuration and complexity. But for me the problem with all these plugins is that they are too huge and functional. When the site needs only one simple (but convenient) feedback form, then a multifunctional monster is too much for me. That's why I wrote this plugin. And then, when Gutenberg appeared, I decided to rewrite the settings page using React components... it turned out very conveniently.
 
 > &#x1F383; Of course, all that plugin has is its lightweight size and simple settings. No unnecessary flexibility and functionality. The simple must remain simple.
 
-The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload ... __but why do you need it?__*). To a certain extent, you can personalize the form and its fields. The form is added to the page using the shortcode `[zu-contact]` or `[zu-booking]`.
+The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload... but why do you need it?*). To a certain extent, you can personalize the form and its fields. The form is added to the page using the shortcode `[zu-contact]` or `[zu-booking]`.
 
 > &#x23F0; In the near future, I plan to finish Gutenberg Custom Block and then the possibilities for personalizing the form will increase significantly.
 
 ### Features
 
-* Lightweight `JS script` & CSS
+* Lightweight `JS script` & `CSS`
 * Adding a contact form to any post or page using a shortcode
 * Form submission via AJAX (*configurable by settings*)
 * Data validation on the server
 * Support for required fields
 * Responsive layout
-* Receive submissions to default admin or custom email addresses
+* Notification of submissions to default admin or custom email addresses
 * Send a `carbon copy` of the submitted message (*configurable by settings*)
 * Basic `SMTP` (*Simple Mail Transfer Protocol*) configuration
-* Protect contact form spam with Google `reCAPTCHA` (*configurable by settings*)
+* Protect submissions from spam with Google `reCAPTCHA` (*configurable by settings*)
 * Automatically checks all submissions against global database of spam (with [Akismet](https://wordpress.org/plugins/akismet/))
 * Save messages to the database as comments to a post or page
 * Compatible with the latest version of WordPress
@@ -46,9 +46,8 @@ You can also personalize the form by adding attributes to the shortcode:
 * __rows__ - Change rows amount in textarea: `rows=12`
 * __message__ - Set predefined form message: `message="Thanks for your hard work!"`
 
-```diff
-+ Examples:
-```
+> &#x2668; Examples
+
 * With custom subheading and without reCAPTCHA:
 
 `[zu-contact subheading="My Contact Form" recaptcha=false]`
@@ -83,9 +82,9 @@ You can also personalize the form by adding attributes to the shortcode:
 
 ## Extensions
 
-В принципе, добавление новых форм не предполагается для пользователя. The simple must remain simple. Но существует возможность создавать новые формы с помощью PHP. Нужно просто добавить небольшой код в файл `functions.php` вашей темы или любой другой `php` файл, который будет вызван при загрузке (вы должны немного понимать как работает WordPress).
+Basically, adding new forms is not intended for the user. The simple must remain simple. But it is possible to create new forms using PHP. You just need to add a little code to your theme's `functions.php` file or any other `php` file that will be called on loading (you need to understand a little about how WordPress works).
 
-Для начала требуется создать объект класса `zu_ContactFields` и задать имя формы и возможно некоторые другие параметры. Затем добавить необходимые поля и, наконец, зарегистрировать форму. После этого можно использовать имя новой формы в shortcode:
+First, you need to create an object of the `zu_ContactFields` class and set the form `name` and possibly some other parameters. Then add the required fields and finally register the form. After that, you can use the name of the new form in the shortcode:
 
 ```php
 // check if plugin is activated
@@ -183,7 +182,7 @@ if(function_exists('zucontact')) {
 
 ```
 
-Использовать новую форму в shortcode довольно просто:
+Using the new form in `shortcode` is pretty simple:
 
 `[zu-contact form="my-form"]`
 
