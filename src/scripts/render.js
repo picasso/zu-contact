@@ -90,11 +90,19 @@ export function selectOption(value, option, updateOptions) {
 						className="__reset"
 						onClick={ () => updateOptions({ [id]: defaultValue }) }
 					>
-						{ __('Reset') }
+						{ __('Reset', 'zukit') }
 					</Button>
 				</div>
 				<p className="components-base-control__help">{ help }</p>
 			</div>
 		</>
+	);
+}
+
+export function testComponentWithUpdate(component, updateOptions) {
+
+	const TestComponent = get(wp, `zukit.components.${component}`);
+	return !TestComponent ? null : (
+		<TestComponent updateOptions={ updateOptions }/>
 	);
 }
