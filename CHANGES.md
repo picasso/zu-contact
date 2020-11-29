@@ -1,3 +1,12 @@
+#### 1.0.2 / 2020-11-29
+* implemented `Test Mail` action
+* refactoring `stats`
+* refactoring test data usage
+* added translations and appearance
+* added plugin banner and screenshots
+* added README
+* bug fixing and css improvements
+
 #### 1.0.0 / 2020-11-24
 * adapted to `shortcode_atts_with_cast` snippet
 * added support for Google `reCAPTCHA`
