@@ -16,7 +16,7 @@ trait zukit_Admin {
 
 		$defaults = [
 			'hook' 			=>	'options-general.php',
-			'title' 		=>	sprintf('%2$s %1$s', __('Options', 'zu-plugin'), $this->data['Name'] ?? 'unknown'),
+			'title' 		=>	sprintf('%2$s %1$s', __('Options', 'zukit'), $this->data['Name'] ?? 'unknown'),
 			'menu' 			=>	$this->data['Name'] ?? 'unknown',
 			'permissions' 	=>	'manage_options',
 			'slug' 			=>	$this->prefix.'-settings',
@@ -85,6 +85,7 @@ trait zukit_Admin {
 			'link'			=> preg_replace('/.*href="([^\"]+).*/ims', '$1', $this->data['Author']),
 			'description'	=> preg_replace('/<cite>.+<\/cite>/i', '', $this->data['Description']),
 			'icon'			=> $this->config['icon'],
+			'colors'		=> $this->config['colors'],
 			'more' 			=> $this->extend_info(),
 		];
 	}
@@ -133,7 +134,7 @@ trait zukit_Admin {
 			get_admin_url(),
 			$this->ops['hook'],
 			$this->admin_slug(),
-			__('Settings', 'textdomain')
+			__('Settings', 'zukit')
 		);
 		array_unshift($links, $settings_link);
 		return $links;

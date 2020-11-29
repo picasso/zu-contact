@@ -35,8 +35,10 @@ const ZukitSkeleton = ({
 	const { createNotice } = noticeOperations;
 	const [moreInfo, setMoreInfo] = useState(info.more || {});
 	const [loading, setLoading] = useState(
-		// create object {action_value: state}
-		reduce(actions, (acc, val) => (acc[val.value] = false, acc), {})
+		// create object {action_value: state} from 'actions'
+		reduce(actions, (acc, val) => (acc[val.value] = false, acc),
+			// from 'debug.actions'
+			reduce(debug.actions, (acc, val) => (acc[val.value] = false, acc), {}))
 	);
 
 	const updateLoading = useCallback(update => {
@@ -76,7 +78,7 @@ const ZukitSkeleton = ({
 				<EditComponent
 					id={ id }
 					info={ info }
-					title={ `${info.title} ${__('Settings')}` }
+					title={ `${info.title} ${__('Settings', 'zukit')}` }
 					options={ options }
 					updateOptions={ updateOptions }
 					ajaxAction={ ajaxAction }
@@ -94,6 +96,11 @@ const ZukitSkeleton = ({
 		/>
 	);
 
+	// custom appearance
+	const backdropColor = get(info, 'colors.backdrop');
+	const headerColor = get(info, 'colors.header');
+	const titleColor = get(info, 'colors.title');
+
 	return (
 		<div className={ `${cprefix} edit-post-layout is-mode-visual is-sidebar-opened block-editor-editor-skeleton` }>
 			<div className="block-editor-editor-skeleton__body">
@@ -102,6 +109,7 @@ const ZukitSkeleton = ({
 					role="region"
 					aria-label="Settings content"
 					tabIndex="-1"
+					style={ backdropColor && { backgroundColor: backdropColor } }
 				>
 					<div className="components-editor-notices__dismissible">
 						{ noticeUI }
@@ -109,9 +117,13 @@ const ZukitSkeleton = ({
 					<div className="edit-post-visual-editor editor-styles-wrapper" tabIndex="-1">
 						<div className="block-editor-block-list__layout">
 							<div className="wp-block block-editor-block-list__block">
-								<div className="editor-post-title">
+								<div className="editor-post-title" style={ headerColor && { backgroundColor: headerColor } }>
 									<div className="wp-block editor-post-title__block">
-										<h1>{ info.title }</h1>
+										<h1
+											style={ titleColor && { color: titleColor } }
+										>
+											{ info.title }
+										</h1>
 										{ pluginIcon }
 									</div>
 								</div>
