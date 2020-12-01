@@ -5,8 +5,6 @@ Simple but smart Ajax contact forms. With Gutenberg based settings page.
 
 [![Zu Contact, a simple but smart Ajax contact forms.](https://user-images.githubusercontent.com/399395/100541246-b6246180-3242-11eb-9a5f-3d9d16a68f72.png)](https://github.com/picasso/zu-contact/)
 
-> &#x2757; Plugin not yet fully tested on different versions of WordPress and PHP.
-
 ## Description
 
 Unfortunately WordPress does not come with built-in functionality for a simple contact form. Although, there are a bunch of plugins that allow you to create various forms of any configuration and complexity. But for me the problem with all these plugins is that they are too huge and functional. When the site needs only one simple (but convenient) feedback form, then a multifunctional monster is too much for me. That's why I wrote this plugin. And then, when Gutenberg appeared, I decided to rewrite the settings page using React components... it turned out very conveniently.

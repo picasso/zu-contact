@@ -1,3 +1,7 @@
+#### 1.0.4 / 2020-12-01
+* implemented compatibility check (for PHP and WordPress)
+* improved archive ignore options
+
 #### 1.0.2 / 2020-11-29
 * implemented `Test Mail` action
 * refactoring `stats`
