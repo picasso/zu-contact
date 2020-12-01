@@ -18,5 +18,6 @@ zukit/package.json export-ignore
 zukit/package-lock.json export-ignore
 zukit/*.md export-ignore
 zukit/*.sh export-ignore
+zukit/*.pot export-ignore
 zukit/.* export-ignore
 zukit/translate-2-json.js export-ignore
