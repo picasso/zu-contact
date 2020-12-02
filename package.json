@@ -1,17 +1,20 @@
 {
-    "name": "zucontact",
+    "name": "Zu Contact",
     "version": "1.0.4",
     "author": "Dmitry Rudakov",
     "description": "Simple but smart Ajax contact forms. With Gutenberg based settings page.",
-    "license": "MIT",
+    "license": "GPL-2.0-or-later",
     "repository": {
         "type": "git",
         "url": "https://github.com/picasso/zu-contact.git"
     },
     "keywords": [
-        "wordpress",
+        "wordpress plugin",
+        "contact",
         "contact form",
-        "plugin",
+        "feedback",
+        "feedback form",
+        "email",
         "gutenberg",
         "ajax"
     ],

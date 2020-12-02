@@ -68,7 +68,7 @@ You can also personalize the form by adding attributes to the shortcode:
 
 ## Installation
 
-> &#x2757; Plugin only works under __WordPress 5.+__ and __PHP 7.+__
+> &#x2757; Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 
 1. Upload the `zu-contact` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin using the `Plugins` menu in your WordPress admin panel.
