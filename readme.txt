@@ -57,7 +57,7 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 
 1. Upload the `zu-contact` folder to your `/wp-content/plugins/` directory.
 2. Activate the plugin using the `Plugins` menu in your WordPress admin panel.
-3. You can adjust the necessary settings using your WordPress admin panel in "Zu Contact" settings.
+3. You can adjust the necessary settings using your WordPress admin panel in "Settings > Zu Contact".
 4. Create a page or a post and insert the shortcode `[zu-contact]` or `[zu-booking]` into the text.
 
 == Screenshots ==

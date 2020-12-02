@@ -72,7 +72,7 @@ You can also personalize the form by adding attributes to the shortcode:
 
 1. Upload the `zu-contact` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin using the `Plugins` menu in your WordPress admin panel.
-3. You can adjust the necessary settings using your WordPress admin panel in "Zu Contact Settings".
+3. You can adjust the necessary settings using your WordPress admin panel in "Settings > Zu Contact".
 4. Create a page or a post and insert the shortcode `[zu-contact]` or `[zu-booking]` into the text.
 
 <!-- 1. You'll need to install the [Gutenberg](https://wordpress.org/plugins/gutenberg/) plugin if you are not running WordPress 5.0+
