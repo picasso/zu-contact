@@ -26,7 +26,7 @@ const ZucontactRecaptcha = ({
 	const restore = testComponentWithUpdate('RestoreRecaptcha', updateOptions);
 
 	return (
-			<ZukitPanel id="recaptcha_keys" initialOpen={ false }>
+			<ZukitPanel id="recaptcha_keys" options={ options } initialOpen={ false }>
 				<div className="__note">
 					{ beforeLinks }
 					<ExternalLink href=" https://www.google.com/recaptcha/admin/">Google reCAPTCHA</ExternalLink><br/>
