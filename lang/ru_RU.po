@@ -4,7 +4,7 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
 "Project-Id-Version: Zu Contact\n"
 "POT-Creation-Date: 2020-11-29 11:55+0100\n"
-"PO-Revision-Date: 2020-11-29 18:24+0100\n"
+"PO-Revision-Date: 2020-12-06 11:33+0100\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -156,7 +156,7 @@ msgstr "Отлично! Теперь Вы подписаны на мои нов�
 
 #: includes/zucontact-form.php:40
 msgid "<b>Attention!</b> No notification was sent to owner."
-msgstr "<b>Внимание!</b> Уведомление не удалось отправить владельцу."
+msgstr "<b>Внимание!</b> Не удалось отправить уведомление владельцу."
 
 #: includes/zucontact-form.php:44
 msgid "Contact Us"

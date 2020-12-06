@@ -15,13 +15,13 @@ trait zu_ContactAjax {
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
+			'locale'	=> get_locale(),
 		];
 	}
 
 	public function ajax_submit() {
 
 	    $contact = new zu_ContactData;
-
 		if($contact->has_recaptcha()) $this->check_recaptcha($contact);
 	    if($contact->is_valid()) $this->send_with_notify($contact);
 

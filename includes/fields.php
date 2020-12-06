@@ -201,7 +201,7 @@ class zu_ContactFields {
 		$msg_class = isset($errors[$id]) ? 'error' : 'success';
 		$error_text = isset($errors[$id]) ? $errors[$id] : '';
 
-		$label = sprintf(
+		$label = zu_sprintf(
 			'<label for="%4$s-%1$s">
 				%2$s%3$s
 			</label>',
