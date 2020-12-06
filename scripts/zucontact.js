@@ -8,6 +8,7 @@
 
 	var Ds_container = `.${Cs_prefix}-container`;
 	var Ds_subheading = `.${Cs_prefix}-subheading`;
+	var Ds_loader = `.${Cs_prefix}-loader`;
 	var Ds_status = `.${Cs_prefix}-status`;
 	var Ds_control= `.${Cs_prefix}-control`
 	var Ds_submit = `#${Cs_prefix}-submit`;
@@ -15,6 +16,8 @@
 	var Fn_verified = `${Cs_prefix}_verified`;
 	var Fn_expired = `${Cs_prefix}_expired`;
 	var Fn_network = `${Cs_prefix}_network`;
+
+	var MessageSplitWidth = 960;
 	// set 0 for production
 	var debugDelay = 0;
 
@@ -23,6 +26,7 @@
 		// Cache selectors
 		var $body = $('body'),
 		$container = $(Ds_container),
+		$loader = $(Ds_loader),
 		$subheading = $container.find(Ds_subheading),
 		$status = $container.find(Ds_status),
 		$form = $container.find('form'),
@@ -33,6 +37,8 @@
 			invalid: '',
 			expired: '',
 		}
+
+		var AdminBarHeight = $('#wpadminbar').height() || 0;
 
 		if($container.length) {
 			// add classes which could be used in others elements
@@ -61,7 +67,10 @@
 		}
 
 		function removePrevErrors() {
-			$form.find(`.${Cs_prefix}-control.error`).removeClass('error');
+			$form.find(`.${Cs_prefix}-control.error`)
+				.removeClass('error')
+				.find('.validation')
+				.html('');
 		}
 
 		function processMessage(errors, message) {
@@ -76,7 +85,10 @@
 			errMessage = errMessage ? `<span>${errMessage}</span>` : null;
 
 			if(errMessage) message = message.replace(/<b>[^<]+/g, `<b>${errMessage}`);
+			if($status.outerWidth() < MessageSplitWidth) message = message.replace(/\./, '.<br/>');
 			$message.html(message);
+
+			maybeScrollTop();
 			if(errors.recaptcha && errors.recaptcha.length) {
 				markReCaptcha(true);
 				resetReCaptcha();
@@ -97,13 +109,7 @@
 			switchHeading(false, !data.is_valid, data.is_valid === true);
 			removePrevErrors();
 
-			if(data.is_valid === true) {
-				// if(isScrolledIntoView($div) === false) {
-				// 	$('html,body').animate({
-				// 		scrollTop: $($div.selector).offset().top
-				// 	}, 'slow');
-				// }
-			} else {
+			if(data.is_valid !== true) {
 				$.each(errors, function(name, value) {
 					var $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`);
 					if($validated.length) {
@@ -112,13 +118,33 @@
 					}
 				});
 			}
+
 			// we need to delay the form animation until the errors animation completes
 			setTimeout(function() { ajaxLoading(false); }, 300);
+		}
+
+		function maybeScrollTop() {
+			var fixedHeaderHeight = $('.site-header.fixed').height() || 0;
+			var docViewTop = $(window).scrollTop() + AdminBarHeight + fixedHeaderHeight,
+				docViewBottom = docViewTop + $(window).height() - AdminBarHeight - fixedHeaderHeight,
+				formTop = $container.offset().top,
+				formBottom = formTop + $container.height();
+
+			if(formBottom > docViewBottom || formTop < docViewTop) {
+				var shift = docViewTop - (docViewTop - formTop) - (AdminBarHeight * 2) - fixedHeaderHeight;
+				$('html,body').animate({
+					scrollTop: shift > 0 ? shift : 0
+				}, 'slow');
+			}
 		}
 
 		function ajaxLoading(initiated) {
 			if(initiated) {
 				$button.attr('disabled', 'disabled');
+				// put loader to center
+				var topCss = ($status.outerHeight() - $loader.outerHeight())/2;
+				var leftCss = ($status.outerWidth() - $loader.outerWidth())/2;
+				$loader.css({ top: topCss, left: leftCss });
 			} else {
 				$button.removeAttr('disabled');
 			}
@@ -222,26 +248,4 @@
 
 	}); // end of $(document).ready
 
-
-	// function isScrolledIntoView(elem) {
-	// 	var docViewTop = $(window).scrollTop();
-	// 	var docViewBottom = docViewTop + $(window).height();
-	//
-	// 	var elemTop = $(elem).offset().top;
-	// 	var elemBottom = elemTop + $(elem).height();
-	//
-	// 	return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
-	// }
-
 })(jQuery);
-// var parent_offset = $container.parent().offset().top;
-// var 	cplus_container_margin = Math.floor($container.offset().top - parent_offset),
-// 		cplus_status_margin = Math.floor($status.offset().top - parent_offset),
-// 		cplus_form_margin = Math.floor($form.offset().top - parent_offset);
-//
-// $(`<style type="text/css">
-// 	cplus-container-margin{margin-top:'+cplus_container_margin+'px !important;}
-// 	.cplus-subheading-margin{margin-top:'+cplus_status_margin+'px !important;}
-// 	.cplus-form-margin{margin-top:'+cplus_form_margin+'px !important;} ' +
-// 	</style>`).appendTo('body');
-// if($subheading.length) $subheading.css({top: cplus_status_margin-cplus_container_margin});
