@@ -15,7 +15,7 @@ trait zu_ContactForm {
     private static $subheading_me = null;
     private static $subheading_form = null;
 
-    private function setup_messages() {
+    private function init_messages() {
         if(empty(self::$error_messages)) {
 
             self::$error_messages = [
@@ -128,9 +128,17 @@ trait zu_ContactForm {
                 ]),
                 $was_error ? ' was-error' : ($was_sent ? ' sent' : ''),
                 $this->message($errors, $name, $was_notified),
-                $this->snippets('loader', 0, 0.8),
-                $values['icon_ok'] ?? (function_exists('zu_get_icon_contacts') ? zu_get_icon_contacts() : ''),
-                $values['icon_cancel'] ?? (function_exists('zu_get_icon_cancel') ? zu_get_icon_cancel() : ''),
+                $this->snippets('loader', 0, 0.8, $css_prefix.'-loader'),
+                $this->snippets('insert_svg_from_file', $this->dir, 'mail', [
+    	            'preserve_ratio'	=> true,
+    	            'strip_xml'			=> true,
+    	            'subdir'			=> 'images/',
+    			]),
+                $this->snippets('insert_svg_from_file', $this->dir, 'flag', [
+    	            'preserve_ratio'	=> true,
+    	            'strip_xml'			=> true,
+    	            'subdir'			=> 'images/',
+    			]),
                 $subheading,
                 $this->error_message($errors),
                 $css_prefix,
