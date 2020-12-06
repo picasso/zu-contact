@@ -1,3 +1,11 @@
+#### 1.0.5 / 2020-12-06
+* refactoring CSS to support different themes
+* added `scroll in view` functionality
+* used SVG files for icons
+* added skip for `heartbeat` and `cron`
+* some changes for wordpress.org
+* small improvements
+
 #### 1.0.4 / 2020-12-01
 * implemented compatibility check (for PHP and WordPress)
 * improved archive ignore options

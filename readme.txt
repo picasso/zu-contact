@@ -2,8 +2,8 @@
 Contributors: ***REMOVED***
 Tags: contact, contact form, feedback, feedback form, email, gutenberg, ajax
 Requires at least: 5.1
-Tested up to: 5.4
-Stable tag: 1.0.4
+Tested up to: 5.5.3
+Stable tag: 1.0.5
 License: GPLv2 or later
 Requires PHP: 7.0
 
@@ -68,6 +68,14 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 4. Booking Form displaying
 
 == Changelog ==
+
+### 1.0.5 ###
+* refactoring CSS to support different themes
+* added `scroll in view` functionality
+* used SVG files for icons
+* added skip for `heartbeat` and `cron`
+* some changes for wordpress.org
+* small improvements
 
 ### 1.0.4 ###
 * implemented compatibility check (for PHP and WordPress)
