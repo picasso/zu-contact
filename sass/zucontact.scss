@@ -2,8 +2,12 @@
 
 $zuc-class-prefix: 'zuc';
 
+$zuc-smaller-font-size: 16px !default; //.875em
+$zuc-small-font-size: 15px !default;
+
+$zuc-letter-spacing: 0.8px;
 $zuc-placeholder-color: rgba(black, 0.5) !default;
-$zuc-placeholder-font-size: .875em !default;
+$zuc-placeholder-font-size: $zuc-small-font-size !default;
 
 $zuc-ok-color: #8fcc8f !default; // #66cc52
 $zuc-error-color: #ff5533 !default;
@@ -11,7 +15,7 @@ $zuc-warning-color: #fcbf00 !default;
 $zuc-error-border-color: #ff5533 !default;
 $zuc-required-color: #ff8066 !default;
 $zuc-required-color-pass: $zuc-ok-color !default;
-$status-background-color: rgba(black, 0.1) !default;
+$status-background-color: rgba(black, 0.8) !default;
 
 $zuc-loader-size: 40px !default;
 $zuc-loader-color: $zuc-error-color !default;
@@ -24,13 +28,16 @@ $zuc-input-text-font-weight: 400 !default;
 $zuc-input-color: #ffffeb !default; 					//#ffffe0 - #fffffa
 $zuc-input-focus-color: white !default;
 $zuc-input-border-color: white !default;
-$zuc-input-focus-border-color: #ffff61 !default;
+
+$zuc-input-focus-border-color: rgba(black, 0.3) !default;
+$zuc-input-focus-shadow-color: rgba(black, 0.2) !default;
 $zuc-input-focus-color-size: 5px !default;
 $zuc-input-padding: 0.6em !default;
 $zuc-input-border-radius: 2px !default;
 
 $zuc-label-color: inherit !default;
-$zuc-label-font-weight: 600 !default;
+$zuc-label-font-weight: 500 !default;
+$zuc-label-font-size: $zuc-smaller-font-size !default;
 
 $zuc-button-color: #cb4e4e !default;
 $zuc-button-focus-color: white !default;
@@ -38,23 +45,49 @@ $zuc-button-font-weight: 500 !default;
 $zuc-button-border-radius: 3px !default;
 $zuc-button-width: 200px !default;
 
+// TwentyTwenty modifications -------------------------------------------------]
+
+$twentytwenty-text-color: rgba(#222, 0.7) !default;
+
+// Zu Theme modifications -----------------------------------------------------]
+
+$zu-status-background-color: rgba(black, 0.2) !default;
+
+$zu-input-focus-color-size: 3px !default;
+$zu-input-focus-shadow-color: #ffff61 !default;
+$zu-input-focus-border-color: darken($zu-input-focus-shadow-color, 50) !default;
+
+// Transitions ----------------------------------------------------------------]
+
+$zuc-transition-time: .3s !default;
+$zuc-transition-short-time: .2s !default;
+$zuc-transition-medium-time: .5s !default;
+$zuc-transition-function: ease-in-out !default;
+$zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
+
 @mixin placeholder {
 	color: $zuc-placeholder-color;
 	font-size: $zuc-placeholder-font-size;
-	letter-spacing: .5pt;
+	letter-spacing: $zuc-letter-spacing;
 	opacity: 1;
-	transition: opacity 0.3s ease-in-out;
+	transition: opacity $zuc-transition-time $zuc-transition-function;
+}
+
+%smaller {
+    font-size: $zuc-smaller-font-size;
+    line-height: 1.2;
+    letter-spacing: $zuc-letter-spacing;
 }
 
 %small {
-    font-size: .875em;
-    line-height: 1.2;
-    letter-spacing: .5pt;
+    font-size: $zuc-small-font-size;
+    line-height: 1;
+    letter-spacing: 1px;
 }
 
 %not_valid {
-	border: 1px solid rgba($zuc-error-border-color, 0.5);
-	box-shadow: 0 0 $zuc-input-focus-color-size $zuc-error-border-color;
+	border: 1px solid rgba($zuc-error-border-color, 0.8);
+	box-shadow: 0 0 $zuc-input-focus-color-size rgba($zuc-error-border-color, 0.5);
 }
 
 %disabled {
@@ -63,10 +96,14 @@ $zuc-button-width: 200px !default;
 	border-color: rgba(black, 0.5);
 }
 
+%sans_font {
+	.is-twentytwenty & {
+		font-family: "Inter var", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+	}
+}
+
 .#{$zuc-class-prefix}-container {
 
-    margin: 16px 0;
-    max-width: 100%;
     position: relative;
 
 	::placeholder { @include placeholder; }
@@ -75,9 +112,10 @@ $zuc-button-width: 200px !default;
 	}
 
 	.#{$zuc-class-prefix}-loader {
-		float: right;
-		clear: both;
-		transition: opacity 0.3s ease-in-out;
+		position: absolute;
+		left: 0;
+		top: 0;
+		transition: opacity $zuc-transition-time $zuc-transition-function;
 		opacity: 0;
 		.ajaxed & {
 			opacity: 1;
@@ -96,12 +134,15 @@ $zuc-button-width: 200px !default;
 		position: absolute;
 		top: 0;
 		left: 0;
-		transition: opacity 0.2s ease-in-out;
+		transition: opacity $zuc-transition-short-time $zuc-transition-function;
 		opacity: 0;
 		margin-top: 0 !important;
 		padding-top: 0 !important;
 		&.before_posting {
 			opacity: 1;
+		}
+		.ajaxed & {
+			opacity: 0 !important;
 		}
 	}
 
@@ -109,6 +150,7 @@ $zuc-button-width: 200px !default;
 		margin-top: $zuc-field-top-margin * 2;
 		.#{$zuc-class-prefix}-input {
 			margin-top: $zuc-field-top-margin;
+			@extend %sans_font;
 		}
 	}
 
@@ -118,11 +160,14 @@ $zuc-button-width: 200px !default;
 		align-items: center;
 		justify-content: flex-start;
 	    padding: 10px;
-	    background-color: $status-background-color;
 	    border-radius: $zuc-input-border-radius + 1;
-		@extend %small;
-		transition: opacity 0.5s ease-in-out;
+		@extend %sans_font;
+		transition: opacity $zuc-transition-medium-time $zuc-transition-function;
 		opacity: 0;
+		background-color: $status-background-color;
+		.is-zu & {
+			background-color: $zu-status-background-color;
+		}
 		.ajaxed & {
 			opacity: 0 !important;
 		}
@@ -147,6 +192,7 @@ $zuc-button-width: 200px !default;
 			}
 		}
 		span {
+			@extend %smaller;
 			&.icon-ok, &.icon-error {
 				line-height: 0;
 				visibility: hidden;
@@ -155,11 +201,15 @@ $zuc-button-width: 200px !default;
 				color: $zuc-warning-color;
 				padding-left: 1em;
 			}
+			br + span, br + b span {
+				padding-left: 0;
+			}
 		}
 		svg {
 			width: 30px;
 			height: auto;
 			margin-right: $zuc-field-left-margin * 2;
+			fill: currentColor;
 		}
 		b {
 			font-style: normal;
@@ -167,16 +217,14 @@ $zuc-button-width: 200px !default;
 		}
 	}
 	.validation {
-		// display: none;
 		display: block;
-		overflow: hidden;
 		height: 0;
 	    font-weight: $zuc-input-text-font-weight;
 	    margin: $zuc-field-top-margin 0 ($zuc-field-top-margin * 2);
 		@extend %small;
 		transition-property: height, opacity;
-		transition-duration: 0.3s;
-		transition-timing-function: ease-in-out;
+		transition-duration: $zuc-transition-time;
+		transition-timing-function: $zuc-transition-function;
 		opacity: 1;
 		.ajaxed & {
 			opacity: 0 !important;
@@ -188,15 +236,20 @@ $zuc-button-width: 200px !default;
 			display: none !important;
 		}
 
-		.success {
+		.success:not(.error) {
 			label {
+				@extend %sans_font;
 				.required {
 			    	color: $zuc-ok-color;
 				}
 			}
+			.validation {
+				opacity: 0;
+			}
 		}
 		.error {
 			label {
+				@extend %sans_font;
 			    color: $zuc-required-color;
 				.required {
 			    	color: $zuc-error-color;
@@ -209,13 +262,6 @@ $zuc-button-width: 200px !default;
 			.validation {
 				color: $zuc-error-color;
 				height: 20px;
-				// display: block;
-			}
-		}
-
-		&.#{$zuc-class-prefix}-general-errors {
-			.success label .required {
-				color: $zuc-error-color;
 			}
 		}
 	}
@@ -244,7 +290,12 @@ $zuc-button-width: 200px !default;
 	label {
 		color: $zuc-label-color;
 	    font-weight: $zuc-label-font-weight;
-	    letter-spacing: .5pt;
+		font-size: $zuc-label-font-size !important;
+	    letter-spacing: $zuc-letter-spacing;
+		@extend %sans_font;
+		.is-twentytwenty & {
+			opacity: 0.7;
+		}
     	.required {
 		    color: $zuc-required-color;
 		    margin-left: $zuc-field-left-margin;
@@ -260,7 +311,7 @@ $zuc-button-width: 200px !default;
 		    display: inline-block;
 		    padding-left: 10px;
 		    vertical-align: middle;
-			@extend %small;
+			@extend %smaller;
 		}
 	}
 
@@ -273,14 +324,22 @@ $zuc-button-width: 200px !default;
 	    border: 1px solid $zuc-input-border-color;
 	    background-color: $zuc-input-color;
 	    padding: $zuc-input-padding;
+		.is-twentytwenty & {
+			color: $twentytwenty-text-color;
+		}
 		&:disabled {
 			@extend %disabled;
 		}
 	    &:focus {
 		    background-color: $zuc-input-focus-color;
-		    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-input-focus-border-color;
+		    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-input-focus-shadow-color;
 		    border: 1px solid $zuc-input-focus-border-color;
+			.is-zu & {
+				box-shadow: 0 0 $zu-input-focus-color-size $zu-input-focus-shadow-color;
+			    border: 1px solid $zu-input-focus-border-color;
+			}
 		}
+
 	}
 	input[type=checkbox], input[type=radio] {
 	    width: auto !important;
@@ -304,14 +363,16 @@ $zuc-button-width: 200px !default;
 	}
 
 	input[type=submit], input[type=button] {
+		@extend %small;
 		appearance: none;
 	    border: 1px solid transparent;
 	    background-color: $zuc-button-color;
 	    color: white;
-	    box-shadow: 1px 1px darken($zuc-button-color, 10%);
+	    box-shadow: none; //1px 1px darken($zuc-button-color, 10%);
 	    cursor: pointer;
 	    text-transform: uppercase;
-	    letter-spacing: 1px;
+		text-decoration: none;
+	    letter-spacing: 1.2px;
 	    padding: 10px 20px;
 		min-width: $zuc-button-width;
 
@@ -321,7 +382,7 @@ $zuc-button-width: 200px !default;
 	    position: relative;
 	    border-radius: $zuc-button-border-radius;
 		float: right;
-		transition: all 0.3s ease-in-out;
+		transition: all $zuc-transition-time $zuc-transition-function;
 	    transition-property: background-color, top, left, border-color;
 
 	    &:disabled {
@@ -332,12 +393,13 @@ $zuc-button-width: 200px !default;
 		    content: '';
 		    position: absolute;
 		    z-index: -1;
-		    transition: all 0.3s;
+		    transition: all $zuc-transition-time;
 		}
 		&:hover:not(:disabled) {
-		    box-shadow: 1px 1px darken($zuc-button-color, 20%);
+		    box-shadow: none; //1px 1px darken($zuc-button-color, 20%);
 		    background-color: darken($zuc-button-color, 10%);
 		    border-color: rgba($zuc-button-focus-color, 0.3);
+			text-decoration: none;
 		}
 		&:active {
 			top: 1px;
