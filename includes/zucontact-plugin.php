@@ -17,8 +17,6 @@ class zu_Contact extends zukit_Plugin {
 		zu_ContactShortcode;
 
 	protected function construct_more() {
-		// init static messages
-		$this->setup_messages();
 		$this->path_autocreated = true;
     }
 
@@ -96,6 +94,7 @@ class zu_Contact extends zukit_Plugin {
 
 		// Some 'inits' from traits -------------------------------------------]
 
+		$this->init_messages();
 		$this->init_ajax();
 		$this->init_shortcode();
 		$this->init_mailer();
