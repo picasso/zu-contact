@@ -213,7 +213,7 @@ class zu_ContactFields {
 
 		if($field['type'] === 'submit') {
 			$output = zu_sprintf(
-				'<div class="%2$s-control">%1$s</div>',
+				'<div class="%2$s-control __submit">%1$s</div>',
 				$field_output,
 				self::$css_prefix
 			);

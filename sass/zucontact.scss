@@ -97,7 +97,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 }
 
 %sans_font {
-	.is-twentytwenty & {
+	.is-twenty-twenty & {
 		font-family: "Inter var", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
 	}
 }
@@ -151,6 +151,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		.#{$zuc-class-prefix}-input {
 			margin-top: $zuc-field-top-margin;
 			@extend %sans_font;
+		}
+		&.__submit {
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
 		}
 	}
 
@@ -293,7 +298,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		font-size: $zuc-label-font-size !important;
 	    letter-spacing: $zuc-letter-spacing;
 		@extend %sans_font;
-		.is-twentytwenty & {
+		.is-twenty-twenty & {
 			opacity: 0.7;
 		}
     	.required {
@@ -324,7 +329,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	    border: 1px solid $zuc-input-border-color;
 	    background-color: $zuc-input-color;
 	    padding: $zuc-input-padding;
-		.is-twentytwenty & {
+		.is-twenty-twenty & {
 			color: $twentytwenty-text-color;
 		}
 		&:disabled {
@@ -381,7 +386,6 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	    outline: none;
 	    position: relative;
 	    border-radius: $zuc-button-border-radius;
-		float: right;
 		transition: all $zuc-transition-time $zuc-transition-function;
 	    transition-property: background-color, top, left, border-color;
 
