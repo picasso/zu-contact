@@ -88,7 +88,6 @@
 			if($status.outerWidth() < MessageSplitWidth) message = message.replace(/\./, '.<br/>');
 			$message.html(message);
 
-			maybeScrollTop();
 			if(errors.recaptcha && errors.recaptcha.length) {
 				markReCaptcha(true);
 				resetReCaptcha();
@@ -152,6 +151,8 @@
 		}
 
 		function ajaxCall() {
+			maybeScrollTop();
+
 			$.ajax({
 				type: 'post',
 				dataType: 'json',
@@ -194,12 +195,14 @@
 		}
 
 		function reExpired() {
+			maybeScrollTop();
 			processMessage({ recaptcha: errorMessages.expired });
 			switchHeading(false, true);
 			markReCaptcha(true);
 		}
 
 		function reNetwork() {
+			maybeScrollTop();
 			processMessage({ recaptcha: errorMessages.network });
 			switchHeading(false, true);
 			markReCaptcha(true);
@@ -237,6 +240,7 @@
 				// eslint-disable-next-line no-undef
 				var response = grecaptcha.getResponse();
 				if(response.length === 0) {
+					maybeScrollTop();
 					processMessage({ recaptcha: errorMessages.invalid });
 					switchHeading(false, true);
 					markReCaptcha(true);
