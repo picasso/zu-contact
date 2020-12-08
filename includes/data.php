@@ -29,21 +29,23 @@ class zu_ContactData {
 		$this->prefix = zu_ContactFields::$css_prefix;
 		$this->available_errors = zucontact()->available_errors();
 
-		$is_post = $_SERVER['REQUEST_METHOD'] === 'POST' ? true : false;
+		// stop immediately if it's not POST
+		if($_SERVER['REQUEST_METHOD'] !== 'POST') return;
 
-		$form_nonce = $_POST[$this->prefix.'_nonce'] ?? null;
-		$is_nonce_verified = ($is_post && wp_verify_nonce($form_nonce, zucontact()->ajax_nonce(false))) ? true : false;
-		$fdata = $_POST[$this->prefix] ?? null;
-		$this->recaptcha = $_POST['g-recaptcha-response'] ?? false;
+		$post = $this->sanitized_fields();
 
-		if($is_post && !$is_nonce_verified) $this->add_error('nonce');
+		$is_nonce_verified = wp_verify_nonce($post['_nonce'], zucontact()->ajax_nonce(false)) ? true : false;
+		$this->recaptcha = $post['g-recaptcha-response'];
+		$fdata = $post['data'];
+
+		if(!$is_nonce_verified) $this->add_error('nonce');
 		if($is_nonce_verified && empty($fdata)) $this->add_error('data');
-		if($is_post && $this->recaptcha !== false && strlen($this->recaptcha) === 0) $this->add_error('recaptcha');
+		if($this->recaptcha !== false && strlen($this->recaptcha) === 0) $this->add_error('recaptcha');
 
 		if(!empty($fdata)) {
-			$this->post_id = isset($fdata['_post_id']) ? absint($fdata['_post_id']): null;
-			$this->post_link = $fdata['_post_link'] ?? null;
-			$this->form = zucontact()->get_form($fdata['_fname'] ?? false);
+			$this->post_id = $fdata['_post_id'];
+			$this->post_link = $fdata['_post_link'];
+			$this->form = zucontact()->get_form($fdata['_fname']);
 			if($this->form === false) $this->add_error('fname');
 
 			if($this->form !== false) {
@@ -69,6 +71,54 @@ class zu_ContactData {
 		$this->was_checked = -1;
 	}
 
+	private function sanitized_fields() {
+
+		$as_string = [
+			'_nonce'				=> null,
+			'g-recaptcha-response'	=> false,
+		];
+
+		$sanitized = ['data' => null];
+
+		// sanitize common keys
+		foreach($as_string as $key => $val) {
+			$pkey = $key === '_nonce' ? $this->prefix.'_nonce' : $key;
+			$sanitized[$key] = isset($_POST[$pkey]) ? sanitize_text_field($_POST[$pkey]) : $val;
+		}
+
+		// sanitize form data
+		if(isset($_POST[$this->prefix])) {
+			$post_data = $_POST[$this->prefix];
+
+			// sanitize hidden fields
+			$data = [
+				'_post_id'		=> isset($post_data['_post_id']) ? absint($post_data['_post_id']): null,
+				'_post_link'	=> isset($post_data['_post_link']) ? esc_url_raw($post_data['_post_link']) : null,
+				'_fname'		=> isset($post_data['_fname']) ? sanitize_text_field($post_data['_fname']) : false,
+			];
+
+			// sanitize the rest of fields
+			$form = zucontact()->get_form($data['_fname']);
+			if($form !== false) {
+				foreach($form->fields() as $field) {
+					$field_id = $field['name'];
+					if($field_id === 'submit') continue;
+					$data[$field_id] = $this->sanitize($post_data, $field_id, $field['type'] ?? '');
+				}
+				$sanitized['data'] = $data;
+			}
+		}
+		return $sanitized;
+	}
+
+	private function sanitize($form, $id, $type) {
+		$value = isset($form[$id]) ? ($type === 'checkbox' ? 'true' : $form[$id]) : null;
+		if($type === 'textarea') return sanitize_textarea_field($value);
+		if($type === 'url') return esc_url_raw($value);
+		if($type === 'email') return sanitize_email($value);
+		return sanitize_text_field($value);
+	}
+
 	private function validate_field($field, $form) {
 		$field_id = $field['name'] ?? '';
 		$field_type = $field['type'] ?? '';
@@ -80,7 +130,7 @@ class zu_ContactData {
 		if($field_type === 'url') return filter_var($form[$field_id], FILTER_SANITIZE_URL);
 		if($field_type === 'number') return filter_var($form[$field_id], FILTER_SANITIZE_NUMBER_INT);
 		if($field_type === 'tel') return preg_replace('/[^0-9+-]/', '', $form[$field_id]);
-		if($field_type === 'checkbox') return isset($form[$field_id]) ? true : false;
+		if($field_type === 'checkbox') return empty($form[$field_id]) ? false : true;
 
 		return null;
 	}
@@ -124,7 +174,7 @@ class zu_ContactData {
 				}
 				//checkbox which should checked - like "I agree with terms & conditions"
 				if($field_type === 'checkbox') {
-					if(strlen($value) !== true) $this->add_error($field_id, $required);
+					if($value !== true) $this->add_error($field_id, $required);
 				}
 			}
 		}
