@@ -1,3 +1,9 @@
+#### 1.0.6 / 2020-12-08
+* all fields are sanitized before processing
+* scroll in view before AJAX call
+* __Zukit__ updated
+* bug fixing and css improvements
+
 #### 1.0.5 / 2020-12-06
 * refactoring CSS to support different themes
 * added `scroll in view` functionality

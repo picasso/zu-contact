@@ -402,5 +402,5 @@ msgid "Dmitry Rudakov"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "https://***REMOVED***.com/about/"
+msgid "https://dmitryrudakov.com/about/"
 msgstr ""

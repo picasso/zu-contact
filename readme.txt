@@ -1,9 +1,9 @@
 === Zu Contact ===
-Contributors: ***REMOVED***
+Contributors: dmitryrudakov
 Tags: contact, contact form, feedback, feedback form, email, gutenberg, ajax
 Requires at least: 5.1
 Tested up to: 5.5.3
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 Requires PHP: 7.0
 
@@ -68,6 +68,12 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 4. Booking Form displaying
 
 == Changelog ==
+
+### 1.0.6 ###
+* all fields are sanitized before processing
+* scroll in view before AJAX call
+* __Zukit__ updated
+* bug fixing and css improvements
 
 ### 1.0.5 ###
 * refactoring CSS to support different themes

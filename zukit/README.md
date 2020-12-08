@@ -719,5 +719,5 @@ https://apps.timwhitlock.info/emoji/tables/unicode
 ```
 -->
 
-<!-- See [Dmitry Rudakov Coding](https://***REMOVED***.com/coding/) for complete docs and demos.
+<!-- See [Dmitry Rudakov Coding](https://dmitryrudakov.com/coding/) for complete docs and demos.
 -->
