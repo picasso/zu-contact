@@ -48,6 +48,7 @@ $zuc-button-width: 200px !default;
 // TwentyTwenty modifications -------------------------------------------------]
 
 $twentytwenty-text-color: rgba(#222, 0.7) !default;
+$twentytwenty-border-color: rgba(#222, 0.2) !default;
 
 // Zu Theme modifications -----------------------------------------------------]
 
@@ -75,7 +76,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 
 %smaller {
     font-size: $zuc-smaller-font-size;
-    line-height: 1.2;
+    line-height: 1.3;
     letter-spacing: $zuc-letter-spacing;
 }
 
@@ -331,6 +332,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	    padding: $zuc-input-padding;
 		.is-twenty-twenty & {
 			color: $twentytwenty-text-color;
+			border-color: $twentytwenty-border-color;
 		}
 		&:disabled {
 			@extend %disabled;
@@ -349,9 +351,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	input[type=checkbox], input[type=radio] {
 	    width: auto !important;
 	    display: inline-block;
-	    vertical-align: middle;
 		&:disabled {
 			@extend %disabled;
+		}
+		& + label {
+			margin-bottom: 0;
 		}
 	}
 	select, textarea {

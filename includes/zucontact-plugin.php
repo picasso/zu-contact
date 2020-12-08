@@ -30,7 +30,7 @@ class zu_Contact extends zukit_Plugin {
 			'domain'			=> 'zu-contact',
 			// appearance
 			'colors'			=> [
-				'backdrop'			=> '#f0f2f1',
+				'backdrop'			=> '#f7fffb',
 				'header'			=> '#b1eed5',
 				'title'				=> '#016760',
 			],
