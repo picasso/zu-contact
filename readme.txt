@@ -3,7 +3,7 @@ Contributors: dmitryrudakov
 Tags: contact, contact form, feedback, feedback form, email, gutenberg, ajax
 Requires at least: 5.1
 Tested up to: 5.5.3
-Stable tag: 1.0.6
+Stable tag: 1.0.8
 License: GPLv2 or later
 Requires PHP: 7.0
 
@@ -65,9 +65,12 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 1. Plugin Settings Page
 2. Google reCAPTCHA Settings Section
 3. Contact Form displaying
-4. Booking Form displaying
+4. Another Contact Form displaying
 
 == Changelog ==
+
+### 1.0.8 ###
+* added assets for WordPress.org
 
 ### 1.0.6 ###
 * all fields are sanitized before processing

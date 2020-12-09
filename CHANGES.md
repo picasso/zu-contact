@@ -1,3 +1,6 @@
+#### 1.0.8 / 2020-12-08
+* added assets for WordPress.org
+
 #### 1.0.6 / 2020-12-08
 * all fields are sanitized before processing
 * scroll in view before AJAX call

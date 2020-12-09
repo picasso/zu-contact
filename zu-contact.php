@@ -2,9 +2,8 @@
 /*
 Plugin Name: Zu Contact
 Plugin URI: https://github.com/picasso/zu-contact
-GitHub Plugin URI: https://github.com/picasso/zu-contact
 Description: Simple but smart Ajax contact forms. With Gutenberg based settings page.
-Version: 1.0.6
+Version: 1.0.8
 Author: Dmitry Rudakov
 Author URI: https://dmitryrudakov.com/about/
 Text Domain: zu-contact
