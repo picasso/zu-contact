@@ -91,7 +91,7 @@ if(function_exists('zucontact')) {
     // available form options:
     // 'rows' - rows amount in textarea
     // 'carbon_copy' - if true then sends a 'copy' of the message to the submitter
-    // 'prefix' -  prefix which will be used  for all CSS classes with this form
+    // 'prefix' - prefix which will be used for all CSS classes with this form
     $form = new zu_ContactFields('booking', ['carbon_copy' => true]);
 
     $form->add(
