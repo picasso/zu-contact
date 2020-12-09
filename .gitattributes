@@ -13,6 +13,11 @@ apple-touch-icon.png export-ignore
 # merge driver
 # style.css merge=ours
 
+# GitHub ignore stuff
+
+/.wordpress-org export-ignore
+/.github export-ignore
+
 # Zukit ignore stuff
 
 zukit/src export-ignore
