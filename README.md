@@ -1,9 +1,17 @@
 # Zu Contact: Contact Forms with Gutenberg
-<!-- [![WordPress plugin](https://img.shields.io/wordpress/plugin/dt/zu-contact.svg?style=flat)](https://wordpress.org/plugins/zu-contact/) [![WordPress plugin](https://img.shields.io/wordpress/plugin/v/zu-contact.svg?style=flat)](https://wordpress.org/plugins/zu-contact/) [![WordPress](https://img.shields.io/wordpress/v/zu-contact.svg?style=flat)]() [![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg)](https://github.com/picasso/zu-contact/blob/master/LICENSE) -->
+
+![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/zu-contact?style=for-the-badge)
+![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/zu-contact?color=4ab866&style=for-the-badge)
+![WordPress Plugin Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/zu-contact?color=bc2a8d&style=for-the-badge)
+ [![License](https://img.shields.io/badge/license-GPL--2.0%2B-fcbf00.svg?style=for-the-badge)](https://github.com/picasso/zu-contact/blob/master/LICENSE)
+
+ <!-- ![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/zu-contact?color=00aced&style=for-the-badge) -->
 
 Simple but smart Ajax contact forms. With Gutenberg based settings page.
 
-[![Zu Contact, a simple but smart Ajax contact forms.](https://user-images.githubusercontent.com/399395/100541246-b6246180-3242-11eb-9a5f-3d9d16a68f72.png)](https://github.com/picasso/zu-contact/)
+[![Zu Contact, a simple but smart Ajax contact forms.](https://ps.w.org/zu-contact/assets/banner-1544x500.png)](https://github.com/picasso/zu-contact/)
+
+
 
 ## Description
 
@@ -17,7 +25,7 @@ The plugin allows you to add a feedback form or booking form to the page. The da
 
 ### Features
 
-* Lightweight `JS script` & `CSS`
+* Lightweight `JS script` & `CSS` (only __4kB__ minified and gzipped)
 * Adding a contact form to any post or page using a shortcode
 * Form submission via AJAX (*configurable by settings*)
 * Data validation on the server
@@ -64,6 +72,7 @@ You can also personalize the form by adding attributes to the shortcode:
 
 ### Download
 
++ [Zu Contact on WordPress.org](https://downloads.wordpress.org/plugin/zu-contact.zip)
 + [Zu Contact on GitHub](https://github.com/picasso/zu-contact/archive/master.zip)
 
 ## Installation
@@ -184,14 +193,17 @@ Using the new form in `shortcode` is pretty simple:
 
 `[zu-contact form="my-form"]`
 
-<!--
+
 ## Support
 
-Need help? This is a developer's portal for Zu Contact and should not be used for general support and queries. Please visit the [Zu Contact support forum on WordPress.org](https://wordpress.org/support/plugin/zu-contact) for assistance.
--->
+Need help? This is a developer's portal for __Zu Contact__ and should not be used for general support and queries. Please visit the [support forum on WordPress.org](https://wordpress.org/support/plugin/zu-contact) for assistance.
 
 ## Screenshots
 
-## [![Plugin Settings Page](https://user-images.githubusercontent.com/399395/100541253-cb998b80-3242-11eb-9880-b6b700b49336.jpg)](https://github.com/picasso/zu-contact/)
+## [![Plugin Settings Page](https://ps.w.org/zu-contact/assets/screenshot-01.jpg)](https://github.com/picasso/zu-contact/)
 
-## [![Google reCAPTCHA Settings Section](https://user-images.githubusercontent.com/399395/100541254-ce947c00-3242-11eb-946d-af7b8756e9ca.jpg)](https://github.com/picasso/zu-contact/)
+## [![Google reCAPTCHA Settings Section](https://ps.w.org/zu-contact/assets/screenshot-02.jpg)](https://github.com/picasso/zu-contact/)
+
+## [![Contact Form Displaying](https://ps.w.org/zu-contact/assets/screenshot-03.jpg)](https://github.com/picasso/zu-contact/)
+
+## [![Another Contact Form Displaying (Russian)](https://ps.w.org/zu-contact/assets/screenshot-04.jpg)](https://github.com/picasso/zu-contact/)

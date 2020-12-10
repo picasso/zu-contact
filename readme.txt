@@ -1,6 +1,6 @@
 === Zu Contact ===
 Contributors: dmitryrudakov
-Tags: contact, contact form, feedback, feedback form, email, gutenberg, ajax
+Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
 Requires at least: 5.1
 Tested up to: 5.5.3
 Stable tag: 1.0.8
