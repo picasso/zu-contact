@@ -10,7 +10,7 @@ trait zu_ContactAjax {
 		add_action('wp_ajax_nopriv_'.$this->ajax_action, [$this, 'ajax_submit']);
 	}
 
-	private function ajax_data() {
+	public function ajax_data() {
 		return [
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,

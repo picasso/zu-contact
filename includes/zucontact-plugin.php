@@ -6,6 +6,7 @@ include_once('zucontact-form.php');
 include_once('zucontact-mailer.php');
 include_once('zucontact-recaptcha.php');
 include_once('zucontact-shortcode.php');
+include_once('zucontact-blocks.php');
 
 class zu_Contact extends zukit_Plugin {
 
@@ -82,6 +83,10 @@ class zu_Contact extends zukit_Plugin {
 				'color'		=> 'gold',
 			]
 		];
+	}
+
+	protected function blocks() {
+		return new zu_ContactBlocks;
 	}
 
 	public function init() {

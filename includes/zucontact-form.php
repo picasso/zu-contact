@@ -1,4 +1,5 @@
 <?php
+require_once('defaults.php');
 require_once('fields.php');
 require_once('data.php');
 
@@ -92,6 +93,8 @@ trait zu_ContactForm {
         return array_keys(self::$error_messages);
     }
 
+    // Output -----------------------------------------------------------------]
+
     public function sprint_form($name, $values, $errors, $message = null, $classes = '') {
 
         $form = $this->get_form($name);
@@ -172,6 +175,21 @@ trait zu_ContactForm {
         return $output;
     }
 
+    public function templates() {
+        $forms = [];
+        foreach($this->available_forms() as $name) {
+            $form = $this->get_form($name);
+            if($form === false) continue;
+            $forms[$name] = [];
+            foreach($form->fields('order', true) as $field) {
+                $forms[$name][] = ['zu/field', $field];
+            }
+        }
+        return $forms;
+    }
+
+    // Messages ---------------------------------------------------------------]
+
     private function subheading($subheading, $form_key = null) {
         if(is_string($subheading)) return $subheading;
         $index = self::$subheading_form[$form_key] ?? 'contact';
@@ -203,6 +221,8 @@ trait zu_ContactForm {
         if($was_notified) return $this->success_message($name);
         return sprintf('%1$s <span>%2$s</span>', $this->success_message($name), self::$success_messages['without_notify']);
     }
+
+    // Statistics -------------------------------------------------------------]
 
     private function get_used_ids() {
         $stats = $this->get_option('stats', []);
