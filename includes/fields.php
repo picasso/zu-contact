@@ -29,7 +29,7 @@ class zu_ContactFields {
 		return [
 			'name'              => $id,
 			'order'				=> -1,
-			'label'     		=> $label,
+			'label'     		=> is_null($label) ? '' : $label,
 			'type'     			=> $type,
 			'is_required'		=> empty($required) ? false : true,
 			'required'			=> $required,
@@ -48,9 +48,23 @@ class zu_ContactFields {
 		return true;
 	}
 
-	public function add($id, $label, $type = 'text', $required = '', $placeholder = '') {
+	// можно создавать поле передавая все параметры, а можно только тип и
+	// массив с параметрами, которые будут смержены с дефолтными значениями
+	public function add($id_or_type, $label_or_required = false, $type_or_params = [], $required = null, $placeholder = null) {
 
-		if(isset($this->fields[$id])) return false;
+		if(is_array($type_or_params)) {
+			$is_required = $label_or_required;
+			$type = zu_ContactFieldDefaults::aliases($id_or_type);
+			$params = array_merge(zu_ContactFieldDefaults::type_defaults($type), $type_or_params);
+			extract($params, EXTR_OVERWRITE);
+			if($is_required === false) $required = null;
+		} else {
+			$id = $id_or_type;
+			$label = $label_or_required;
+			$type = $type_or_params;
+		}
+
+		if(is_null($id) || isset($this->fields[$id])) return false;
 
 		$field = $this->field($id, $label, $type, $required, $placeholder);
 		$field['order'] = count($this->fields) + 1;
@@ -109,7 +123,7 @@ class zu_ContactFields {
 	}
 
 	public function get($id) {
-		return $this->fields[$id] ?? false;
+		return $this->fields[$id] ?? null;
 	}
 
 	public function get_required($value, &$required, &$required_valid) {
@@ -121,7 +135,7 @@ class zu_ContactFields {
 		$required_valid = is_array($value) ? $value[1] : $value;
 	}
 
-	public function fields($sorting_key = 'order') {
+	public function fields($sorting_key = 'order', $template = false) {
 
 		$available_attrs = array_keys($this->field());
 		if(!in_array($sorting_key, $available_attrs)) $sorting_key = 'order';
@@ -130,6 +144,17 @@ class zu_ContactFields {
 		usort($fields, function($a, $b) use ($sorting_key) {
 			return ($a[$sorting_key] == $b[$sorting_key]) ? 0 : ($a[$sorting_key] > $b[$sorting_key] ? 1 : -1);
 		});
+
+		if($template) {
+			$fields = array_map(function($field) {
+				$field['id'] = $field['name'];
+				unset($field['order']);
+				unset($field['is_required']);
+				unset($field['name']);
+				return $field;
+			}, $this->fields);
+		}
+
 		return $fields;
 	}
 
@@ -192,7 +217,7 @@ class zu_ContactFields {
 	public function sprint($id, $value, $errors, $rows = null) {
 
 		$field = $this->get($id);
-		if($field === false) return;
+		if(empty($field)) return;
 
 		if($field['type'] === 'textarea') $field_output = $this->textarea($field, $value, $rows);
 		else if($field['type'] === 'submit') $field_output = $this->input($field, $field['label']);
