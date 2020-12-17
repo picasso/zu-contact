@@ -23,6 +23,7 @@ $zuc-loader-color: $zuc-error-color !default;
 $zuc-field-left-margin: 4px !default;
 $zuc-field-top-margin: 8px !default;
 
+$zuc-input-font-size: $zuc-smaller-font-size !default;
 $zuc-input-text-color: #222 !default;
 $zuc-input-text-font-weight: 400 !default;
 $zuc-input-color: #ffffeb !default; 					//#ffffe0 - #fffffa
@@ -74,6 +75,16 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	transition: opacity $zuc-transition-time $zuc-transition-function;
 }
 
+%reset_input {
+	outline: none;
+	appearance: none;
+	box-shadow: none;
+	margin: 0;
+	padding: 0;
+	max-width: 100%;
+	width: 100%;
+}
+
 %smaller {
     font-size: $zuc-smaller-font-size;
     line-height: 1.3;
@@ -99,7 +110,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 
 %sans_font {
 	.is-twenty-twenty & {
-		font-family: "Inter var", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
+		font-family: "Inter var", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif !important;
 	}
 }
 
@@ -149,9 +160,17 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 
 	.#{$zuc-class-prefix}-control {
 		margin-top: $zuc-field-top-margin * 2;
+		line-height: 1;
 		.#{$zuc-class-prefix}-input {
 			margin-top: $zuc-field-top-margin;
-			@extend %sans_font;
+			&.submit {
+				padding: 0;
+			}
+			input, select, textarea {
+				@extend %sans_font;
+				font-size: $zuc-input-font-size;
+				line-height: 1;
+			}
 		}
 		&.__submit {
 			display: flex;
@@ -298,6 +317,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 	    font-weight: $zuc-label-font-weight;
 		font-size: $zuc-label-font-size !important;
 	    letter-spacing: $zuc-letter-spacing;
+		line-height: 1;
 		@extend %sans_font;
 		.is-twenty-twenty & {
 			opacity: 0.7;
@@ -321,10 +341,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		}
 	}
 
+
+
 	input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not([type='image']):not([type='file']), textarea {
-	    appearance: none;
+	    @extend %reset_input;
 	    border-radius: $zuc-input-border-radius;
-	    outline: none;
 	    color: $zuc-input-text-color;
 	    font-weight: $zuc-input-text-font-weight;
 	    border: 1px solid $zuc-input-border-color;
@@ -349,6 +370,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 
 	}
 	input[type=checkbox], input[type=radio] {
+		@extend %reset_input;
 	    width: auto !important;
 	    display: inline-block;
 		&:disabled {
@@ -359,7 +381,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		}
 	}
 	select, textarea {
-	    appearance: none;
+	    @extend %reset_input;
 	    line-height: 1.5;
 		letter-spacing: normal;
 		option {
