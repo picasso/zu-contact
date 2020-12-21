@@ -122,7 +122,7 @@ trait zu_ContactForm {
         $output = zu_sprintf(
             '<div id="%9$s-%10$s" class="%1$s">
                 %4$s%7$s
-                <div class="%9$s-status%2$s" style="visibility:hidden;">
+                <div class="%9$s-status%2$s" style="visibility:hidden;opacity:0;">
                     <span class="icon-ok">%5$s</span>
                     <span class="icon-error">%6$s</span>
                     <span class="message" data-errmsg="%8$s">%3$s</span>
@@ -130,6 +130,7 @@ trait zu_ContactForm {
                 $this->snippets('merge_classes', [
                     $classes,
                     $css_prefix.'-container',
+                    $name,
                     ($was_error || $was_sent) ? $css_prefix.'-processed': ''
                 ]),
                 $was_error ? ' was-error' : ($was_sent ? ' sent' : ''),

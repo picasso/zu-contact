@@ -12,6 +12,7 @@
 	var Ds_status = `.${Cs_prefix}-status`;
 	var Ds_control= `.${Cs_prefix}-control`
 	var Ds_submit = `#${Cs_prefix}-submit`;
+	var Ds_validation = '.__validation';
 
 	var Fn_verified = `${Cs_prefix}_verified`;
 	var Fn_expired = `${Cs_prefix}_expired`;
@@ -63,13 +64,18 @@
 			</style>`)
 				.appendTo('body');
 
-			if($subheading.length) $subheading.css({top: status_margin - container_margin});
+			$status.removeAttr('style');
+			// center the heading in the middle of the status bar
+			if($subheading.length) {
+				var top_center = ($status.outerHeight() - $subheading.outerHeight())/2;
+				$subheading.css({top: status_margin - container_margin + top_center});
+			}
 		}
 
 		function removePrevErrors() {
 			$form.find(`.${Cs_prefix}-control.error`)
 				.removeClass('error')
-				.find('.validation')
+				.find(Ds_validation)
 				.html('');
 		}
 

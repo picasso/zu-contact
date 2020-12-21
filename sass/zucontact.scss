@@ -1,6 +1,7 @@
 // Zu Contact Form & controls -------------------------------------------------]
 
 $zuc-class-prefix: 'zuc';
+$zuc-validation-class: '__validation';
 
 $zuc-smaller-font-size: 16px !default; //.875em
 $zuc-small-font-size: 15px !default;
@@ -155,16 +156,35 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		position: absolute;
 		top: 0;
 		left: 0;
-		transition: opacity $zuc-transition-short-time $zuc-transition-function;
 		opacity: 0;
 		margin-top: 0 !important;
 		padding-top: 0 !important;
+
+		transition-property: top, opacity;
+		transition-duration: $zuc-transition-time;
+		transition-timing-function: $zuc-transition-function;
+
+		// transition: opacity $zuc-transition-short-time $zuc-transition-function;
+
 		&.before_posting {
 			opacity: 1;
 		}
 		.ajaxed & {
 			opacity: 0 !important;
 		}
+		.is-twenty-twenty & {
+			opacity: 0.7 !important;
+			letter-spacing: 0.5px;
+			margin-bottom: 0;
+		}
+		// 'subscribe' heading is too long for this theme
+		@at-root {
+    		.is-twenty-twenty {
+				.#{$zuc-class-prefix}-container.subscribe .#{$zuc-class-prefix}-subheading {
+					font-size: 36px;
+				}
+			}
+    	}
 	}
 
 	.#{$zuc-class-prefix}-control {
@@ -179,6 +199,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 				@extend %sans_font;
 				font-size: $zuc-input-font-size;
 				line-height: 1;
+			}
+			.__align-middle {
+				display: flex;
+				justify-content: flex-start;
+				align-items: center;
 			}
 		}
 		&.__submit {
@@ -250,11 +275,12 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 			font-weight: 600;
 		}
 	}
-	.validation {
+	.#{$zuc-validation-class} {
 		display: block;
 		height: 0;
 	    font-weight: $zuc-input-text-font-weight;
 	    margin: $zuc-field-top-margin 0 ($zuc-field-top-margin * 2);
+		@extend %sans_font;
 		@extend %small;
 		transition-property: height, opacity;
 		transition-duration: $zuc-transition-time;
@@ -277,7 +303,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 			    	color: $zuc-ok-color;
 				}
 			}
-			.validation {
+			.#{$zuc-validation-class} {
 				opacity: 0;
 			}
 		}
@@ -293,7 +319,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 				textarea {
 					@extend %not_valid;
 			}
-			.validation {
+			.#{$zuc-validation-class} {
 				color: $zuc-error-color;
 				height: 20px;
 			}
@@ -341,11 +367,12 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		}
 	}
 	.checkbox, .radio {
+		input {
+			top: auto;
+		}
 		label {
 			font-weight: $zuc-input-text-font-weight;
-		    display: inline-block;
-		    padding-left: 10px;
-		    vertical-align: middle;
+		    padding-left: 0.5rem;
 			@extend %smaller;
 		}
 	}
