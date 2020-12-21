@@ -1,9 +1,176 @@
-$note-color: #e8a723;
+$brand-color: #bc2a8d;
+$wp-admin-blue-color: #0075af;
+$border-radius: 3px;
 
+$zuc-form-class: components-zu-form;
+$zuc-field-class: components-zu-field;
+
+$zuc-layout-color: rgba($brand-color, 0.03);
+$zuc-layout-border-color: rgba($brand-color, 0.4);
+$zuc-layout-hover-color: rgba($brand-color, 0.08);
+$zuc-layout-heading-color: rgba($brand-color, 0.8);
+$zuc-selected-color: $brand-color;
+$zuc-disabled-color: black;
+
+$zuc-icon-frame-opacity: 0.3;
+$zuc-layout-icon-size: 24px * 3;
+$zuc-field-type-icon-size: 24px * 2;
 
 .wp-block[data-type="zu/field"] {
-
 	margin-top: 0;
 	margin-bottom: 0;
+}
 
+.#{$zuc-form-class} {
+
+	h2.zuc-subheading {
+		display: block;
+		position: static;
+		margin: 0;
+		opacity: 0.7 !important;
+		font-size: 32px;
+		letter-spacing: 0.5px;
+	}
+
+	.zuc-status {
+		display: none !important;
+	}
+
+	.zuc-control {
+		label {
+			cursor: text;
+		}
+		.__edit-placeholder {
+			margin: 1px 0 0 1px;
+			position: absolute;
+			top: 0;
+			left: 0.5px;
+			width: calc(100% - 2px);
+			height: calc(100% - 2px);
+			display: flex;
+			align-items: center;
+			justify-content: flex-start;
+		}
+		.zuc-input {
+			position: relative;
+			&.textarea {
+				.__edit-placeholder {
+					align-items: flex-start;
+				}
+			}
+		}
+		.__edit-submit {
+			span {
+				cursor: text;
+			}
+		}
+	}
+
+	&__placeholder {
+		background-color: white !important;
+		border: 1px solid $zuc-layout-border-color;
+		border-radius: $border-radius;
+		margin: 8px 0 0 0 !important;
+		// width: calc(100% - 2px);
+		min-height: 90px !important;
+		box-shadow: none !important;
+
+		div, iframe {
+			z-index: 1;
+		}
+
+		&::before {
+			content: '';
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			overflow: hidden;
+			pointer-events: none;
+			background-color: $zuc-layout-color !important;
+			z-index: 0;
+		}
+
+		.components-placeholder__label {
+			margin-bottom: 8px;
+			font-weight: 500;
+			color: $zuc-layout-heading-color;
+		}
+		.components-placeholder__instructions {
+			display: block !important;
+			line-height: 1.5em;
+			margin-bottom: 8px;
+		}
+		.components-placeholder__fieldset {
+			flex-direction: row !important;
+			.components-button:first-child {
+				margin-right: 8px !important;
+			}
+
+			.components-button {
+				box-shadow: none !important;
+				.__wrapper {
+					svg {
+						width: $zuc-layout-icon-size;
+						height: $zuc-layout-icon-size;
+					}
+				}
+				&:hover {
+					background-color: $zuc-layout-hover-color;
+					border-color: $zuc-layout-border-color !important;
+				}
+			}
+		}
+	}
+}
+
+.#{$zuc-field-class}__settings {
+	.__field-type {
+		.components-button-group {
+			justify-content: flex-start;
+		}
+		.zukit-select-item__button-wrapper {
+			margin-right: 6px;
+			margin-bottom: 0;
+
+			svg {
+				width: $zuc-field-type-icon-size;
+				height: $zuc-field-type-icon-size;
+			}
+			.zukit-select-item__button {
+				&:hover {
+					background-color: rgba($wp-admin-blue-color, 0.04);
+					box-shadow: inset 0 0 0 1px rgba($wp-admin-blue-color, 0.5);
+				}
+			}
+
+			&.is-disabled {
+				.zukit-select-item__button {
+					background-color: rgba($zuc-selected-color, 0.05);
+					border-color: rgba($zuc-selected-color, 0.5);
+				}
+				svg {
+					color: $zuc-selected-color;
+					#frame {
+						fill: rgba($zuc-selected-color, $zuc-icon-frame-opacity);
+					}
+				}
+			}
+
+			&.is-selected {
+				box-shadow: none;
+				.zukit-select-item__button {
+					background-color: rgba($zuc-disabled-color, 0.07);
+					border-color: rgba($zuc-disabled-color, 0.4);
+					color: $zuc-disabled-color;
+					#frame {
+						fill: rgba($zuc-disabled-color, $zuc-icon-frame-opacity);
+					}
+					opacity: 0.5;
+				}
+			}
+		}
+	}
 }

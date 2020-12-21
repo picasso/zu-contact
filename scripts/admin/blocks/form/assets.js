@@ -1,64 +1,55 @@
 // WordPress dependencies
 
-const {
-	join,
-	map,
-	transform,
-	reject,
-	includes,
-} = lodash;
-
+const { map, transform, get, pick } = lodash;
 const { __ } = wp.i18n;
+
+// form
+// field
+// layout
+// placeholder
+// required
+// remove
+// add
+//
+// recaptcha
+
 
 // Internal dependencies
 
-import { row, layout, iconColor } from './../../shared/assets.js';
-import { layoutsXGrid, makeColumnAttributes } from './../../shared/on-responsive.js';
+import { form, contact, booking, subscribe, pluginDefaults, prefixIt } from './../assets.js';
+
+const { templates = {} } = pluginDefaults;
 
 // Options & Values
 
-const columnOptions = [
-	{ value: 1, label: __('One Column'), layout: [100] },
-	{ value: 2, label: __('Two Columns'), layout: [50, 50] },
-	{ value: 3, label: __('Three Columns'), layout: [33, 33, 33] },
-	{ value: 4, label: __('Four Columns'), layout: [25, 25, 25, 25]},
+function params(name) { return pick(get(templates, name, {}), ['name', 'title']); }
+
+export const layoutOptions = [
+	{ value: 'contact', label: __('Contact Layout', 'zu-contact'), layout: params('contact') },
+	{ value: 'booking', label: __('Booking Layout', 'zu-contact'), layout: params('booking') },
+	{ value: 'subscribe', label: __('Subscribe Layout', 'zu-contact'), layout: params('subscribe') },
+	{ value: 'skip', label: __('Skip', 'zu-contact'), layout: params('skip') },
 ];
 
-// Create options object based on layout options
-// 		2: [
-// 			 {  value: '50_50', label: __('50  %  50') },
-export const layoutOptionsFull = transform(layoutsXGrid, (values, set, columns)  => {
-	values[columns] = map(set, layout => {
-		return { label:  join(layout, '  /  '), value: join(layout, '_') };
-	});
-});
-
-// We do not use these layouts as primary options because we have space for 4 columns only
-const skipOptions = ['33_66', '60_40', '25_75', '25_25_50'];
-export const layoutOptions = transform(layoutOptionsFull, (values, set, columns)  => {
-	values[columns] = reject(set, obj => { return includes(skipOptions, obj.value); });
-});
-
-export const columnBlock = 'zu/column';
-
-export const allowedBlocks = [ columnBlock ];
+export const fieldBlock = 'zu/field';
+export const allowedBlocks = [ fieldBlock ];
+export { prefixIt };
 
 // Create template object based on layout options
-// 	'50_50': [
-// 				[ columnBlock, { width: '50%' } ],
-// 				[ columnBlock, { width: '50%' } ],
-// 			 ],
-export const template = transform(layoutsXGrid, (values, set, columns)  => {
-	transform(set, (group, layout)  => {
-		group[join(layout, '_')] = map(layout, (value, index) => {
-			return [ columnBlock, makeColumnAttributes(columns, index, value, layout) ];
-		});
-	}, values);
+// 'contact': [
+// 			[ 'zu/field', { id:'name', label:'Name', placeholder:'Your Name', required: true, type: 'text' } ],
+// 			[ 'zu/field', { id:'email', label:'Email', placeholder:'Your Email Address', required: false, type: 'text' } ],
+// 	],
+export const layoutTemplates = transform(templates, (values, layout, name)  => {
+	values[name] = map(layout['fields'] || {}, attrs => [fieldBlock, { ...attrs }]);
 });
 
 export const assets = {
-	columnOptions,
 	layoutOptions,
-	layoutOptionsFull,
-	svg: { row: { src: row, foreground: iconColor }, layout: { src: layout, foreground: iconColor } },
+	svg: {
+		form, //: { src: form, foreground: iconColor },
+		contact,
+		booking, //: { src: booking, foreground: iconColor },
+		subscribe, //: { src: subscribe, foreground: iconColor },
+	},
 };

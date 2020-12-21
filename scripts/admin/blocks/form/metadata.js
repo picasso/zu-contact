@@ -4,41 +4,63 @@ const { __ } = wp.i18n;
 
 // Internal dependencies
 
-import { form as icon, iconColor, blockTitle } from './../assets.js';
+import { form as icon, iconColor } from './../assets.js';
 
 const name = 'zu/form';
-const title = blockTitle(name);
+const title = __('Smart Form', 'zu-contact');
 
 const attributes = {
     name: {
         type: 'string',
-        // source: 'attribute',
-		// attribute: 'id',
+        // The documentation says:
+        // "If no selector argument is specified, the source definition runs against the block’s root node"
+        // https://developer.wordpress.org/block-editor/developers/block-api/block-attributes/
+        // but this does not match the current Gutenberg implementation - block's root node is the first child
+        // when parsing and therefore to get attributes from root node I use 'div:first-child'
+        // (probably can be ':first-child' but not sure about selector)
+        selector: 'div:first-child',
+        source: 'attribute',
+		attribute: 'data-id',
     },
-    // title: {
-    //     type: 'number',
-    //     // selector: '.x_row',
-    //     // source: 'attribute',
-    //     // attribute: 'data-columns',
-    // },
+    noajax: {
+        type: 'boolean',
+        selector: 'div:first-child',
+        source: 'attribute',
+        attribute: 'data-noajax',
+    },
     title: {
         type: 'string',
-        // source: 'attribute',
-		// attribute: 'data-layout',
+        selector: 'h2',
+        source: 'text',
+    },
+    postId: {
+        type: 'string',
+        selector: 'input.__postId',
+        source: 'attribute',
+        attribute: 'value'
+    },
+    postLink: {
+        type: 'string',
+        selector: 'input.__postLink',
+        source: 'attribute',
+        attribute: 'value'
     },
 };
 
-// id, ['data-columns']: columns, ['data-layout']: layout
-
 const metadata = {
     name,
+    /* translators: block name */
     title,
-    description: __('Add a contact form to your page.'),
+    /* translators: block description */
+    description: __('Add a contact form to your page.', 'zu-contact'),
     category: 'layout',
     keywords: [
-        __('contact'),
-        __('feedback'),
-        __('form'),
+        /* translators: block keyword */
+        __('contact', 'zu-contact'),
+        /* translators: block keyword */
+        __('feedback', 'zu-contact'),
+        /* translators: block keyword */
+        __('form', 'zu-contact'),
     ],
     icon: { src: icon, foreground: iconColor },
 

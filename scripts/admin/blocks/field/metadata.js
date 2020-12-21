@@ -20,7 +20,7 @@ const attributes = {
         type: 'string',
     },
     required: {
-        type: 'string',
+        type: 'boolean',
     },
     value: {
         type: 'string',
@@ -29,24 +29,32 @@ const attributes = {
         type: 'string',
     },
     rows: {
-        type: 'string',
+        type: 'number',
+        default: 10,
     },
 };
 
 const metadata = {
     name,
+    /* translators: block name */
     title,
-    description: __('A text box for longer responses.'),
+    /* translators: block description */
+    description: __('A text box for longer responses.', 'zu-contact'),
     category: 'layout',
     keywords: [
-        __('field'),
-        __('feedback'),
-        __('form'),
+        /* translators: block keyword */
+        __('field', 'zu-contact'),
+        /* translators: block keyword */
+        __('feedback', 'zu-contact'),
+        /* translators: block keyword */
+        __('form', 'zu-contact'),
     ],
     icon: { src: icon, foreground: iconColor },
     parent: ['zu/form'],
     supports: {
 		align: false,
+        reusable: false,
+        html: false,
 	},
 
     attributes,

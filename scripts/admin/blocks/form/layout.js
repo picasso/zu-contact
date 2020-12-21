@@ -1,98 +1,58 @@
 // WordPress dependencies
 
-const { find, isNil } = lodash;
-const { __, sprintf } = wp.i18n;
-const { Placeholder, Button } = wp.components;
+const { get, find } = lodash;
+const { __ } = wp.i18n;
+const { Placeholder } = wp.components;
 const { BlockIcon } = wp.blockEditor;
-const { useCallback, useEffect } = wp.element;
+const { useCallback } = wp.element;
+
+// Zukit dependencies
+
+const { SelectItemControl } = wp.zukit.components;
 
 // Internal dependencies
 
 import { assets } from './assets.js';
-import SelectItemControl from './../../components/inspector/select-item-control.js';
-import LayoutPreview from './../../components/inspector/layout-preview.js';
+import { title } from './metadata.js';
 
-const RowLayout = ({
+const FormLayout = ({
 		classPrefix,
-		columns,
 		layout,
-		setAttributes,
+		setLayout,
 }) => {
 
-	useEffect(() => {
-		if(columns === 1 && isNil(layout)) {
-			setAttributes({ layout: '100' });
-		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const setColumns = useCallback((columns) => {
-		setAttributes({
-			columns,
-			layout: columns === 1 ? '100' : null,
-		});
-	}, [setAttributes]);
-
-	const resetLayouts = useCallback(() => {
-		setAttributes({ columns: null });
-	}, [setAttributes]);
-
-	const setLayouts = useCallback((layout) => {
-		setAttributes({ layout: layout });
-	}, [setAttributes]);
+	// useEffect(() => {
+	// 	if(columns === 1 && isNil(layout)) {
+	// 		setAttributes({ layout: '100' });
+	// 	}
+	// // eslint-disable-next-line react-hooks/exhaustive-deps
+	// }, []);
+	//
+	const selectLayout = useCallback(name => {
+		setLayout(get(find(assets.layoutOptions, { value: name }), 'layout', {}));
+	}, [setLayout]);
 
 	return (
 		<Placeholder
-			key="placeholder"
 			className={ `${classPrefix}__placeholder` }
-			icon={ <BlockIcon icon={ assets.svg[columns ? 'layout' : 'row'] } showColors /> }
+			icon={ <BlockIcon icon={ assets.svg['form'] } showColors /> }
 			// we need add '  ' to separate title from SVG (css does not work!)
-			label={ ' ' + (columns ? __('Row Layout') : __('Row')) }
-			instructions={ columns ?
-				sprintf(__('Select a layout for this %s column row.'), columns)
-				:	__('Select the number of columns for this row.')
-			}
+			label={ ' ' + title }
+			instructions={ __('Select a form layout to start with.', 'zu-contact') }
 		>
-			{ !columns ?
-				<SelectItemControl
-					isSmall
-					withTooltip
-					className="row-layout"
-					columns={ assets.columnOptions.length }
-					label={ __('Select Row Columns') }
-					options={ assets.columnOptions }
-					selectedItem={ columns }
-					onClick={ setColumns }
-					transformValue={ value =>
-						<LayoutPreview isSmall withoutLabels layoutSet={ find(assets.columnOptions, { value }).layout }/>
-					}
-				/>
-			:
-				<SelectItemControl
-					isSmall
-					withTooltip
-					className="row-layout"
-					columns={ assets.layoutOptions[columns].length }
-					label={ __('Select Row Layout') }
-					options={ assets.layoutOptions[columns] }
-					selectedItem={ layout }
-					onClick={ setLayouts }
-					transformValue={ value =>
-						<LayoutPreview isSmall layoutSet={ value }/>
-					}
-					beforeItem={
-						<Button
-							icon="exit"
-							className={ `${classPrefix}__back` }
-							onClick={ resetLayouts }
-							label={ __('Back to Columns') }
-						/>
-					}
-				/>
-			}
+			<SelectItemControl
+				isSmall
+				withTooltip
+				className="form-layout"
+				columns={ assets.layoutOptions.length }
+				options={ assets.layoutOptions }
+				selectedItem={ layout }
+				onClick={ selectLayout }
+				transformValue={ value => <span className="__wrapper">{ assets.svg[value] }</span> }
+			/>
 		</Placeholder>
 	);
 }
 
-RowLayout.Preview = LayoutPreview;
-export default RowLayout;
+// FormLayout.Preview = LayoutPreview;
+export default FormLayout;
