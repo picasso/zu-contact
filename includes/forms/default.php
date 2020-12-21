@@ -1,28 +1,15 @@
 <?php
 //
-// Default Contact Form
+// Default Form
 //
 function zuc_register_default_form() {
 
-	$form = new zu_ContactFields('default', ['carbon_copy' => true]);
+	$form = new zu_ContactFields('default');
 
-	$form->add('name', true);
-	$form->add('email', true);
-	$form->add('message', true);
+	$form->add('name');
 	$form->add('submit');
 
-	// Register default form
 	zucontact()->register_form($form);
-
-	$contact_form = clone $form;
-	$contact_form->update([
-		'name'				=> 'contact',
-		'rows'				=> 5,
-		'carbon_copy'		=> false,
-	]);
-
-	// Register contact form
-	zucontact()->register_form($contact_form);
 }
 
 zuc_register_default_form();
@@ -53,6 +40,6 @@ zuc_register_default_form();
 //
 // $form->add(
 // 	'submit',
-// 	__('Send Message', 'zu-contact'),  
+// 	__('Send Message', 'zu-contact'),
 // 	'submit'
 // );

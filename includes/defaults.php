@@ -72,6 +72,12 @@ class zu_ContactFieldDefaults {
 				'required'		=> __('Please accept terms and conditions.', 'zu-contact'),
 				'placeholder'	=> null,
 			],
+			'number'		=> [
+				'id'			=> 'age',
+				'label'			=> __('How old are you?', 'zu-contact'),
+				'required'		=> __('Please enter your age to continue.', 'zu-contact'),
+				'placeholder'	=> __('Your Age', 'zu-contact'),
+			],
 			'submit'		=> [
 				'id'			=> 'submit',
 				'label'			=> __('Send Message', 'zu-contact'),
