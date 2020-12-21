@@ -14,7 +14,7 @@ trait zu_ContactForm {
     private static $success_messages = null;
     private static $subheading_us = null;
     private static $subheading_me = null;
-    private static $subheading_form = null;
+    private static $subheading_aliases = null;
 
     private function init_messages() {
         if(empty(self::$error_messages)) {
@@ -55,7 +55,7 @@ trait zu_ContactForm {
                 'subscribe'			=>	__('Subscribe to My Newsletter', 'zu-contact'),
             ];
 
-            self::$subheading_form = [
+            self::$subheading_aliases = [
                 'default'			=> 	'write',
                 'contact'			=> 	'contact',
                 'booking'			=>	'book',
@@ -71,7 +71,10 @@ trait zu_ContactForm {
 			if(empty($this->default_name)) $this->default_name = $form->name;
             if($form->name === 'default') $this->default_name = $form->name;
 
-			if($form->carbon_copy) $form->insert_at(-1, 'carbon-copy', __('Send me a copy', 'zu-contact'), 'checkbox');
+			if($form->carbon_copy) $form->insert_at(-1, 'checkbox', false, [
+                'id'    => 'carbon-copy',
+                'label' => __('Send me a copy', 'zu-contact')
+            ]);
 			else $form->remove('carbon-copy');
 
 			$this->forms[$form->name] = $form;
@@ -180,9 +183,13 @@ trait zu_ContactForm {
         foreach($this->available_forms() as $name) {
             $form = $this->get_form($name);
             if($form === false) continue;
-            $forms[$name] = [];
+            $forms[$name] = [
+                'name'      => $name,
+                'title'     => $this->subheading(null, $name),
+                'fields'    => [],
+            ];
             foreach($form->fields('order', true) as $field) {
-                $forms[$name][] = ['zu/field', $field];
+                $forms[$name]['fields'][] = $field;
             }
         }
         return $forms;
@@ -190,10 +197,10 @@ trait zu_ContactForm {
 
     // Messages ---------------------------------------------------------------]
 
-    private function subheading($subheading, $form_key = null) {
+    private function subheading($subheading, $key = null) {
         if(is_string($subheading)) return $subheading;
-        $index = self::$subheading_form[$form_key] ?? 'contact';
         $selected = $this->is_option('me_or_us') ? self::$subheading_me : self::$subheading_us;
+        $index = array_key_exists($key, $selected) ? $key : self::$subheading_aliases[$key] ?? 'contact';
         return $selected[$index];
     }
 

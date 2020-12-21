@@ -69,43 +69,27 @@ class zu_ContactFields {
 		$field = $this->field($id, $label, $type, $required, $placeholder);
 		$field['order'] = count($this->fields) + 1;
 		$this->fields[$id] = $field;
-		return true;
+		return $id;
 	}
 
 	// insert field at given position
 	// if $position is -1 then insert before last field (which is usually 'submit' button)
-	public function insert_at($position, $id, $label, $type = 'text', $required = '', $placeholder = '') {
+	public function insert_at($position, $id_or_type, $label_or_required = false, $type_or_params = [], $required = null, $placeholder = null) {
 
-		if($position === -1) $position = count($this->fields) - 1;
-		if(isset($this->fields[$id]) || $position < 1 || $position > count($this->fields)) return false;
+		if($position === -1) $position = (count($this->fields) + 1) - 1; // count after insert - 1
+		if($position < 1 || $position > (count($this->fields) + 1)) return false;
+
+		$id = $this->add($id_or_type, $label_or_required, $type_or_params, $required, $placeholder);
+		if($id === false) return false;
 
 		$this->fields = array_map(function($field) use($position) {
 			if($field['order'] >= $position) $field['order']++;
 			return $field;
 		}, $this->fields);
 
-		$field = $this->field($id, $label, $type, $required, $placeholder);
-		$field['order'] = $position;
-		$this->fields[$id] = $field;
+		$this->fields[$id]['order'] = $position;
+		return $id;
 	}
-
-	// insert field before last field (which is usually 'submit' button)
-	// public function insert_before_last($id, $label, $type = 'text', $required = '', $placeholder = '') {
-	//
-	// 	if(isset($this->fields[$id])) return false;
-	//
-	// 	$fields_keys = array_keys($this->fields);
-	// 	$last_pos = count($this->fields) - 1;
-	// 	$last_id = $fields_keys[$last_pos];
-	// 	$last_field = $this->fields[$last_id];
-	//
-	// 	$field = $this->field($id, $label, $type, $required, $placeholder);
-	// 	$field['order'] = $last_field['order'];
-	// 	$last_field['order']++;
-	//
-	// 	$this->fields = array_merge(array_slice($this->fields, 0, $last_pos), [$id => $field, $last_id => $last_field]);
-	// 	return true;
-	// }
 
 	public function remove($id) {
 
@@ -135,7 +119,7 @@ class zu_ContactFields {
 		$required_valid = is_array($value) ? $value[1] : $value;
 	}
 
-	public function fields($sorting_key = 'order', $template = false) {
+	public function fields($sorting_key = 'order', $template = false, $rows = null) {
 
 		$available_attrs = array_keys($this->field());
 		if(!in_array($sorting_key, $available_attrs)) $sorting_key = 'order';
@@ -148,9 +132,11 @@ class zu_ContactFields {
 		if($template) {
 			$fields = array_map(function($field) {
 				$field['id'] = $field['name'];
+				$field['required'] = $field['is_required'];
 				unset($field['order']);
 				unset($field['is_required']);
 				unset($field['name']);
+				if($field['type'] === 'textarea') $field['rows'] = $rows ?? $this->rows_in_message;
 				return $field;
 			}, $this->fields);
 		}
@@ -242,22 +228,40 @@ class zu_ContactFields {
 				$field_output,
 				self::$css_prefix
 			);
+		} else if($field['type'] === 'checkbox') {
+			$output = zu_sprintf(
+				'<div class="%1$s-control %5$s">
+					<div class="%1$s-input checkbox">
+						<div class="__align-middle">
+							%2$s%4$s
+						</div>
+			        	<span for="%1$s-%3$s" class="__validation">
+							%6$s
+						</span>
+					</div>
+				</div>',
+				self::$css_prefix,
+				$field_output,
+				$id,
+				$label,
+				$msg_class,
+				$error_text,
+			);
 		} else {
 			$output = zu_sprintf(
-				'<div class="%8$s-control %6$s">
+				'<div class="%7$s-control %5$s">
 					%4$s
-					<div class="%8$s-input %1$s">
-						%2$s%5$s
-			        	<span for="%8$s-%3$s" class="validation">
-							%7$s
+					<div class="%7$s-input %1$s">
+						%2$s
+			        	<span for="%7$s-%3$s" class="__validation">
+							%6$s
 						</span>
 					</div>
 				</div>',
 				$field['type'],
 				$field_output,
 				$id,
-				$field['type'] === 'checkbox' ? '' : $label,
-				$field['type'] === 'checkbox' ? $label : '',
+				$label,
 				$msg_class,
 				$error_text,
 				self::$css_prefix
