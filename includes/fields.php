@@ -138,7 +138,7 @@ class zu_ContactFields {
 				unset($field['name']);
 				if($field['type'] === 'textarea') $field['rows'] = $rows ?? $this->rows_in_message;
 				return $field;
-			}, $this->fields);
+			}, $fields);
 		}
 
 		return $fields;
