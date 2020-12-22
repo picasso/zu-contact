@@ -209,7 +209,7 @@ class zu_ContactFields {
 		else if($field['type'] === 'submit') $field_output = $this->input($field, $field['label']);
 		else $field_output = $this->input($field, $value);
 
-		$msg_class = isset($errors[$id]) ? 'error' : 'success';
+		$msg_class = isset($errors[$id]) ? '__error' : '__success';
 		$error_text = isset($errors[$id]) ? $errors[$id] : '';
 
 		$label = zu_sprintf(

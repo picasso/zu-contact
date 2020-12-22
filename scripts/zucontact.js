@@ -5,6 +5,7 @@
 	var Cs_prefix = jsdata.prefix;
 	var Cs_processed = `${Cs_prefix}-processed`;
 	var Cs_errors = `${Cs_prefix}-general-errors`;
+	var Cs_error = '__error';
 
 	var Ds_container = `.${Cs_prefix}-container`;
 	var Ds_subheading = `.${Cs_prefix}-subheading`;
@@ -73,8 +74,8 @@
 		}
 
 		function removePrevErrors() {
-			$form.find(`.${Cs_prefix}-control.error`)
-				.removeClass('error')
+			$form.find(`.${Cs_prefix}-control.${Cs_error}`)
+				.removeClass(Cs_error)
 				.find(Ds_validation)
 				.html('');
 		}
@@ -119,7 +120,7 @@
 					var $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`);
 					if($validated.length) {
 						$validated.html(value);
-						$validated.closest(Ds_control).addClass('error');
+						$validated.closest(Ds_control).addClass(Cs_error);
 					}
 				});
 			}
@@ -215,7 +216,7 @@
 		}
 
 		function markReCaptcha(isError) {
-			$('.g-recaptcha')[isError ? 'addClass': 'removeClass']('error');
+			$('.g-recaptcha')[isError ? 'addClass': 'removeClass'](Cs_error);
 		}
 
 		function initReCaptcha() {

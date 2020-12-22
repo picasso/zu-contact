@@ -296,7 +296,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 			display: none !important;
 		}
 
-		.success:not(.error) {
+		.__success:not(.__error) {
 			label {
 				@extend %sans_font;
 				.required {
@@ -307,7 +307,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 				opacity: 0;
 			}
 		}
-		.error {
+	}
+
+	// we need a special class to simulate errors in edit mode
+	&.#{$zuc-class-prefix}-processed, &.__edit-mode {
+		.__error {
 			label {
 				@extend %sans_font;
 			    color: $zuc-required-color;
@@ -336,7 +340,7 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		&.error > div {
+		&.__error > div {
 			@extend %not_valid;
 		}
 	}
