@@ -1,12 +1,13 @@
 // WordPress dependencies
 
-const { get, set, has, includes, map } = lodash;
+const { isNil, get, set, has, includes, map, indexOf } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
 const { PanelBody, ToggleControl, TextControl } = wp.components; //Button, SelectControl,
+const { createBlock } = wp.blocks;
 const { InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
-const { withSelect } = wp.data; // , withDispatch
-const { useState, useCallback, useRef } = wp.element;
+const { withSelect, withDispatch } = wp.data;
+const { useState, useCallback, useRef, useEffect } = wp.element;
 
 // Zukit dependencies
 
@@ -14,11 +15,12 @@ const { SelectItemControl } = wp.zukit.components;
 
 // Internal dependencies
 
-import { assets, typeDefaults, iconColor } from './assets.js';
+import { name as blockName } from './metadata.js';
+import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
 import ZuSubmitEdit from './edit-submit.js';
+import ZuFieldBlockControls from './field-block-controls.js';
 import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
-import ZuFieldBlockControls from './../components/field-block-controls.js';
 
 const fieldPrefix = 'components-zu-field__settings';
 
@@ -27,6 +29,9 @@ const ZuFieldEdit = ({
 		className,
 		setAttributes,
 		uniqueId,
+
+		remove,
+		insert,
 }) => {
 
 	const {
@@ -40,9 +45,26 @@ const ZuFieldEdit = ({
 	} = attributes;
 
 	const [ temporaryValue, setTemporaryValue ] = useState(type === 'checkbox' ? false : '');
-	const [ isEditingPlaceholder, setIsEditingPlaceholder ] = useState(false);
-	const [ isEditingRequired, setIsEditingRequired ] = useState(false);
 	const attrRef = useRef(null);
+	const requiredRef = useRef(null);
+	const inputRef = useRef();
+	const modeRef = useRef({
+		required: false,
+		invalid: false,
+		placeholder: false,
+	});
+
+	// create 'text' field as default if no attributes found
+	useEffect(() => {
+		if(isNil(id)) {
+			const newAttrs = typeDefaults[type || 'text'];
+			// avoid duplicate field id
+			setAttributes({ ...newAttrs, id: uniqueId(newAttrs.id) });
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	// Label helpers ----------------------------------------------------------]
 
 	const labelEdit = (type === 'submit') ? null : (
 		<label>
@@ -56,27 +78,49 @@ const ZuFieldEdit = ({
 		</label>
 	);
 
+	// Required helpers -------------------------------------------------------]
+
+	const [ isEditingRequired, setIsEditingRequired ] = useState(false);
+	const [ temporaryRequired, setTemporaryRequired ] = useState(requiredDefaults[type] || null);
+	const requiredEditRef = useRef();
+
 	const validationEdit = (!isEditingRequired || type === 'submit') ? null : (
 		<ZuPlainEdit
+			ref={ requiredEditRef }
 			className="__validation"
-			value={ "Please give your email address." }
-			attrKey={ 'label' }
+			value={ temporaryRequired }
 			placeholder={ __('Add field error message...', 'zu-contact') }
-			setAttributes={ setAttributes }
+			setAttributes={ setTemporaryRequired }
 		/>
 	);
 
-	const submitEdit = (
-		<ZuSubmitEdit { ...{ type, label, setAttributes } }/>
-	);
+	const onEditRequired = useCallback(() => {
+		setIsEditingRequired(true);
+		modeRef.current.required = true;
+	}, []);
 
-	// const onEditPlaceholder = useCallback(() => {
-	// 	setIsEditingPlaceholder(true);
-	// }, []);
+	useEffect(() => {
+		if(isEditingRequired) {
+			requiredEditRef.current.focus();
+		} else if(modeRef.current.required === true) {
+			inputRef.current.focus();
+			modeRef.current.required = false;
+		}
+	}, [isEditingRequired]);
+
+	const onSubmitRequired = useCallback(() => {
+		setIsEditingRequired(false);
+	}, []);
+
+	// Placeholder helpers ----------------------------------------------------]
+
+	const [ isEditingPlaceholder, setIsEditingPlaceholder ] = useState(false);
+	const placeholderEditRef = useRef();
 
 	const placeholderEdit = !isEditingPlaceholder ? null : (
 		<div className="__edit-placeholder">
 			<ZuPlainEdit
+				ref={ placeholderEditRef }
 				value={ placeholder }
 				attrKey={ 'placeholder' }
 				placeholder={ __('Add field placeholder...', 'zu-contact') }
@@ -85,17 +129,43 @@ const ZuFieldEdit = ({
 		</div>
 	);
 
+	const onEditPlaceholder = useCallback(() => {
+		setIsEditingPlaceholder(true);
+		modeRef.current.placeholder = true;
+	}, []);
+
+	useEffect(() => {
+		if(isEditingPlaceholder) {
+			placeholderEditRef.current.focus();
+		} else if(modeRef.current.placeholder === true) {
+			inputRef.current.focus();
+			modeRef.current.placeholder = false;
+		}
+	}, [isEditingPlaceholder]);
+
+	// Other helpers ----------------------------------------------------------]
+
+	const submitEdit = <ZuSubmitEdit { ...{ type, label, setAttributes } }/>;
+
 	const onChangeValue = (event) => setTemporaryValue(event.target[type === 'checkbox' ? 'checked' : 'value']);
 
 	const selectType = useCallback(selected => {
 		const { type } = attributes;
 		if(selected === type) return;
+
 		// keep current attributes, maybe they will be used later
 		attrRef.current = set(attrRef.current || {}, type, attributes);
+		// keep current error message for required, maybe it will be used later
+		requiredRef.current = set(requiredRef.current || {}, type, temporaryRequired);
+
 		const newAttrs = has(attrRef.current, selected) ? attrRef.current[selected] : typeDefaults[selected];
-		// we should avoid duplicate field id
+		const newRequired = has(requiredRef.current, selected) ? requiredRef.current[selected] : requiredDefaults[selected];
+
+		// avoid duplicate field id
 		setAttributes({ ...newAttrs, id: uniqueId(newAttrs.id) });
-	}, [attributes, setAttributes, uniqueId]);
+		setTemporaryRequired(newRequired);
+
+	}, [attributes, setAttributes, temporaryRequired, uniqueId]);
 
 	return (
 		<>
@@ -132,17 +202,17 @@ const ZuFieldEdit = ({
 			</InspectorAdvancedControls>
 			<ZuFieldBlockControls
 				isEditingPlaceholder={ isEditingPlaceholder }
-				onEditPlaceholder={ () => setIsEditingPlaceholder(true) }
-				onCancelPlaceholder={ () => setIsEditingPlaceholder(false) }
+				onEditPlaceholder={ onEditPlaceholder } //() => setIsEditingPlaceholder(true) }
+				onSubmitPlaceholder={ () => setIsEditingPlaceholder(false) }
 
 				isEditingRequired={ isEditingRequired }
-				onEditRequired={ () => setIsEditingRequired(true) }
-				onCancelRequired={ () => setIsEditingRequired(false) }
+				onEditRequired={ onEditRequired } //() => setIsEditingRequired(true) }
+				onSubmitRequired={ onSubmitRequired }
 
-				{ ...{ id, type, required, placeholder } }
+				{ ...{ id, type, required, placeholder, remove, insert } }
 			/>
 			<ZuField
-				isEditor
+				ref={ inputRef }
 				labelEdit={ labelEdit }
 				validationEdit={ validationEdit }
 				submitEdit={ submitEdit }
@@ -179,12 +249,21 @@ export default compose([
 		}
 		return {
 			uniqueId,
-			// availableFieldIds,
+			parentId,
+			insertIndex: indexOf(fieldIds, clientId) + 1,
 		};
 	}),
-	// withDispatch( ( dispatch ) => {
-	// 	const { updateBlockAttributes } = dispatch('core/block-editor');
-	// 	return { updateBlockAttributes };
-	// }),
+	withDispatch(( dispatch, { clientId, parentId, insertIndex }) => {
+		const { removeBlock, insertBlock } = dispatch('core/block-editor');
+		return {
+			remove: () => removeBlock(clientId, false),
+			insert: () => insertBlock(
+				createBlock(blockName, { type: 'text' }),
+				insertIndex,
+				parentId,
+				false
+			),
+		};
+	}),
 
 ])(ZuFieldEdit);

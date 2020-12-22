@@ -1,6 +1,7 @@
 // WordPress dependencies
 
 // const { isArray, get } = lodash;
+const { forwardRef } = wp.element;
 
 // Zukit dependencies
 
@@ -8,12 +9,12 @@ const { mergeClasses } = wp.zukit.utils;
 
 // Internal dependencies
 
-// import { mergeClasses } from './../utils.js';
 import { prefixIt } from './../assets.js';
 
 const ZuField = ({
 		// isEditor,
 		labelEdit,
+		validationEdit,
 		submitEdit,
 		placeholderEdit,
 		temporaryValue,
@@ -23,45 +24,28 @@ const ZuField = ({
 		id,
 		type,
 		required,
-		// required_valid,
 		value,
 		placeholder,
 		label,
 
 		rows = 10,
-}) => {
+}, ref) => {
 
 	const idWithPrefix = prefixIt(id);
-	// const isRequired =
-
-	// const requiredData = {
-	// 	'data-required_rule': required ? true : null,
-	// 	'data-required': required ? (isArray ? get(required, '0', null) : required) : null,
-	// 	'data-required_valid': isArray ? get(required, '1', null) : null,
-	// }
-
-// if(value === null) console.log('input with null', {className,
-// id,
-// type,
-// required,
-// value,
-// placeholder,
-// label,});
-//
-// { onChange ? tempValue : value }
-// </textarea>
+	const inputValue = (onChange ? temporaryValue : value) || (type === 'checkbox' ? false : '');
+	const placeholderValue = type === 'checkbox' || placeholderEdit ? null : placeholder;
 
 	const control = type === 'textarea' ? (
 		<>
 			<textarea
+				ref={ ref }
 				className="form-control"
 				id={ idWithPrefix }
 				name={ prefixIt(id, '[]') }
 				rows={ rows }
-				placeholder={ placeholderEdit ? null : placeholder }
+				placeholder={ placeholderValue }
 				onChange={ onChange }
-				value={ onChange ? temporaryValue : value }
-				// { ...requiredData }
+				value={ inputValue }
 			/>
 			{ placeholderEdit }
 		</>
@@ -75,39 +59,47 @@ const ZuField = ({
 	) : (
 		<>
 			<input
+				ref={ ref }
 				className="form-control"
 				type={ type }
 				id={ idWithPrefix }
 				name={ idWithPrefix }
-				value={ onChange ? temporaryValue : value }
-				checked={ type === 'checkbox' ? (value === true ? true : null) : null }
-				placeholder={ placeholderEdit ? null : placeholder }
+				value={ type === 'checkbox' ? "1" : inputValue }
+				checked={ type === 'checkbox' ? inputValue : null }
+				placeholder={ placeholderValue }
 				onChange={ onChange }
-				// { ...requiredData }
 			/>
 			{ placeholderEdit }
 		</>
 	));
 
-	const controlLabel = labelEdit ? labelEdit : type === 'checkbox' || type === 'submit' ? null : (
+	const controlLabel = labelEdit ? labelEdit : type === 'submit' ? null : (
 		<label htmlFor={ idWithPrefix }>
 			{ label }
 			{ required ? <span className="required">*</span> : null }
 		</label>
 	);
 
+	const controlValidation = validationEdit ? validationEdit : type === 'submit' ? null : (
+		<span htmlFor={ idWithPrefix } className="__validation"></span>
+	);
+
 	return (
-		<div className={ mergeClasses(prefixIt('control'), 'success', { __submit: type === 'submit' }, className) }>
-			{ controlLabel }
+		<div className={ mergeClasses(
+			prefixIt('control'), {
+				__submit: type === 'submit',
+				__success: true,
+				__error: validationEdit,
+			}, className)
+		}>
+			{ type === 'checkbox' ? null : controlLabel }
 			<div className={ mergeClasses(prefixIt('input'), type) }>
 				{ control }
-				{ type === 'checkbox' ? label : null }
-				{ type === 'submit' ? null :
-					<span htmlFor={ idWithPrefix } className="validation"></span>
-				}
+				{ type === 'checkbox' ? controlLabel : null }
+				{ controlValidation }
 			</div>
 		</div>
 	);
 };
 
-export default ZuField;
+export default forwardRef(ZuField);

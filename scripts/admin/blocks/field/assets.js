@@ -1,6 +1,6 @@
 // WordPress dependencies
 
-const { map, transform, includes, omit } = lodash;
+const { isArray, isNil, get, map, transform, includes, omit, omitBy } = lodash;
 const { __ } = wp.i18n;
 
 // 'text'+
@@ -50,6 +50,10 @@ const availableTypes = map(typeOptions, t => t.value);
 export const typeDefaults = transform(fullTypeDefaults, (values, attr, name)  => {
 	if(includes(availableTypes, name)) values[name] = omit(attr, 'required');
 });
+
+export const requiredDefaults = omitBy(transform(fullTypeDefaults, (values, attr, name)  => {
+	values[name] = (isArray(attr.required) ? get(attr, ['required', '0']) : attr.required) || null;
+}), isNil);
 
 export { prefixIt, iconColor };
 

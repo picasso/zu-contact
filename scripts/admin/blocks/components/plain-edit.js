@@ -1,41 +1,36 @@
 // WordPress dependencies
 
-// const { isArray, get } = lodash;
-// const { __ } = wp.i18n;
+const { isNil } = lodash;
 const { RichText } = wp.blockEditor;
-const { useCallback } = wp.element;
+const { useCallback, forwardRef } = wp.element;
 
 // Zukit dependencies
 
-// const { mergeClasses } = wp.zukit.utils;
-
-// Internal dependencies
+const { mergeClasses } = wp.zukit.utils;
 
 const ZuPlainEdit = ({
+		className,
 		attrKey,
 		value,
 		placeholder,
 		setAttributes,
 		keepOnFocus = true,
-		onBlur,
-		onFocus,
-}) => {
+}, ref) => {
 
 	const setText = useCallback(val => {
 		const doc = document.implementation.createHTMLDocument('');
 		doc.body.innerHTML = val;
-		setAttributes({ [attrKey]: doc.body.innerText });
+		setAttributes(isNil(attrKey) ? doc.body.innerText : { [attrKey]: doc.body.innerText });
 	}, [attrKey, setAttributes]);
 
 	return (
 		<RichText
+			ref={ ref }
 			tagName="span"
-			className="__edit"
+			className={ mergeClasses('__edit', className) }
 			allowedFormats={ [] }
 			value={ value }
 			onChange={ setText }
-			onBlur={ onBlur }
-			unstableOnFocus={ onFocus }
 			placeholder={ placeholder }
 			keepPlaceholderOnFocus={ keepOnFocus }
 			__unstablePastePlainText
@@ -43,4 +38,4 @@ const ZuPlainEdit = ({
 	);
 };
 
-export default ZuPlainEdit;
+export default forwardRef(ZuPlainEdit);

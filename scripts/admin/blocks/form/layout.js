@@ -21,13 +21,6 @@ const FormLayout = ({
 		setLayout,
 }) => {
 
-	// useEffect(() => {
-	// 	if(columns === 1 && isNil(layout)) {
-	// 		setAttributes({ layout: '100' });
-	// 	}
-	// // eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, []);
-	//
 	const selectLayout = useCallback(name => {
 		setLayout(get(find(assets.layoutOptions, { value: name }), 'layout', {}));
 	}, [setLayout]);
