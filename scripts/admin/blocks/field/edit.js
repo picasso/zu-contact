@@ -22,26 +22,6 @@ import ZuFieldBlockControls from './../components/field-block-controls.js';
 
 const fieldPrefix = 'components-zu-field__settings';
 
-// process button cliks and key down events
-// let skipNextClick = false;
-// function submitClick(ev) {
-// 	const node = String(ev.target.nodeName || ev.target.tagName).toLowerCase();
-// 	if(node === 'span') ev.preventDefault();
-// 	else {
-// 		if(!skipNextClick) alert('Doesn\'t Work here!');
-// 		ev.preventDefault();
-// 	}
-// 	skipNextClick = false;
-// }
-//
-// function submitKeyDown(ev) {
-//
-// 	const node = String(ev.target.nodeName || ev.target.tagName).toLowerCase();
-// 	if(node === 'span') {
-// 		skipNextClick = event.keyCode === 32;
-// 	}
-// }
-
 const ZuFieldEdit = ({
 		attributes,
 		className,
@@ -59,11 +39,12 @@ const ZuFieldEdit = ({
 		rows,
 	} = attributes;
 
-	const [ temporaryValue, setTemporaryValue ] = useState('');
+	const [ temporaryValue, setTemporaryValue ] = useState(type === 'checkbox' ? false : '');
 	const [ isEditingPlaceholder, setIsEditingPlaceholder ] = useState(false);
+	const [ isEditingRequired, setIsEditingRequired ] = useState(false);
 	const attrRef = useRef(null);
 
-	const labelEdit = (type === 'checkbox' || type === 'submit') ? null : (
+	const labelEdit = (type === 'submit') ? null : (
 		<label>
 			<ZuPlainEdit
 				value={ label }
@@ -75,19 +56,19 @@ const ZuFieldEdit = ({
 		</label>
 	);
 
+	const validationEdit = (!isEditingRequired || type === 'submit') ? null : (
+		<ZuPlainEdit
+			className="__validation"
+			value={ "Please give your email address." }
+			attrKey={ 'label' }
+			placeholder={ __('Add field error message...', 'zu-contact') }
+			setAttributes={ setAttributes }
+		/>
+	);
+
 	const submitEdit = (
 		<ZuSubmitEdit { ...{ type, label, setAttributes } }/>
 	);
-	// (type !== 'submit') ? null : (
-	// 	<button className="__edit-submit" onClick={ submitClick } onKeyDown={ submitKeyDown }>
-	// 		<ZuPlainEdit
-	// 			value={ label }
-	// 			attrKey={ 'label' }
-	// 			placeholder={ __('Add button label...', 'zu-contact') }
-	// 			setAttributes={ setAttributes }
-	// 		/>
-	// 	</button>
-	// );
 
 	// const onEditPlaceholder = useCallback(() => {
 	// 	setIsEditingPlaceholder(true);
@@ -104,7 +85,7 @@ const ZuFieldEdit = ({
 		</div>
 	);
 
-	const onChangeValue = (event) => setTemporaryValue(event.target.value);
+	const onChangeValue = (event) => setTemporaryValue(event.target[type === 'checkbox' ? 'checked' : 'value']);
 
 	const selectType = useCallback(selected => {
 		const { type } = attributes;
@@ -153,11 +134,17 @@ const ZuFieldEdit = ({
 				isEditingPlaceholder={ isEditingPlaceholder }
 				onEditPlaceholder={ () => setIsEditingPlaceholder(true) }
 				onCancelPlaceholder={ () => setIsEditingPlaceholder(false) }
+
+				isEditingRequired={ isEditingRequired }
+				onEditRequired={ () => setIsEditingRequired(true) }
+				onCancelRequired={ () => setIsEditingRequired(false) }
+
 				{ ...{ id, type, required, placeholder } }
 			/>
 			<ZuField
 				isEditor
 				labelEdit={ labelEdit }
+				validationEdit={ validationEdit }
 				submitEdit={ submitEdit }
 				placeholderEdit={ placeholderEdit }
 				temporaryValue={ temporaryValue }

@@ -32,6 +32,16 @@ const FormLayout = ({
 		setLayout(get(find(assets.layoutOptions, { value: name }), 'layout', {}));
 	}, [setLayout]);
 
+	const renderItem = (value, label) => (
+		<span className="__wrapper">
+			{ value === 'skip' ?
+			<span className="__skip">{ label }</span>
+		:
+			assets.svg[value]
+			}
+		</span>
+	);
+
 	return (
 		<Placeholder
 			className={ `${classPrefix}__placeholder` }
@@ -48,7 +58,7 @@ const FormLayout = ({
 				options={ assets.layoutOptions }
 				selectedItem={ layout }
 				onClick={ selectLayout }
-				transformValue={ value => <span className="__wrapper">{ assets.svg[value] }</span> }
+				transformValue={ renderItem }
 			/>
 		</Placeholder>
 	);

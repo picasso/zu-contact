@@ -7,7 +7,7 @@ const { __ } = wp.i18n;
 import { form as icon, iconColor } from './../assets.js';
 
 const name = 'zu/form';
-const title = __('Smart Form', 'zu-contact');
+const title = __('Zu Form', 'zu-contact');
 
 const attributes = {
     name: {
