@@ -51,7 +51,13 @@ const ZuForm = ({
 	return (
 		<div
 			id={ nameWithPrefix }
-			className={ mergeClasses(prefixIt('container'), name, formPrefix, className) }
+			className={ mergeClasses(
+				prefixIt('container'),
+				name,
+				formPrefix,
+				{ '__edit-mode': titleEdit },
+				className)
+			}
 			data-id={ name }
 			data-noajax={ toBool(noajax, true) }
 		>

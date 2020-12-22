@@ -52,7 +52,7 @@ const metadata = {
     /* translators: block name */
     title,
     /* translators: block description */
-    description: __('Add a contact form to your page.', 'zu-contact'),
+    description: __(' Simple but smart and modern Ajax contact form.', 'zu-contact'),
     category: 'layout',
     keywords: [
         /* translators: block keyword */
