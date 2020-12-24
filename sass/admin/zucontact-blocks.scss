@@ -5,7 +5,7 @@ $border-radius: 3px;
 $zuc-form-class: components-zu-form;
 $zuc-field-class: components-zu-field;
 
-$zuc-layout-color: rgba($brand-color, 0.03);
+$zuc-layout-bg-color: rgba($brand-color, 0.02);
 $zuc-layout-border-color: rgba($brand-color, 0.4);
 $zuc-layout-hover-color: rgba($brand-color, 0.08);
 $zuc-layout-heading-color: rgba($brand-color, 0.8);
@@ -91,13 +91,14 @@ $zuc-field-type-icon-size: 24px * 2;
 			width: 100%;
 			overflow: hidden;
 			pointer-events: none;
-			background-color: $zuc-layout-color !important;
+			background-color: $zuc-layout-bg-color !important;
 			z-index: 0;
 		}
 
 		.components-placeholder__label {
 			margin-bottom: 8px;
-			font-weight: 500;
+			font-weight: 500 !important;
+			letter-spacing: 0.5px;
 			color: $zuc-layout-heading-color;
 		}
 		.components-placeholder__instructions {
@@ -111,12 +112,7 @@ $zuc-field-type-icon-size: 24px * 2;
 				margin-right: 8px !important;
 			}
 
-			// .zukit-select-item.__4columns {
-			// 	width: $zuc-layout-icon-size + (5px * 2) + (3px * 2);
-			// }
-
 			.components-button {
-				box-shadow: none !important;
 				.__wrapper {
 					svg, .__skip {
 						width: $zuc-layout-icon-size;
@@ -125,13 +121,11 @@ $zuc-field-type-icon-size: 24px * 2;
 					.__skip {
 						display: inline-block;
 						font-size: 16px;
-						font-weight: 400;
+						font-weight: 500;
+						text-transform: uppercase;
+						letter-spacing: 0.5px;
 						padding-top: $zuc-layout-icon-size - $zuc-layout-icon-font-size + 5px; // 5px - padding for __wrapper
  					}
-				}
-				&:hover {
-					background-color: $zuc-layout-hover-color;
-					border-color: $zuc-layout-border-color !important;
 				}
 			}
 		}
@@ -151,36 +145,19 @@ $zuc-field-type-icon-size: 24px * 2;
 				width: $zuc-field-type-icon-size;
 				height: $zuc-field-type-icon-size;
 			}
-			.zukit-select-item__button {
-				&:hover {
-					background-color: rgba($wp-admin-blue-color, 0.04);
-					box-shadow: inset 0 0 0 1px rgba($wp-admin-blue-color, 0.5);
+			.components-button:hover {
+				#frame {
+					fill: rgba($zuc-selected-color, $zuc-icon-frame-opacity);
 				}
 			}
-
 			&.is-disabled {
-				.zukit-select-item__button {
-					background-color: rgba($zuc-selected-color, 0.05);
-					border-color: rgba($zuc-selected-color, 0.5);
-				}
-				svg {
-					color: $zuc-selected-color;
-					#frame {
-						fill: rgba($zuc-selected-color, $zuc-icon-frame-opacity);
-					}
+				#frame {
+					fill: rgba($zuc-selected-color, $zuc-icon-frame-opacity);
 				}
 			}
-
 			&.is-selected {
-				box-shadow: none;
-				.zukit-select-item__button {
-					background-color: rgba($zuc-disabled-color, 0.07);
-					border-color: rgba($zuc-disabled-color, 0.4);
-					color: $zuc-disabled-color;
-					#frame {
-						fill: rgba($zuc-disabled-color, $zuc-icon-frame-opacity);
-					}
-					opacity: 0.5;
+				#frame {
+					fill: rgba($zuc-disabled-color, $zuc-icon-frame-opacity);
 				}
 			}
 		}
