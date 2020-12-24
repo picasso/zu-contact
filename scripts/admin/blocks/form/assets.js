@@ -28,7 +28,7 @@ export const layoutOptions = [
 	{ value: 'contact', label: __('Contact Layout', 'zu-contact'), layout: params('contact') },
 	{ value: 'booking', label: __('Booking Layout', 'zu-contact'), layout: params('booking') },
 	{ value: 'subscribe', label: __('Subscribe Layout', 'zu-contact'), layout: params('subscribe') },
-	{ value: 'skip', label: __('Skip', 'zu-contact'), layout: params('skip') },
+	{ value: 'skip', label: __('Skip', 'zu-contact'), layout: params('default') },
 ];
 
 export const fieldBlock = 'zu/field';
@@ -49,7 +49,7 @@ export const assets = {
 	svg: {
 		form, //: { src: form, foreground: iconColor },
 		contact,
-		booking, //: { src: booking, foreground: iconColor },
-		subscribe, //: { src: subscribe, foreground: iconColor },
+		booking,
+		subscribe,
 	},
 };
