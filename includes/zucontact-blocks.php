@@ -17,7 +17,7 @@ class zu_ContactBlocks extends zukit_Blocks {
 	protected function js_data($is_frontend) {
 		$ajax_data = $this->plugin->ajax_data();
 		return $is_frontend ? null : array_merge([
-			'jsdata_name'	=> $this->prefix_it('blocks_data', '_'),
+			// 'jsdata_name'	=> $this->prefix_it('blocks_data', '_'),
 			'nonce'     	=> $this->ajax_nonce(true),
 			'types'			=> zu_ContactFieldDefaults::as_data(),
 			'templates'		=> $this->plugin->templates(),

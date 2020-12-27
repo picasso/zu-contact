@@ -16,6 +16,11 @@ $zuc-icon-frame-opacity: 0.3;
 $zuc-layout-icon-size: 24px * 3;
 $zuc-layout-icon-font-size: 16px;
 $zuc-field-type-icon-size: 24px * 2;
+$zuc-loader-size: 40px;
+
+%transition-opacity {
+    transition: opacity .3s ease-in-out;
+}
 
 .wp-block[data-type="zu/field"] {
 	margin-top: 0;
@@ -24,6 +29,26 @@ $zuc-field-type-icon-size: 24px * 2;
 
 .#{$zuc-form-class} {
 
+	.zu-loader {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+
+		min-height: $zuc-loader-size;
+		max-height: $zuc-loader-size;
+		overflow: hidden;
+	}
+
+	&.__reveal-loader {
+		h2.zuc-subheading {
+			opacity: 0 !important;
+		}
+		.zuc-form-container {
+			opacity: 0.5;
+		}
+	}
+
 	h2.zuc-subheading {
 		display: block;
 		position: static;
@@ -31,10 +56,15 @@ $zuc-field-type-icon-size: 24px * 2;
 		opacity: 0.7 !important;
 		font-size: 32px;
 		letter-spacing: 0.5px;
+		@extend %transition-opacity;
 	}
 
 	.zuc-status {
 		display: none !important;
+	}
+
+	.zuc-form-container {
+		@extend %transition-opacity;
 	}
 
 	.zuc-control {
@@ -133,6 +163,7 @@ $zuc-field-type-icon-size: 24px * 2;
 }
 
 .#{$zuc-field-class}__settings {
+
 	.__field-type {
 		.components-button-group {
 			justify-content: flex-start;

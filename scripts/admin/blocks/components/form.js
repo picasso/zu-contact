@@ -7,6 +7,7 @@ const { isNil } = lodash;
 // Zukit dependencies
 
 const { mergeClasses, toBool } = wp.zukit.utils;
+const { Loader } = wp.zukit.components;
 
 // Internal dependencies
 
@@ -22,6 +23,7 @@ const defaultMessage = null;
 const ZuForm = ({
 		className,
 		titleEdit,
+		loaderEdit,
 
 		postId,
 		postLink,
@@ -29,6 +31,8 @@ const ZuForm = ({
 		name,
 		title,
 		noajax,
+
+		loaderHTML,
 
 		children,
 }) => {
@@ -38,7 +42,6 @@ const ZuForm = ({
 		<h2 className={ mergeClasses(prefixIt('subheading'), 'before_posting') }>{ title }</h2>
 	);
 
-	// const postLink = isNil(postSlug) ? '' : `/${trim(postSlug, '/')}/`;
 	const formNonce = isNil(nonce) ? null : (
 		<>
 			<input type="hidden" id={ prefixIt('nonce', '_') } name={ prefixIt('nonce', '_') } value={ '__nonce__' }/>
@@ -46,7 +49,9 @@ const ZuForm = ({
 		</>
 	);
 
-	const loader = null;
+	const formLoader = loaderEdit ? loaderEdit : (
+		<Loader className={ prefixIt('loader') } loaderHTML={ loaderHTML } />
+	);
 
 	return (
 		<div
@@ -61,7 +66,7 @@ const ZuForm = ({
 			data-id={ name }
 			data-noajax={ toBool(noajax, true) }
 		>
-			{ loader }
+			{ formLoader }
 			{ formTitle }
 			<div className={ prefixIt('status') } style={ { visibility: 'hidden' } }>
                 <span className="icon-ok">{ okIcon }</span>

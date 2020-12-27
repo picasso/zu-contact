@@ -13,10 +13,11 @@ const save = ({ className, attributes }) => {
 		name,
 		title,
 		noajax,
+		loaderHTML,
 	} = attributes;
-
+	
 	return (
-		<ZuForm { ...{ className, name, title, noajax, postId, postLink } }>
+		<ZuForm { ...{ className, name, title, noajax, postId, postLink, loaderHTML } }>
 			<InnerBlocks.Content />
 		</ZuForm>
 	);

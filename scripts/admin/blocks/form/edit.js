@@ -8,18 +8,24 @@ const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEd
 const { withSelect } = wp.data;
 const { useCallback, useEffect } = wp.element;
 
+// Zukit dependencies
+
+const { LoaderControl, Loader } = wp.zukit.components;
+const { useLoaders } = wp.zukit.data;
+
 // Internal dependencies
 
 // import { pluginDefaults } from './../assets.js';
 import { allowedBlocks, layoutTemplates, prefixIt } from './assets.js';
-// import { mergeClasses, borderClasses, gutterClasses  } from './../../shared/utils.js';
+// import { useGetOption,   } from './../options.js';
 
 import ZuForm from './../components/form.js';
 import ZuPlainEdit from './../components/plain-edit.js';
+// import PluginOptionsEdit from './../options/plugin.js';
 import FormLayout from './layout.js';
 
 const ZuFormEdit = ({
-		// clientId,
+		clientId,
 		className,
 		currentPostId,
 		editedPostSlug,
@@ -33,6 +39,7 @@ const ZuFormEdit = ({
 		noajax,
 		postId,
 		postLink,
+		loader,
 	} = attributes;
 
 	useEffect(() => {
@@ -42,6 +49,15 @@ const ZuFormEdit = ({
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	// Loader -----------------------------------------------------------------]
+
+	// get all possible options for 'loaders'
+	const loaders = useLoaders();
+
+	const loaderEdit = <Loader.WithOptions className={ prefixIt('loader') } id={ loader }/>;
+
+	// Layouts ----------------------------------------------------------------]
 
 	const setLayout = useCallback(layout => {
 		setAttributes({ name: layout.name, title: layout.title });
@@ -58,6 +74,8 @@ const ZuFormEdit = ({
 		);
 	}
 
+	// Title ------------------------------------------------------------------]
+
 	const titleEdit = (
 		<h2 className={ prefixIt('subheading') }>
 			<ZuPlainEdit
@@ -70,6 +88,9 @@ const ZuFormEdit = ({
 	);
 
 // console.log(name, layoutTemplates[name]);
+// <PanelBody title={ __('Plugin options', 'zu-contact') }>
+// 	<PluginOptionsEdit/>
+// </PanelBody>
 
 	return (
 		<>
@@ -81,6 +102,16 @@ const ZuFormEdit = ({
 						onChange={ () => setAttributes({ noajax: !noajax }) }
 					/>
 				</PanelBody>
+
+				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>
+					<LoaderControl
+						clientId={ clientId }
+						editClassName="__reveal-loader"
+						shape={ loader }
+						loaders={ loaders }
+						setAttributes={ setAttributes }
+					/>
+				</PanelBody>
 			</InspectorControls>
 			<InspectorAdvancedControls>
 				<TextControl
@@ -90,11 +121,20 @@ const ZuFormEdit = ({
 					onChange={ val => setAttributes({ name: val }) }
 				/>
 			</InspectorAdvancedControls>
-			<ZuForm isEditor { ...{ className, name, title, noajax, postId, postLink, titleEdit } }>
+			<ZuForm { ...{
+				className,
+				name,
+				title,
+				noajax,
+				postId,
+				postLink,
+				titleEdit,
+				loaderEdit }
+			}>
 				<InnerBlocks
 					allowedBlocks={ allowedBlocks }
 					template={ layoutTemplates[name] }
-					// templateLock="all"
+					templateLock={ false }
 					templateInsertUpdatesSelection={ false }
 					renderAppender={ () => ( null ) }
 					__experimentalCaptureToolbars={ true }
@@ -104,7 +144,6 @@ const ZuFormEdit = ({
 	);
 }
 
-// export default ZuFormEdit;
 export default compose([
 	withSelect(select => {
 		const { getCurrentPostId, getEditedPostSlug } = select('core/editor');

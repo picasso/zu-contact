@@ -4,10 +4,11 @@ const { __ } = wp.i18n;
 
 // Internal dependencies
 
-import { field as icon, iconColor, blockTitle } from './../assets.js';
+import { field as icon, iconColor } from './../assets.js';
 
 const name = 'zu/field';
-const title = blockTitle(name);
+/* translators: block name */
+const title = __('Zu Field', 'zu-contact');
 
 const attributes = {
     id: {
@@ -36,7 +37,6 @@ const attributes = {
 
 const metadata = {
     name,
-    /* translators: block name */
     title,
     /* translators: block description */
     description: __('A text box for longer responses.', 'zu-contact'),

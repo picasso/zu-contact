@@ -7,6 +7,7 @@ const { __ } = wp.i18n;
 import { form as icon, iconColor } from './../assets.js';
 
 const name = 'zu/form';
+/* translators: block name */
 const title = __('Zu Form', 'zu-contact');
 
 const attributes = {
@@ -45,11 +46,23 @@ const attributes = {
         source: 'attribute',
         attribute: 'value'
     },
+    loader: {
+        type: 'string',
+        default: 'none',
+        selector: '.zu-loader svg',
+        source: 'attribute',
+        attribute: 'data-id',
+    },
+    loaderHTML: {
+        type: 'string',
+        default: '',
+        selector: '.zu-loader',
+        source: 'html',
+    },
 };
 
 const metadata = {
     name,
-    /* translators: block name */
     title,
     /* translators: block description */
     description: __(' Simple but smart and modern Ajax contact form.', 'zu-contact'),
