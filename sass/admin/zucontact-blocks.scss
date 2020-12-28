@@ -22,10 +22,7 @@ $zuc-loader-size: 40px;
     transition: opacity .3s ease-in-out;
 }
 
-.wp-block[data-type="zu/field"] {
-	margin-top: 0;
-	margin-bottom: 0;
-}
+// Form -----------------------------------------------------------------------]
 
 .#{$zuc-form-class} {
 
@@ -160,6 +157,28 @@ $zuc-loader-size: 40px;
 			}
 		}
 	}
+}
+
+// Field ----------------------------------------------------------------------]
+
+.#{$zuc-field-class} {
+    // outline-width: 0;
+    outline-color: transparent;
+    outline-offset: 5px;
+    transition: outline-width .5s ease-in-out;
+    .is-selected.wp-block[data-type="zu/field"] & { // :not(.is-hovered)
+        outline: 1px dashed rgba($brand-color, 0.3);
+    }
+
+    .wp-block[data-type="zu/field"]:focus &, .wp-block[data-type="zu/field"]:hover & {
+        // outline-width: 0 !important;
+        outline-color: transparent !important;
+    }
+}
+
+.wp-block[data-type="zu/field"] {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 .#{$zuc-field-class}__settings {
