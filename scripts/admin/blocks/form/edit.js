@@ -3,21 +3,21 @@
 const { isNil, trim } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
-const { PanelBody, TextControl, ToggleControl } = wp.components;
+const { PanelBody, ToggleControl, Button } = wp.components;
 const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
 const { withSelect } = wp.data;
-const { useCallback, useEffect } = wp.element;
+const { useCallback, useEffect, useState } = wp.element;
 
 // Zukit dependencies
 
-const { LoaderControl, Loader } = wp.zukit.components;
+const { uniqueValue } = wp.zukit.utils;
+const { LoaderControl, Loader, AdvTextControl } = wp.zukit.components;
 const { useLoaders } = wp.zukit.data;
 
 // Internal dependencies
 
-// import { pluginDefaults } from './../assets.js';
 import { allowedBlocks, layoutTemplates, prefixIt } from './assets.js';
-// import { useGetOption,   } from './../options.js';
+import { FormsContext, useUpdateForms, useOnFormRemove, getUsedNames  } from './../data/use-form-context.js';
 
 import ZuForm from './../components/form.js';
 import ZuPlainEdit from './../components/plain-edit.js';
@@ -42,6 +42,26 @@ const ZuFormEdit = ({
 		loader,
 	} = attributes;
 
+	// Sync form changes with information stored on the server ----------------]
+
+	// * * *
+	// need to update form attributes on events:
+	// * * *
+	// + create: { postId, name, 'create', value(=templateName) }
+	// + purge: { postId, name, 'purge' }
+	// + 'name' changing: { postId, name, 'rename', value(=newName) }
+
+	const [ updateForm, updateField ] = useUpdateForms(postId, name);
+	const [ templateName, setTemplateName ] = useState();
+
+	useOnFormRemove(clientId, postId, name, updateForm);
+
+	const onChangeName = useCallback(value => {
+		setAttributes({ name: value });
+		updateForm(postId, name, 'rename', value);
+	}, [postId, name, setAttributes, updateForm]);
+
+
 	useEffect(() => {
 		if(isNil(postId) || isNil(postLink)) {
 			const link = isNil(editedPostSlug) ? '' : `/${trim(editedPostSlug, '/')}/`;
@@ -60,8 +80,11 @@ const ZuFormEdit = ({
 	// Layouts ----------------------------------------------------------------]
 
 	const setLayout = useCallback(layout => {
-		setAttributes({ name: layout.name, title: layout.title });
-	}, [setAttributes]);
+		const uniqueName = uniqueValue(layout.name, getUsedNames());
+		setTemplateName(layout.name);
+		setAttributes({ name: uniqueName, title: layout.title });
+		updateForm(postId, uniqueName, 'create', layout.name)
+	}, [postId, updateForm, setAttributes]);
 
 	// if the name is not defined - display the layout selection
 	if(!name) {
@@ -101,6 +124,13 @@ const ZuFormEdit = ({
 						checked={ !noajax }
 						onChange={ () => setAttributes({ noajax: !noajax }) }
 					/>
+
+					<Button
+						isPrimary
+						onClick={ () => updateForm(postId, name, { name, title }) }
+					>
+						Update Form
+					</Button>
 				</PanelBody>
 
 				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>
@@ -114,11 +144,14 @@ const ZuFormEdit = ({
 				</PanelBody>
 			</InspectorControls>
 			<InspectorAdvancedControls>
-				<TextControl
+				<AdvTextControl
+					withDebounce
+					withoutClear
 					label={ __('Form Name', 'zu-contact') }
-					help={ __('Usually you don\'t need to change it', 'zu-contact') }
+					help={ __('Usually you don\'t need to change it.', 'zu-contact') }
 					value={ name }
-					onChange={ val => setAttributes({ name: val }) }
+					onChange={ onChangeName }
+					withoutValues={ getUsedNames() }
 				/>
 			</InspectorAdvancedControls>
 			<ZuForm { ...{
@@ -131,14 +164,16 @@ const ZuFormEdit = ({
 				titleEdit,
 				loaderEdit }
 			}>
-				<InnerBlocks
-					allowedBlocks={ allowedBlocks }
-					template={ layoutTemplates[name] }
-					templateLock={ false }
-					templateInsertUpdatesSelection={ false }
-					renderAppender={ () => ( null ) }
-					__experimentalCaptureToolbars={ true }
-				/>
+				<FormsContext.Provider value={ updateField }>
+					<InnerBlocks
+						allowedBlocks={ allowedBlocks }
+						template={ layoutTemplates[templateName] }
+						templateLock={ false }
+						templateInsertUpdatesSelection={ false }
+						renderAppender={ () => ( null ) }
+						__experimentalCaptureToolbars={ true }
+					/>
+				</FormsContext.Provider>
 			</ZuForm>
 		</>
 	);
@@ -147,6 +182,7 @@ const ZuFormEdit = ({
 export default compose([
 	withSelect(select => {
 		const { getCurrentPostId, getEditedPostSlug } = select('core/editor');
+
 		return {
 			currentPostId: getCurrentPostId(),
 			editedPostSlug: getEditedPostSlug(),

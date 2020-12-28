@@ -1,9 +1,9 @@
 // WordPress dependencies
 
-const { isNil, get, set, has, includes, map, indexOf } = lodash;
+const { isNil, get, set, has, map, indexOf } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
-const { PanelBody, ToggleControl, TextControl } = wp.components; //Button, SelectControl,
+const { PanelBody, ToggleControl } = wp.components;
 const { createBlock } = wp.blocks;
 const { InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
 const { withSelect, withDispatch } = wp.data;
@@ -11,24 +11,27 @@ const { useState, useCallback, useRef, useEffect } = wp.element;
 
 // Zukit dependencies
 
-const { SelectItemControl } = wp.zukit.components;
+const { uniqueValue } = wp.zukit.utils;
+const { SelectItemControl, AdvTextControl } = wp.zukit.components;
 
 // Internal dependencies
 
 import { name as blockName } from './metadata.js';
 import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
+import { useFormsContext, useOnFieldRemove  } from './../data/use-form-context.js';
+
 import ZuSubmitEdit from './edit-submit.js';
 import ZuFieldBlockControls from './field-block-controls.js';
 import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
 
-const fieldPrefix = 'components-zu-field__settings';
+const fieldPrefix = `${ZuField.fieldPrefix}__settings`;
 
 const ZuFieldEdit = ({
 		attributes,
 		className,
 		setAttributes,
-		uniqueId,
+		availableFieldIds,
 
 		remove,
 		insert,
@@ -54,15 +57,45 @@ const ZuFieldEdit = ({
 		placeholder: false,
 	});
 
+	// Sync field changes with information stored on the server ---------------]
+	// * * *
+	// need to update field attributes on events:
+	// * * *
+	// + addition: { id, type, required, requiredValue }
+	// + deletion: { id }
+	// + 'type' changing: { previousId, id, type, required, requiredValue }
+	// + 'requiredValue' changing: { id, requiredValue: temporaryRequired }
+	// + 'required' changing: { id, required }
+	// + 'id' changing: { previousId, id }
+
+	const updateField = useFormsContext();
+
 	// create 'text' field as default if no attributes found
 	useEffect(() => {
 		if(isNil(id)) {
 			const newAttrs = typeDefaults[type || 'text'];
 			// avoid duplicate field id
-			setAttributes({ ...newAttrs, id: uniqueId(newAttrs.id) });
+			const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') } ;
+			setAttributes(newAttrsWithId);
+			updateField('add', { ...newAttrsWithId, requiredValue: requiredDefaults[newAttrsWithId.type] });
+		} else {
+			// сомнительно что работает
+			updateField('add', { id, type, required, requiredValue: requiredDefaults[type] });
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useOnFieldRemove(id, updateField);
+
+	const onChangeRequired  = useCallback(() => {
+		setAttributes({ required: !required });
+		updateField('update', { updated: 'required', required });
+	}, [required, setAttributes, updateField]);
+
+	const onChangeId = useCallback(newId => {
+		setAttributes({ id: newId });
+		updateField('update', { updated: 'id', previousId: id, id: newId });
+	}, [id, setAttributes, updateField]);
 
 	// Label helpers ----------------------------------------------------------]
 
@@ -110,7 +143,8 @@ const ZuFieldEdit = ({
 
 	const onSubmitRequired = useCallback(() => {
 		setIsEditingRequired(false);
-	}, []);
+		updateField('update', { updated: 'requiredValue', requiredValue: temporaryRequired });
+	}, [temporaryRequired, updateField]);
 
 	// Placeholder helpers ----------------------------------------------------]
 
@@ -150,7 +184,7 @@ const ZuFieldEdit = ({
 	const onChangeValue = (event) => setTemporaryValue(event.target[type === 'checkbox' ? 'checked' : 'value']);
 
 	const selectType = useCallback(selected => {
-		const { type } = attributes;
+		const { type, id } = attributes;
 		if(selected === type) return;
 
 		// keep current attributes, maybe they will be used later
@@ -162,10 +196,12 @@ const ZuFieldEdit = ({
 		const newRequired = has(requiredRef.current, selected) ? requiredRef.current[selected] : requiredDefaults[selected];
 
 		// avoid duplicate field id
-		setAttributes({ ...newAttrs, id: uniqueId(newAttrs.id) });
+		const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') };
+		setAttributes(newAttrsWithId);
 		setTemporaryRequired(newRequired);
+		updateField('update', { updated: 'type', previousId: id, ...newAttrsWithId, requiredValue: newRequired });
 
-	}, [attributes, setAttributes, temporaryRequired, uniqueId]);
+	}, [attributes, setAttributes, temporaryRequired, availableFieldIds, updateField]);
 
 	return (
 		<>
@@ -187,26 +223,30 @@ const ZuFieldEdit = ({
 						<ToggleControl
 							label={ __('This is a required field.', 'zu-contact') }
 							checked={ !!required }
-							onChange={ () => setAttributes({ required: !required }) }
+							onChange={ onChangeRequired }
 						/>
 					}
 				</PanelBody>
 			</InspectorControls>
 			<InspectorAdvancedControls>
-				<TextControl
+				<AdvTextControl
+					withDebounce
+					withoutClear
 					label={ __('Field Id', 'zu-contact') }
 					help={ __('Usually you don\'t need to change it', 'zu-contact') }
 					value={ id }
-					onChange={ val => setAttributes({ id: uniqueId(val) }) }
+					onChange={ onChangeId }
+					withoutValues={ availableFieldIds }
+					fallbackValue="id"
 				/>
 			</InspectorAdvancedControls>
 			<ZuFieldBlockControls
 				isEditingPlaceholder={ isEditingPlaceholder }
-				onEditPlaceholder={ onEditPlaceholder } //() => setIsEditingPlaceholder(true) }
+				onEditPlaceholder={ onEditPlaceholder }
 				onSubmitPlaceholder={ () => setIsEditingPlaceholder(false) }
 
 				isEditingRequired={ isEditingRequired }
-				onEditRequired={ onEditRequired } //() => setIsEditingRequired(true) }
+				onEditRequired={ onEditRequired }
 				onSubmitRequired={ onSubmitRequired }
 
 				{ ...{ id, type, required, placeholder, remove, insert } }
@@ -225,30 +265,16 @@ const ZuFieldEdit = ({
 	);
 }
 
-// export default ZuFieldEdit;
 export default compose([
 	withSelect(( select, { clientId }) => {
 		const { getBlockOrder, getBlockRootClientId, getBlockAttributes } = select('core/block-editor');
-		// const { getBlockTypes } = select('core/blocks');
 
-		// const block = getBlock(clientId);
 		const parentId = getBlockRootClientId(clientId);
 		const fieldIds = getBlockOrder(parentId);
 		const availableFieldIds= map(fieldIds, id => get(getBlockAttributes(id), 'id', null));
 
-		const uniqueId = id => {
-			if(includes(availableFieldIds, id)) {
-				let index = 0;
-				const idBody = String(id).replace(/-\d+$/, '').replace(/\d+$/, '') || 'id';
-				while(++index > 0) {
-					const testId = `${idBody}-${index}`;
-					if(!includes(availableFieldIds, testId)) return testId;
-				}
-			}
-			return id;
-		}
 		return {
-			uniqueId,
+			availableFieldIds,
 			parentId,
 			insertIndex: indexOf(fieldIds, clientId) + 1,
 		};

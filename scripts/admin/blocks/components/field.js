@@ -11,6 +11,8 @@ const { mergeClasses } = wp.zukit.utils;
 
 import { prefixIt } from './../assets.js';
 
+const fieldPrefix = 'components-zu-field';
+
 const ZuField = ({
 		// isEditor,
 		labelEdit,
@@ -86,6 +88,7 @@ const ZuField = ({
 
 	return (
 		<div className={ mergeClasses(
+			fieldPrefix,
 			prefixIt('control'), {
 				__submit: type === 'submit',
 				__success: true,
@@ -102,4 +105,7 @@ const ZuField = ({
 	);
 };
 
-export default forwardRef(ZuField);
+const ForwardZuField = forwardRef(ZuField);
+ForwardZuField.fieldPrefix = fieldPrefix;
+
+export default ForwardZuField;
