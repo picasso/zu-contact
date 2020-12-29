@@ -17,7 +17,7 @@ const { useLoaders } = wp.zukit.data;
 // Internal dependencies
 
 import { allowedBlocks, layoutTemplates, prefixIt } from './assets.js';
-import { FormsContext, useUpdateForms, useOnFormRemove, getUsedNames  } from './../data/use-form-context.js';
+import { FormContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
 
 import ZuForm from './../components/form.js';
 import ZuPlainEdit from './../components/plain-edit.js';
@@ -51,15 +51,15 @@ const ZuFormEdit = ({
 	// + purge: { postId, name, 'purge' }
 	// + 'name' changing: { postId, name, 'rename', value(=newName) }
 
-	const [ updateForm, updateField ] = useUpdateForms(postId, name);
+	const [ updateForm, updateField ] = useUpdateForm(name);
 	const [ templateName, setTemplateName ] = useState();
 
 	useOnFormRemove(clientId, postId, name, updateForm);
 
 	const onChangeName = useCallback(value => {
 		setAttributes({ name: value });
-		updateForm(postId, name, 'rename', value);
-	}, [postId, name, setAttributes, updateForm]);
+		updateForm(value, TYPES.RENAME_FORM, { previousName: name });
+	}, [name, setAttributes, updateForm]);
 
 
 	useEffect(() => {
@@ -83,8 +83,8 @@ const ZuFormEdit = ({
 		const uniqueName = uniqueValue(layout.name, getUsedNames());
 		setTemplateName(layout.name);
 		setAttributes({ name: uniqueName, title: layout.title });
-		updateForm(postId, uniqueName, 'create', layout.name)
-	}, [postId, updateForm, setAttributes]);
+		updateForm(uniqueName, TYPES.CREATE_FORM, { template: layout.name })
+	}, [updateForm, setAttributes]);
 
 	// if the name is not defined - display the layout selection
 	if(!name) {
@@ -164,7 +164,7 @@ const ZuFormEdit = ({
 				titleEdit,
 				loaderEdit }
 			}>
-				<FormsContext.Provider value={ updateField }>
+				<FormContext.Provider value={ updateField }>
 					<InnerBlocks
 						allowedBlocks={ allowedBlocks }
 						template={ layoutTemplates[templateName] }
@@ -173,7 +173,7 @@ const ZuFormEdit = ({
 						renderAppender={ () => ( null ) }
 						__experimentalCaptureToolbars={ true }
 					/>
-				</FormsContext.Provider>
+				</FormContext.Provider>
 			</ZuForm>
 		</>
 	);

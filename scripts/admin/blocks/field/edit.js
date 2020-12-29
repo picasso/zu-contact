@@ -18,7 +18,7 @@ const { SelectItemControl, AdvTextControl } = wp.zukit.components;
 
 import { name as blockName } from './metadata.js';
 import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
-import { useFormsContext, useOnFieldRemove  } from './../data/use-form-context.js';
+import { useFormContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
 
 import ZuSubmitEdit from './edit-submit.js';
 import ZuFieldBlockControls from './field-block-controls.js';
@@ -68,7 +68,7 @@ const ZuFieldEdit = ({
 	// + 'required' changing: { id, required }
 	// + 'id' changing: { previousId, id }
 
-	const updateField = useFormsContext();
+	const updateField = useFormContext();
 
 	// create 'text' field as default if no attributes found
 	useEffect(() => {
@@ -77,10 +77,10 @@ const ZuFieldEdit = ({
 			// avoid duplicate field id
 			const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') } ;
 			setAttributes(newAttrsWithId);
-			updateField('add', { ...newAttrsWithId, requiredValue: requiredDefaults[newAttrsWithId.type] });
+			updateField(TYPES.ADD_FIELD, { ...newAttrsWithId, requiredValue: requiredDefaults[newAttrsWithId.type] });
 		} else {
 			// сомнительно что работает
-			updateField('add', { id, type, required, requiredValue: requiredDefaults[type] });
+			updateField(TYPES.ADD_FIELD, { id, type, required, requiredValue: requiredDefaults[type] });
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -89,12 +89,12 @@ const ZuFieldEdit = ({
 
 	const onChangeRequired  = useCallback(() => {
 		setAttributes({ required: !required });
-		updateField('update', { updated: 'required', required });
-	}, [required, setAttributes, updateField]);
+		updateField(TYPES.UPDATE_FIELD, { id, updated: 'required', required: !required });
+	}, [id, required, setAttributes, updateField]);
 
 	const onChangeId = useCallback(newId => {
 		setAttributes({ id: newId });
-		updateField('update', { updated: 'id', previousId: id, id: newId });
+		updateField(TYPES.RENAME_FIELD, { updated: 'id', previousId: id, id: newId });
 	}, [id, setAttributes, updateField]);
 
 	// Label helpers ----------------------------------------------------------]
@@ -143,8 +143,8 @@ const ZuFieldEdit = ({
 
 	const onSubmitRequired = useCallback(() => {
 		setIsEditingRequired(false);
-		updateField('update', { updated: 'requiredValue', requiredValue: temporaryRequired });
-	}, [temporaryRequired, updateField]);
+		updateField(TYPES.UPDATE_FIELD, { id, updated: 'requiredValue', requiredValue: temporaryRequired });
+	}, [id, temporaryRequired, updateField]);
 
 	// Placeholder helpers ----------------------------------------------------]
 
@@ -199,7 +199,7 @@ const ZuFieldEdit = ({
 		const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') };
 		setAttributes(newAttrsWithId);
 		setTemporaryRequired(newRequired);
-		updateField('update', { updated: 'type', previousId: id, ...newAttrsWithId, requiredValue: newRequired });
+		updateField(TYPES.UPDATE_FIELD, { updated: 'type', previousId: id, ...newAttrsWithId, requiredValue: newRequired });
 
 	}, [attributes, setAttributes, temporaryRequired, availableFieldIds, updateField]);
 
