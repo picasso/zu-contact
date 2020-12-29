@@ -6,6 +6,7 @@ class zu_ContactFields {
 	public static $css_prefix = 'zuc';
 
 	public $name = null;
+	public $title = null;
 	public $fields = [];
 	public $rows_in_message = 10;
 	public $carbon_copy = false;
@@ -17,6 +18,7 @@ class zu_ContactFields {
 
 	public function update($params) {
 		$this->name = $params['name'] ?? $this->name;
+		$this->title = $params['title'] ?? null;
 		$this->rows_in_message = $params['rows'] ?? 10;
 		$this->carbon_copy = $params['carbon_copy'] ?? false;
 		self::$css_prefix = $params['prefix'] ?? 'zuc';

@@ -83,9 +83,10 @@ trait zu_ContactForm {
 		} else return false;
 	}
 
-	public function get_form($form_name = null) {
+	public function get_form($form_name = null, $post_id = null) {
 		$form_name = is_null($form_name) || $form_name === 'default' ? $this->default_name : $form_name;
-		return $this->forms[$form_name] ?? false;
+        $ajax_form_name = $this->ajax_form_name($post_id, $form_name);
+		return $this->forms[$form_name] ?? $this->forms[$ajax_form_name] ?? false;
 	}
 
     public function available_forms() {
@@ -237,17 +238,28 @@ trait zu_ContactForm {
         return wp_parse_id_list($stats);
     }
 
-    private function update_stats($contact) {
+    private function update_stats($contact, $remove = false) {
+        $post_id = null;
         if($contact instanceof zu_ContactData) {
             // update stats only if entry was sent
             if(!$contact->was_sent) return;
+            $post_id = $contact->post_id;
+		} else if(is_string($contact) || is_int($contact)) {
+            $post_id = absint($contact);
+        }
 
+        if($post_id) {
             $stats = $this->get_used_ids();
-            if(!in_array($contact->post_id, $stats)) {
-                $stats[] = $contact->post_id;
+            if($remove) {
+                if(in_array($post_id, $stats)) {
+                    $stats = array_diff($stats, [$post_id]);
+                    $this->set_option('stats', implode(',', $stats));
+                }
+            } else if(!in_array($post_id, $stats)) {
+                $stats[] = $post_id;
                 $this->set_option('stats', implode(',', $stats));
             }
-		}
+        }
     }
 
     private function stats() {

@@ -97,6 +97,8 @@ class zu_Contact extends zukit_Plugin {
 			include_once($filename);
 		}
 
+		$this->register_ajax_forms();
+
 		// Some 'inits' from traits -------------------------------------------]
 
 		$this->init_messages();

@@ -45,7 +45,7 @@ class zu_ContactData {
 		if(!empty($fdata)) {
 			$this->post_id = $fdata['_post_id'];
 			$this->post_link = $fdata['_post_link'];
-			$this->form = zucontact()->get_form($fdata['_fname']);
+			$this->form = zucontact()->get_form($fdata['_fname'], $this->post_id);
 			if($this->form === false) $this->add_error('fname');
 
 			if($this->form !== false) {
@@ -98,7 +98,7 @@ class zu_ContactData {
 			];
 
 			// sanitize the rest of fields
-			$form = zucontact()->get_form($data['_fname']);
+			$form = zucontact()->get_form($data['_fname'], $data['_post_id']);
 			if($form !== false) {
 				foreach($form->fields() as $field) {
 					$field_id = $field['name'];
