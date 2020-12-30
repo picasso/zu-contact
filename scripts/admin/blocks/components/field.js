@@ -12,6 +12,7 @@ const { mergeClasses } = wp.zukit.utils;
 import { prefixIt } from './../assets.js';
 
 const fieldPrefix = 'components-zu-field';
+const inputClass = 'form-control';
 
 const ZuField = ({
 		// isEditor,
@@ -41,7 +42,7 @@ const ZuField = ({
 		<>
 			<textarea
 				ref={ ref }
-				className="form-control"
+				className={ inputClass }
 				id={ idWithPrefix }
 				name={ prefixIt(id, '[]') }
 				rows={ rows }
@@ -62,10 +63,10 @@ const ZuField = ({
 		<>
 			<input
 				ref={ ref }
-				className="form-control"
+				className={ inputClass }
 				type={ type }
 				id={ idWithPrefix }
-				name={ idWithPrefix }
+				name={ prefixIt(id, '[]') }
 				value={ type === 'checkbox' ? "1" : inputValue }
 				checked={ type === 'checkbox' ? inputValue : null }
 				placeholder={ placeholderValue }
