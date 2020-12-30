@@ -1,8 +1,6 @@
 // WordPress dependencies
 
-const { isNil } = lodash;
-// const { compose } = wp.compose;
-// const { withSelect } = wp.data;
+// const { isNil } = lodash;
 
 // Zukit dependencies
 
@@ -11,13 +9,9 @@ const { Loader } = wp.zukit.components;
 
 // Internal dependencies
 
-import { pluginDefaults, prefixIt } from './../assets.js';
+import { prefixIt, mail as okIcon, flag as errorIcon } from './../assets.js';
 
-const { nonce } = pluginDefaults;
 const formPrefix = 'components-zu-form';
-
-const okIcon = null;
-const errorIcon = null;
 const defaultMessage = null;
 
 const ZuForm = ({
@@ -33,7 +27,7 @@ const ZuForm = ({
 		noajax,
 
 		loaderHTML,
-
+		withoutNonce,
 		children,
 }) => {
 
@@ -42,9 +36,9 @@ const ZuForm = ({
 		<h2 className={ mergeClasses(prefixIt('subheading'), 'before_posting') }>{ title }</h2>
 	);
 
-	const formNonce = isNil(nonce) ? null : (
+	const formNonce = withoutNonce ? null : (
 		<>
-			<input type="hidden" id={ prefixIt('nonce', '_') } name={ prefixIt('nonce', '_') } value={ '__nonce__' }/>
+			<input type="hidden" id={ prefixIt('nonce') } name={ prefixIt('nonce', '_') } value={ '__nonce__' }/>
 			<input type="hidden" name="_wp_http_referer" value={ postLink }/>
 		</>
 	);
