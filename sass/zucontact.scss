@@ -21,6 +21,8 @@ $status-background-color: rgba(black, 0.8) !default;
 $zuc-loader-size: 40px !default;
 $zuc-loader-color: $zuc-error-color !default;
 
+$zuc-status-message-min-height: 20px !default;
+
 $zuc-field-left-margin: 4px !default;
 $zuc-field-top-margin: 8px !default;
 
@@ -224,6 +226,10 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 		transition: opacity $zuc-transition-medium-time $zuc-transition-function;
 		opacity: 0;
 		background-color: $status-background-color;
+
+		.message {
+			min-height: $zuc-status-message-min-height;
+		}
 		.is-zu & {
 			background-color: $zu-status-background-color;
 		}

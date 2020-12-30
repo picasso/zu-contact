@@ -14,12 +14,14 @@
 	var Ds_control= `.${Cs_prefix}-control`
 	var Ds_submit = `#${Cs_prefix}-submit`;
 	var Ds_validation = '.__validation';
+	var Ds_nonce = `#${Cs_prefix}-nonce`;
 
 	var Fn_verified = `${Cs_prefix}_verified`;
 	var Fn_expired = `${Cs_prefix}_expired`;
 	var Fn_network = `${Cs_prefix}_network`;
 
 	var MessageSplitWidth = 960;
+	var DefaultErrMessage = 'There was a problem: <b>maybe an error?</b>';
 	// set 0 for production
 	var debugDelay = 0;
 
@@ -44,7 +46,7 @@
 
 		if($container.length) {
 			// add classes which could be used in others elements
-			inlineStyle();
+			initAndInjectInlineStyle();
 			// init reCAPTCHA callbacks if needed
 			initReCaptcha();
 		} else {
@@ -52,7 +54,7 @@
 			return;
 		}
 
-		function inlineStyle() {
+		function initAndInjectInlineStyle() {
 			var offset = $container.parent().offset().top;
 			var container_margin = Math.floor($container.offset().top - offset);
 			var status_margin = Math.floor($status.offset().top - offset);
@@ -71,6 +73,9 @@
 				var top_center = ($status.outerHeight() - $subheading.outerHeight())/2;
 				$subheading.css({top: status_margin - container_margin + top_center});
 			}
+
+			// set nonce value - it may be absent if it's Ajax form
+			$container.find(Ds_nonce).val(jsdata.nonce);
 		}
 
 		function removePrevErrors() {
@@ -111,7 +116,7 @@
 		function processPostData(data) {
 
 			var errors = data.errors || {};
-			processMessage(errors, data.message);
+			processMessage(errors, data.message || DefaultErrMessage);
 			switchHeading(false, !data.is_valid, data.is_valid === true);
 			removePrevErrors();
 
