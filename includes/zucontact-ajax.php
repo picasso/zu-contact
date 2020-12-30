@@ -12,12 +12,17 @@ trait zu_ContactAjax {
 		add_action('wp_ajax_nopriv_'.$this->ajax_action, [$this, 'ajax_submit']);
 	}
 
-	public function ajax_data() {
-		return [
+	public function ajax_data($is_frontend = true) {
+		return $is_frontend ? [
 			'form'		=> $this->default_name,
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
 			'locale'	=> get_locale(),
+		] : [
+			'required'	=> $this->get_ajax_forms_required(),
+			'prefix'	=> zu_ContactFields::$css_prefix,
+			'types'		=> zu_ContactFieldDefaults::as_data(),
+			'templates'	=> $this->templates(),
 		];
 	}
 
@@ -86,19 +91,8 @@ trait zu_ContactAjax {
 		return sprintf('%1$s_%2$s', $post_id, $name);
 	}
 
-	// public function add($id_or_type, $label_or_required = false, $type_or_params = [], $required = null, $placeholder = null) {
-	//
-	// 	if(is_array($type_or_params)) {
-	// 		$is_required = $label_or_required;
-	// 		$type = zu_ContactFieldDefaults::aliases($id_or_type);
-	// 		$params = array_merge(zu_ContactFieldDefaults::type_defaults($type), $type_or_params);
-	// 		extract($params, EXTR_OVERWRITE);
-	// 		if($is_required === false) $required = null;
-	//
-
 	private function register_ajax_forms() {
 		$forms = $this->get_option($this->ajax_forms_key, []);
-_dbug($forms);
 		foreach($forms as $post_id => $post_forms) {
 
 			foreach($post_forms as $name => $data) {
@@ -112,5 +106,20 @@ _dbug($forms);
 				$this->register_form($form);
 			}
 		}
+	}
+
+	private function get_ajax_forms_required() {
+		$forms = $this->get_option($this->ajax_forms_key, []);
+		$post_id = get_the_ID();
+		$forms = $forms[$post_id] ?? [];
+
+		$required = [];
+		foreach($forms as $name => $data) {
+			$required[$name] = [];
+			foreach($data ?? [] as $field) {
+				$required[$name][$field['id']] = $field['requiredValue'] ?? null;
+			}
+		}
+		return $required;
 	}
 }

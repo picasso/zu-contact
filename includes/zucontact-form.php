@@ -86,7 +86,8 @@ trait zu_ContactForm {
 	public function get_form($form_name = null, $post_id = null) {
 		$form_name = is_null($form_name) || $form_name === 'default' ? $this->default_name : $form_name;
         $ajax_form_name = $this->ajax_form_name($post_id, $form_name);
-		return $this->forms[$form_name] ?? $this->forms[$ajax_form_name] ?? false;
+        // first we check the Ajax forms as their names can be the same as default form names
+		return $this->forms[$ajax_form_name] ?? $this->forms[$form_name] ??  false;
 	}
 
     public function available_forms() {
