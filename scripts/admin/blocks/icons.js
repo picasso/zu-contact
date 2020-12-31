@@ -3,9 +3,9 @@
 const { keys, has, transform } = lodash;
 const { Path, G, SVG } = wp.components;
 
-// Zukit dependencies
+// Internal dependencies
 
-const { getColor, hexToRGBA } = wp.zukit.utils;
+import { getColor, hexToRGBA } from './utils.js';
 
 // Custom foreground icon color based on the Zu Blocks branding
 export const iconColor = getColor('violet');

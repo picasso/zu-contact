@@ -14,7 +14,6 @@ const { __ } = wp.i18n;
 
 // recaptcha
 
-
 // Internal dependencies
 
 import { types as typesSvg, iconColor, pluginDefaults, prefixIt } from './../assets.js';
@@ -22,17 +21,6 @@ import { types as typesSvg, iconColor, pluginDefaults, prefixIt } from './../ass
 const { types: fullTypeDefaults = {} } = pluginDefaults;
 
 // Options & Values
-
-// function params(name) { return pick(get(templates, name, {}), ['name', 'title']); }
-
-// text
-// textarea
-// mail
-// tel
-// url
-// checkbox
-// number
-// submit
 
 export const typeOptions = [
 	{ value: 'text', label: __('Text Field', 'zu-contact')},
@@ -55,18 +43,9 @@ export const requiredDefaults = omitBy(transform(fullTypeDefaults, (values, attr
 	values[name] = (isArray(attr.required) ? get(attr, ['required', '0']) : attr.required) || null;
 }), isNil);
 
-export { prefixIt, iconColor };
-
-// Create template object based on Field options
-// 'contact': [
-// 			[ 'zu/field', { id:'name', label:'Name', placeholder:'Your Name', required: true, type: 'text' } ],
-// 			[ 'zu/field', { id:'email', label:'Email', placeholder:'Your Email Address', required: false, type: 'text' } ],
-// 	],
-// export const FieldTemplates = transform(templates, (values, Field, name)  => {
-// 	values[name] = map(Field['fields'] || {}, attrs => [fieldBlock, { ...attrs }]);
-// });
-
 export const assets = {
 	typeOptions,
 	svg: typesSvg,
 };
+
+export { prefixIt, iconColor };

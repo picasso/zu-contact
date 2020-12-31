@@ -2,24 +2,16 @@
 
 const { registerBlockType } = wp.blocks;
 
-// Import debug object and make it available from global scope
-// import zubug from './shared/debug.js';
-// window.Zubug = zubug;
-
-// Zukit dependencies
-
-const { registerCollection, registerCategory, brandAssets } = wp.zukit.utils;
-
 // Internal dependencies
 
-// import { registerPlugins } from './zu-plugins.js';
-// import { editorInit } from './zu-admin.js';
+import { registerCollection, registerCategory, brandAssets } from './blocks/utils.js';
 
 // Register ZU blocks collection or category
 const supportsCollections = registerCollection();
 if(!supportsCollections) registerCategory();
 
-//  Register Blocks
+//  Register Blocks -----------------------------------------------------------]
+
 import * as form from './blocks/form/index.js';
 import * as field from './blocks/field/index.js';
 

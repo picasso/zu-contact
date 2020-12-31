@@ -4,9 +4,9 @@ const { isNil } = lodash;
 const { RichText } = wp.blockEditor;
 const { useCallback, forwardRef } = wp.element;
 
-// Zukit dependencies
+// Internal dependencies
 
-const { mergeClasses } = wp.zukit.utils;
+import { mergeClasses } from './../utils.js';
 
 const ZuPlainEdit = ({
 		className,

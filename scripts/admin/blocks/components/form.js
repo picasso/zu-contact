@@ -4,11 +4,11 @@
 
 // Zukit dependencies
 
-const { mergeClasses, toBool } = wp.zukit.utils;
 const { Loader } = wp.zukit.components;
 
 // Internal dependencies
 
+import { mergeClasses, toBool } from './../utils.js';
 import { prefixIt, mail as okIcon, flag as errorIcon } from './../assets.js';
 
 const formPrefix = 'components-zu-form';

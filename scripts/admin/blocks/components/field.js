@@ -3,12 +3,9 @@
 // const { isArray, get } = lodash;
 const { forwardRef } = wp.element;
 
-// Zukit dependencies
-
-const { mergeClasses } = wp.zukit.utils;
-
 // Internal dependencies
 
+import { mergeClasses } from './../utils.js';
 import { prefixIt } from './../assets.js';
 
 const fieldPrefix = 'components-zu-field';

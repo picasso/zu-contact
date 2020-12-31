@@ -1,26 +1,12 @@
 // WordPress dependencies
 
-const { includes, startCase, isNil } = lodash;
-// const { __ } = wp.i18n;
-
-// Zukit dependencies
-
-const { externalData } = wp.zukit.utils;
+const { isNil } = lodash;
 
 // Internal dependencies
 
-// eslint-disable-next-line no-unused-vars
+import { externalData } from './utils.js';
+
 import { getColor } from './icons.js';
-
-// Available Zu Blocks
-const zuBlocks = [
-	'zu/field',
-	'zu/form',
-];
-
-export function blockTitle(blockName) {
-	return includes(zuBlocks, blockName) ? `${ startCase(blockName.replace('zu/', '')) }` : blockName;
-}
 
 // Gets JSON data (CSS prefix, form action, etc.) from PHP
 export const pluginDefaults = externalData('zucontact_blocks_data', {
@@ -28,6 +14,8 @@ export const pluginDefaults = externalData('zucontact_blocks_data', {
 	action: 'submit',
 	templates: {},
 	types: {},
+	// просто чтобы избежать предупреждения ESLint, CodeKit не понимает 'export * from'
+	alertColor: getColor('red')
 });
 
 // re-export all named imports ------------------------------------------------]
