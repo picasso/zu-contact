@@ -5,11 +5,6 @@ const { useContext, createContext } = wp.element;
 const { useCallback, useRef, useEffect } = wp.element;
 const { select, subscribe } = wp.data;
 
-
-
-
-// const { createHigherOrderComponent } = wp.compose;
-
 // Internal dependencies
 
 import { useUpdateForm as useUpdateFormGeneric, TYPES, persistForms } from './form-store.js';
@@ -24,16 +19,16 @@ export function useFormContext() {
 	return useContext(FormContext);
 }
 
-export const useUpdateForm = (formName) => {
+export const useUpdateForm = (fname) => {
     const update = useUpdateFormGeneric();
 
     const updateForm = useCallback((name, action, value) => {
-        console.log('UPDATE:', { name, action, value });
-        update(name, action, value);
+		update(name, action, value);
     }, [update]);
 
-    const updateField = useCallback((action, value) => updateForm(formName, action, value)
-    , [formName, updateForm]);
+    const updateField = useCallback((action, value) => {
+		update(fname, action, value);
+    }, [fname, update]);
 
     return [updateForm, updateField];
 };
@@ -85,9 +80,9 @@ export const useOnFieldRemove = (id, updateField) => {
 	// 'updateField' will be called on field removing only
 	useEffect(() => {
 		return () => {
-			// need to update 'updateField' because it's stuck in closure
+			// need to get 'updateField' again because it could be stuck in closure
 			const { id, updateField: updateFieldSynced } = fieldRef.current || {};
-			updateFieldSynced(TYPES.REMOVE_FIELD, { id });
+			updateFieldSynced({ type: TYPES.REMOVE_FIELD, id });
 		}
 	}, []);
 }
@@ -106,4 +101,4 @@ subscribe(() => {
             formsPersisted = true;
         }
     }
-} );
+});

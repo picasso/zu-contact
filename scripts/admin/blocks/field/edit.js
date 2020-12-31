@@ -11,11 +11,11 @@ const { useState, useCallback, useRef, useEffect } = wp.element;
 
 // Zukit dependencies
 
-const { uniqueValue } = wp.zukit.utils;
 const { SelectItemControl, AdvTextControl } = wp.zukit.components;
 
 // Internal dependencies
 
+import { uniqueValue } from './../utils.js';
 import { name as blockName } from './metadata.js';
 import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
 import { useFormContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
@@ -26,6 +26,7 @@ import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
 
 const fieldPrefix = `${ZuField.fieldPrefix}__settings`;
+const getRequiredValue = (type, prev = null) => get(prev, 'requiredValue') || requiredDefaults[type];
 
 const ZuFieldEdit = ({
 		attributes,
@@ -61,13 +62,12 @@ const ZuFieldEdit = ({
 	// * * *
 	// need to update field attributes on events:
 	// * * *
-	// + addition: { id, type, required, requiredValue }
-	// + deletion: { id }
-	// + 'type' changing: { previousId, id, type, required, requiredValue }
-	// + 'requiredValue' changing: { id, requiredValue: temporaryRequired }
-	// + 'required' changing: { id, required }
-	// + 'id' changing: { previousId, id }
-
+	// + ADD_FIELD: { id, type, required, requiredValue }
+	// + REMOVE_FIELD:
+	// + UPDATE_FIELD 'type': { 'updated': 'type' }, { id, type, required, requiredValue }
+	// + UPDATE_FIELD 'requiredValue': { 'updated': 'requiredValue' }, temporaryRequired
+	// + UPDATE_FIELD 'required': { 'updated': 'required' }, required
+	// + RENAME_FIELD: newId
 	const updateField = useFormContext();
 
 	// create 'text' field as default if no attributes found
@@ -75,12 +75,23 @@ const ZuFieldEdit = ({
 		if(isNil(id)) {
 			const newAttrs = typeDefaults[type || 'text'];
 			// avoid duplicate field id
-			const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') } ;
+			const uniqueId = uniqueValue(newAttrs.id, availableFieldIds, 'id');
+			const newAttrsWithId = { ...newAttrs, id: uniqueId } ;
 			setAttributes(newAttrsWithId);
-			updateField(TYPES.ADD_FIELD, { ...newAttrsWithId, requiredValue: requiredDefaults[newAttrsWithId.type] });
+			updateField({
+				type: TYPES.ADD_FIELD,
+				id: uniqueId
+			}, { ...newAttrsWithId, requiredValue: getRequiredValue(newAttrsWithId.type) });
 		} else {
-			// сомнительно что работает
-			updateField(TYPES.ADD_FIELD, { id, type, required, requiredValue: requiredDefaults[type] });
+			updateField({
+				type: TYPES.ADD_FIELD,
+				id,
+			// here we use callback with prevValue to merge with data from the store (if any)
+			}, prevValue => {
+				const requiredValue = getRequiredValue(type, prevValue);
+				setTemporaryRequired(requiredValue);
+				return { ...prevValue, id, type, required, requiredValue }
+			});
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
@@ -89,12 +100,19 @@ const ZuFieldEdit = ({
 
 	const onChangeRequired  = useCallback(() => {
 		setAttributes({ required: !required });
-		updateField(TYPES.UPDATE_FIELD, { id, updated: 'required', required: !required });
+		updateField({
+			type: TYPES.UPDATE_FIELD,
+			id,
+			updated: 'required',
+		}, !required);
 	}, [id, required, setAttributes, updateField]);
 
 	const onChangeId = useCallback(newId => {
 		setAttributes({ id: newId });
-		updateField(TYPES.RENAME_FIELD, { updated: 'id', previousId: id, id: newId });
+		updateField({
+			type: TYPES.RENAME_FIELD,
+			id,
+		}, newId);
 	}, [id, setAttributes, updateField]);
 
 	// Label helpers ----------------------------------------------------------]
@@ -114,7 +132,7 @@ const ZuFieldEdit = ({
 	// Required helpers -------------------------------------------------------]
 
 	const [ isEditingRequired, setIsEditingRequired ] = useState(false);
-	const [ temporaryRequired, setTemporaryRequired ] = useState(requiredDefaults[type] || null);
+	const [ temporaryRequired, setTemporaryRequired ] = useState(getRequiredValue(type));
 	const requiredEditRef = useRef();
 
 	const validationEdit = (!isEditingRequired || type === 'submit') ? null : (
@@ -143,8 +161,15 @@ const ZuFieldEdit = ({
 
 	const onSubmitRequired = useCallback(() => {
 		setIsEditingRequired(false);
-		updateField(TYPES.UPDATE_FIELD, { id, updated: 'requiredValue', requiredValue: temporaryRequired });
-	}, [id, temporaryRequired, updateField]);
+		updateField({
+			type: TYPES.UPDATE_FIELD,
+			id,
+			updated: 'requiredValue',
+		}, temporaryRequired);
+		// so that Gutenberg thinks that we have updated the block attributes - call 'setAttributes' with "something"
+		// this is needed so that the 'Update' button ceases to be disabled
+		setAttributes({ hack: true });
+	}, [id, setAttributes, temporaryRequired, updateField]);
 
 	// Placeholder helpers ----------------------------------------------------]
 
@@ -193,13 +218,17 @@ const ZuFieldEdit = ({
 		requiredRef.current = set(requiredRef.current || {}, type, temporaryRequired);
 
 		const newAttrs = has(attrRef.current, selected) ? attrRef.current[selected] : typeDefaults[selected];
-		const newRequired = has(requiredRef.current, selected) ? requiredRef.current[selected] : requiredDefaults[selected];
+		const newRequired = has(requiredRef.current, selected) ? requiredRef.current[selected] : getRequiredValue(selected);
 
 		// avoid duplicate field id
 		const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') };
 		setAttributes(newAttrsWithId);
 		setTemporaryRequired(newRequired);
-		updateField(TYPES.UPDATE_FIELD, { updated: 'type', previousId: id, ...newAttrsWithId, requiredValue: newRequired });
+		updateField({
+			type: TYPES.UPDATE_FIELD,
+			updated: 'type',
+			id,
+		}, { ...newAttrsWithId, requiredValue: newRequired });
 
 	}, [attributes, setAttributes, temporaryRequired, availableFieldIds, updateField]);
 
@@ -233,7 +262,7 @@ const ZuFieldEdit = ({
 					withDebounce
 					withoutClear
 					label={ __('Field Id', 'zu-contact') }
-					help={ __('Usually you don\'t need to change it', 'zu-contact') }
+					help={ __('Usually you don\'t need to change it.', 'zu-contact') }
 					value={ id }
 					onChange={ onChangeId }
 					withoutValues={ availableFieldIds }

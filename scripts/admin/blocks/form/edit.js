@@ -3,19 +3,19 @@
 const { isNil, trim } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
-const { PanelBody, ToggleControl, Button } = wp.components;
+const { PanelBody, ToggleControl } = wp.components;
 const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
 const { withSelect } = wp.data;
 const { useCallback, useEffect, useState } = wp.element;
 
 // Zukit dependencies
 
-const { uniqueValue } = wp.zukit.utils;
 const { LoaderControl, Loader, AdvTextControl } = wp.zukit.components;
 const { useLoaders } = wp.zukit.data;
 
 // Internal dependencies
 
+import { uniqueValue } from './../utils.js';
 import { allowedBlocks, layoutTemplates, prefixIt } from './assets.js';
 import { FormContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
 
@@ -58,7 +58,7 @@ const ZuFormEdit = ({
 
 	const onChangeName = useCallback(value => {
 		setAttributes({ name: value });
-		updateForm(value, TYPES.RENAME_FORM, { previousName: name });
+		updateForm(name, TYPES.RENAME_FORM, value);
 	}, [name, setAttributes, updateForm]);
 
 
@@ -83,7 +83,7 @@ const ZuFormEdit = ({
 		const uniqueName = uniqueValue(layout.name, getUsedNames());
 		setTemplateName(layout.name);
 		setAttributes({ name: uniqueName, title: layout.title });
-		updateForm(uniqueName, TYPES.CREATE_FORM, { template: layout.name })
+		updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
 	}, [updateForm, setAttributes]);
 
 	// if the name is not defined - display the layout selection
@@ -124,13 +124,6 @@ const ZuFormEdit = ({
 						checked={ !noajax }
 						onChange={ () => setAttributes({ noajax: !noajax }) }
 					/>
-
-					<Button
-						isPrimary
-						onClick={ () => updateForm(postId, name, { name, title }) }
-					>
-						Update Form
-					</Button>
 				</PanelBody>
 
 				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>

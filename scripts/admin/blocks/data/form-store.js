@@ -1,6 +1,6 @@
 // // WordPress dependencies
 
-const { isFunction, isEmpty, has, get, set, unset, pick, keys } = lodash; // , transform, map, cloneDeep
+const { isFunction, isPlainObject, isEmpty, has, get, set, unset, pull, pick, keys} = lodash;
 const { registerStore, select, dispatch, useDispatch } = wp.data;
 const { apiFetch } = wp;
 
@@ -10,13 +10,14 @@ const { isNull, requestURL } = wp.zukit.data;
 
 // Internal dependencies
 
-// import { pluginDefaults } from './../assets.js';
+import { pluginDefaults } from './../assets.js';
 
 // Create and register Zu Contact Form store ----------------------------------]
 
 const ZUCONTACT_STORE = 'zucontact/form';
 const fetchKey = 'zucontact_forms';
 const formsKey = 'forms';
+const fieldsKey = 'fields';
 
 export const TYPES = {
     ADD_FIELD: 'ADD_FIELD',
@@ -32,27 +33,26 @@ export const TYPES = {
 }
 
 const initialState = {
-    [formsKey]: {}
+    [formsKey]: get(pluginDefaults, 'store', {}),
 };
 
 function formReducer(state = initialState, action) {
 
-    function field(state, name, id) {
-        return get(state, [formsKey, name, id], {});
+    function shallowClone(state, fieldPath = null) {
+        if(fieldPath) set(state, fieldPath, { ...get(state, fieldPath, {}) });
+        set(state, [formsKey], { ...get(state, [formsKey], {}) });
     }
 
-    function shallowClone(state, name = false) {
-        if(name) return set(state, [formsKey, name], { ...get(state, [formsKey, name], {}) });
-        return set(state, [formsKey], { ...get(state, [formsKey], {}) });
-    }
-
-    const { type, name } = action;
+    const { type, name, updated, id, value } = action;
+    const fieldPath = [formsKey, name, fieldsKey, id];
+    const formPath = [formsKey, name];
+    const callback = isFunction(value) ? value : () => value;
 
     switch(type) {
         case TYPES.ADD_FIELD:
         case TYPES.RENAME_FIELD:
         case TYPES.UPDATE_FIELD:
-            shallowClone(state, name);
+            shallowClone(state, fieldPath);
             break;
 
         case TYPES.CREATE_FORM:
@@ -62,62 +62,63 @@ function formReducer(state = initialState, action) {
             break;
     }
 
+    const prevValue = get(state, id ? fieldPath : formPath, {});
+
     switch(type) {
         case TYPES.ADD_FIELD:
-            set(state, [formsKey, name, action.id], action.value);
+            set(state, fieldPath, callback(prevValue));
             break;
 
         case TYPES.REMOVE_FIELD:
-            if(has(state, [formsKey, name])) state = shallowClone(state, name);
-            unset(state, [formsKey, name, action.id]);
+            // guard! - if the form was removed before the field
+            if(has(state, formPath)) state = shallowClone(state, fieldPath);
+            unset(state, fieldPath);
             break;
 
         case TYPES.RENAME_FIELD:
-            unset(state, [formsKey, name, action.previousId]);
-            set(state, [formsKey, name, action.id], field(state, name, action.previousId));
+            unset(state, fieldPath);
+            set(state, [ ...pull(fieldPath, id), callback(id) ], prevValue);
             break;
 
         case TYPES.UPDATE_FIELD:
-            if(action.updated === 'type') {
-                unset(state, [formsKey, name, action.previousId]);
-                set(state, [formsKey, name, action.id], action.value);
+            if(updated === 'type') {
+                const newValue = callback(prevValue);
+                unset(state, fieldPath);
+                set(state, [ ...pull(fieldPath, id), newValue.id ], newValue);
             } else {
-                let newField = { ...field(state, name, action.id) };
-                set(newField, action.updated, get(action.value, action.updated));
-                set(state, [formsKey, name, action.id], newField);
+                let newField = { ...prevValue, [updated]: callback(prevValue[updated]) };
+                set(state, fieldPath, newField);
             }
             break;
 
         case TYPES.CREATE_FORM:
-            set(state, [formsKey, name], {});
+            set(state, formPath, callback(prevValue) || {});
             break;
 
         case TYPES.PURGE_FORM:
-            unset(state, [formsKey, name]);
+            unset(state, formPath);
             break;
 
         case TYPES.RENAME_FORM:
-            set(state, [formsKey, name], get(state, [formsKey, action.previousName]));
-            unset(state, [formsKey, action.previousName])
+            set(state, [ ...pull(formPath, name), callback(name) ], prevValue);
+            unset(state, formPath);
             break;
 
         case TYPES.PERSIST_FORMS:
             // set(state, [formsKey, action.name, 'saved'], true);
             break;
     }
-    // console.log('formReducer ACTIONS:', action);
-    // console.log('formReducer:', cloneDeep(state));
+
+    Zubug.data({ action, updated: get(state, id ? fieldPath : formPath) });
     return state;
 }
 
 const formActions = {
     updateForm(name, action, value) {
-        const params = pick(value, ['id', 'previousId', 'previousName', 'updated', 'template']);
         return {
-			type: action,
+			...(isPlainObject(action) ? action : { type: action }),
             name,
-			value: pick(value, ['id', 'type', 'required', 'requiredValue']),
-            ...params,
+			value: isPlainObject(value) ? pick(value, ['id', 'type', 'required', 'requiredValue']) : value,
 		};
     },
     * persistForms(id, value) {
@@ -170,7 +171,7 @@ export const persistForms = () => {
 
         if(postId && isFunction(persist)) {
             persist(postId, isEmpty(forms) ? null : forms);
-            console.log('PERSIST:', postId, forms);
+            Zubug.info('PERSIST', { postId, forms });
         }
     }
 }

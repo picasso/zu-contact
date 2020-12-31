@@ -19,7 +19,7 @@ trait zu_ContactAjax {
 			'action'	=> $this->ajax_action,
 			'locale'	=> get_locale(),
 		] : [
-			'required'	=> $this->get_ajax_forms_required(),
+			'store'		=> $this->get_ajax_forms(),
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'types'		=> zu_ContactFieldDefaults::as_data(),
 			'templates'	=> $this->templates(),
@@ -84,7 +84,7 @@ trait zu_ContactAjax {
 
 		// Update statistics
 		$this->update_stats($post_id, $value === null);
-		return $this->set_option($this->ajax_forms_key, $forms);
+		return $this->set_option($this->ajax_forms_key, $forms, true);
 	}
 
 	private function ajax_form_name($post_id, $name) {
@@ -97,7 +97,7 @@ trait zu_ContactAjax {
 
 			foreach($post_forms as $name => $data) {
 				$form = new zu_ContactFields($this->ajax_form_name($post_id, $name));
-				foreach($data ?? [] as $field) {
+				foreach($data['fields'] ?? [] as $field) {
 					$form->add($field['type'], $field['required'], [
 						'id'			=> $field['id'],
 						'required'		=> $field['requiredValue'] ?? null,
@@ -108,18 +108,9 @@ trait zu_ContactAjax {
 		}
 	}
 
-	private function get_ajax_forms_required() {
+	private function get_ajax_forms() {
 		$forms = $this->get_option($this->ajax_forms_key, []);
 		$post_id = get_the_ID();
-		$forms = $forms[$post_id] ?? [];
-
-		$required = [];
-		foreach($forms as $name => $data) {
-			$required[$name] = [];
-			foreach($data ?? [] as $field) {
-				$required[$name][$field['id']] = $field['requiredValue'] ?? null;
-			}
-		}
-		return $required;
+		return $forms[$post_id] ?? [];
 	}
 }
