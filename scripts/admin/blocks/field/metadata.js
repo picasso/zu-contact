@@ -13,25 +13,42 @@ const title = __('Zu Field', 'zu-contact');
 const attributes = {
     id: {
         type: 'string',
+        selector: '.__zu-control',
+        source: 'attribute',
+        attribute: 'data-id'
     },
     label: {
         type: 'string',
+        selector: '.__zu-control',
+        source: 'attribute',
+        attribute: 'data-label'
+    },
+    placeholder: {
+        type: 'string',
+        selector: '.__zu-control',
+        source: 'attribute',
+        attribute: 'placeholder'
+    },
+    rows: {
+        type: 'string',
+        default: 10,
+        selector: '.__zu-control',
+        source: 'attribute',
+        attribute: 'rows'
+    },
+    // if specify the type boolean and use attribute source
+    // then should output the attribute value for 'true' and 'undefined' for 'false' (like: required || undefined)
+    required: {
+        type: 'boolean',
+        selector: '.__zu-control',
+        source: 'attribute',
+        attribute: 'data-required'
     },
     type: {
         type: 'string',
     },
-    required: {
-        type: 'boolean',
-    },
     value: {
         type: 'string',
-    },
-    placeholder: {
-        type: 'string',
-    },
-    rows: {
-        type: 'number',
-        default: 10,
     },
 };
 
@@ -39,7 +56,7 @@ const metadata = {
     name,
     title,
     /* translators: block description */
-    description: __('A text box for longer responses.', 'zu-contact'),
+    description: __('Form field of various types and flexible settings.', 'zu-contact'),
     category: 'layout',
     keywords: [
         /* translators: block keyword */

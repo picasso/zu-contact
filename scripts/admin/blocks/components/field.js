@@ -9,7 +9,7 @@ import { mergeClasses } from './../utils.js';
 import { prefixIt } from './../assets.js';
 
 const fieldPrefix = 'components-zu-field';
-const inputClass = 'form-control';
+const inputClass = '__zu-control';
 
 const ZuField = ({
 		// isEditor,
@@ -41,6 +41,11 @@ const ZuField = ({
 				ref={ ref }
 				className={ inputClass }
 				id={ idWithPrefix }
+
+				data-id={ id }
+				data-label={ label }
+				data-required={ required || undefined }
+
 				name={ prefixIt(id, '[]') }
 				rows={ rows }
 				placeholder={ placeholderValue }
@@ -51,9 +56,13 @@ const ZuField = ({
 		</>
 	) : (type === 'submit' ? (submitEdit ? submitEdit :
 		<input
-			className="button button-submit"
+			className={ mergeClasses('button', 'button-submit', inputClass) }
 			type={ type }
 			id={ idWithPrefix }
+
+			data-id={ id }
+			data-label={ label }
+
 			value={ label || '' }
 		/>
 	) : (
@@ -63,6 +72,11 @@ const ZuField = ({
 				className={ inputClass }
 				type={ type }
 				id={ idWithPrefix }
+
+				data-id={ id }
+				data-label={ label }
+				data-required={ required || undefined }
+
 				name={ prefixIt(id, '[]') }
 				value={ type === 'checkbox' ? "1" : inputValue }
 				checked={ type === 'checkbox' ? inputValue : null }

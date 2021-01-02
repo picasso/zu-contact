@@ -155,14 +155,18 @@ class zu_ContactFields {
 		if(empty($required_value)) return '';
 		$this->get_required($required_value, $required, $required_valid);
 
-		$data_required = empty($required) ? '' : sprintf('data-required_rule="true" data-required="%1$s"', $required);
-		$data_required .= empty($required_valid) ? '' : sprintf('data-required_valid="%1$s"', $required_valid);
+		$data_required = empty($required) ? '' : 'data-required="true"';
+
+		// NOTE: не нужно, видимо... совсем не уиспользую в JS, осталось наследие от прошлой версии
+
+		// $data_required = empty($required) ? '' : sprintf('data-required_rule="true" data-required="%1$s"', $required);
+		// $data_required .= empty($required_valid) ? '' : sprintf('data-required_valid="%1$s"', $required_valid);
 		return $data_required;
 	}
 
 	private function input($field, $value) {
 
-		$class = $field['type'] === 'submit' ? 'button button-submit' : 'form-control';
+		$class = $field['type'] === 'submit' ? '__zu-control button button-submit' : '__zu-control';
 		$value_attr = sprintf('value="%1$s"', empty($value) ? '' : esc_attr($value));
 		$value = $field['type'] === 'checkbox' ? ($value == true ? 'checked' : '') : $value_attr;
 		$placeholder = empty($field['placeholder']) ? '' : sprintf('placeholder="%1$s"', $field['placeholder']);
@@ -170,7 +174,7 @@ class zu_ContactFields {
 
 		return zu_sprintf(
 			'<input class="%6$s" %1$s
-				type="%2$s" id="%8$s-%3$s"
+				type="%2$s" id="%8$s-%3$s" data-id="%3$s" data-label="%9$s"
 				%7$s
 				%4$s
 				%5$s
@@ -182,13 +186,15 @@ class zu_ContactFields {
 			$placeholder,
 			$class,
 			$name,
-			self::$css_prefix
+			self::$css_prefix,
+			$field['label']
 		);
 	}
 
 	private function textarea($field, $value, $rows = null) {
 		return zu_sprintf(
-			'<textarea class="form-control" %1$s id="%6$s-%3$s" name="%6$s[%3$s]" rows="%2$s"%5$s>
+			'<textarea
+				class="__zu-control" data-id="%3$s" data-label="%7$s" %1$s id="%6$s-%3$s" name="%6$s[%3$s]" rows="%2$s"%5$s>
 				%4$s
 			</textarea>',
 			$this->data_required($field['required']),
@@ -196,7 +202,8 @@ class zu_ContactFields {
 			$field['name'],
 			esc_textarea($value),
 			empty($field['placeholder']) ? '' : sprintf(' placeholder="%1$s"', $field['placeholder']),
-			self::$css_prefix
+			self::$css_prefix,
+			$field['label']
 		);
 	}
 
