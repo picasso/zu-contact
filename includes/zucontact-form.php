@@ -173,7 +173,7 @@ trait zu_ContactForm {
 
         foreach($form->fields() as $field) {
             $field_id = $field['name'];
-            if($field_id === 'submit') $output .= $this->get_recaptcha($values['_recaptcha'] ?? null);
+            if($field['type'] === 'submit') $output .= $this->get_recaptcha($values['_recaptcha'] ?? null);
             $output .= $form->sprint($field_id, $values[$field_id] ?? '', $errors, $values['_rows'] ?? null);
         }
 
