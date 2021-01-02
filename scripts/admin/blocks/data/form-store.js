@@ -109,7 +109,7 @@ function formReducer(state = initialState, action) {
             break;
     }
 
-    Zubug.data({ action, updated: get(state, id ? fieldPath : formPath) });
+    // Zubug.data({ action, updated: get(state, id ? fieldPath : formPath) });
     return state;
 }
 
@@ -171,7 +171,7 @@ export const persistForms = () => {
 
         if(postId && isFunction(persist)) {
             persist(postId, isEmpty(forms) ? null : forms);
-            Zubug.info('PERSIST', { postId, forms });
+            // Zubug.info('PERSIST', { postId, forms });
         }
     }
 }

@@ -23,12 +23,6 @@ const attributes = {
         source: 'attribute',
 		attribute: 'data-id',
     },
-    noajax: {
-        type: 'boolean',
-        selector: 'div:first-child',
-        source: 'attribute',
-        attribute: 'data-noajax',
-    },
     title: {
         type: 'string',
         selector: 'h2',

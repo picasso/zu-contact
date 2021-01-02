@@ -6,7 +6,7 @@ const { compose } = wp.compose;
 const { PanelBody, ToggleControl } = wp.components;
 const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
 const { withSelect } = wp.data;
-const { useCallback, useEffect, useState } = wp.element;
+const { useCallback, useEffect, useState, useRef } = wp.element;
 
 // Zukit dependencies
 
@@ -47,9 +47,9 @@ const ZuFormEdit = ({
 	// * * *
 	// need to update form attributes on events:
 	// * * *
-	// + create: { postId, name, 'create', value(=templateName) }
-	// + purge: { postId, name, 'purge' }
-	// + 'name' changing: { postId, name, 'rename', value(=newName) }
+	// + create: { name, 'CREATE_FORM', value(=templateName) }
+	// + purge: { name, 'PURGE_FORM' }
+	// + rename: { name, 'RENAME_FORM', value(=newName) }
 
 	const [ updateForm, updateField ] = useUpdateForm(name);
 	const [ templateName, setTemplateName ] = useState();
@@ -86,6 +86,32 @@ const ZuFormEdit = ({
 		updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
 	}, [updateForm, setAttributes]);
 
+	// Title ------------------------------------------------------------------]
+
+	const [ withoutTitle, setWithoutTitle ] = useState(!title);
+	const peviousTitle = useRef(title);
+
+	const titleEdit = withoutTitle ? null : (
+		<h2 className={ prefixIt('subheading') }>
+			<ZuPlainEdit
+				value={ title }
+				attrKey={ 'title' }
+				placeholder={ __('Add form title...', 'zu-contact') }
+				setAttributes={ setAttributes }
+			/>
+		</h2>
+	);
+
+	const disableTitle = useCallback(val => {
+		setAttributes({ title: val ? '' : peviousTitle.current });
+		if(val) peviousTitle.current = title;
+		setWithoutTitle(val);
+	}, [title, setAttributes]);
+
+// <PanelBody title={ __('Plugin options', 'zu-contact') }>
+// 	<PluginOptionsEdit/>
+// </PanelBody>
+
 	// if the name is not defined - display the layout selection
 	if(!name) {
 		return (
@@ -97,32 +123,14 @@ const ZuFormEdit = ({
 		);
 	}
 
-	// Title ------------------------------------------------------------------]
-
-	const titleEdit = (
-		<h2 className={ prefixIt('subheading') }>
-			<ZuPlainEdit
-				value={ title }
-				attrKey={ 'title' }
-				placeholder={ __('Add form title...', 'zu-contact') }
-				setAttributes={ setAttributes }
-			/>
-		</h2>
-	);
-
-// console.log(name, layoutTemplates[name]);
-// <PanelBody title={ __('Plugin options', 'zu-contact') }>
-// 	<PluginOptionsEdit/>
-// </PanelBody>
-
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody title={ __('Form Settings', 'zu-contact') }>
 					<ToggleControl
-						label={ __('Submit via Ajax', 'zu-contact') }
-						checked={ !noajax }
-						onChange={ () => setAttributes({ noajax: !noajax }) }
+						label={ __('Without Form Heading', 'zu-contact') }
+						checked={ withoutTitle }
+						onChange={ disableTitle }
 					/>
 				</PanelBody>
 
