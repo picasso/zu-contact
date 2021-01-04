@@ -36,8 +36,9 @@ const attributes = {
         source: 'attribute',
         attribute: 'rows'
     },
-    // if specify the type boolean and use attribute source
+    // if specify the type 'boolean' and use attribute 'source'
     // then should output the attribute value for 'true' and 'undefined' for 'false' (like: required || undefined)
+    // if just output the value (true or false) - parser will always return true!
     required: {
         type: 'boolean',
         selector: '.__zu-control',

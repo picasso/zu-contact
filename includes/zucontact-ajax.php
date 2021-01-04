@@ -23,6 +23,7 @@ trait zu_ContactAjax {
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'types'		=> zu_ContactFieldDefaults::as_data(),
 			'templates'	=> $this->templates(),
+			'recaptcha'	=> $this->ajax_recaptcha_data(),
 		];
 	}
 

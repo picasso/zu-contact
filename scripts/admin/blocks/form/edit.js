@@ -15,9 +15,9 @@ const { useLoaders } = wp.zukit.data;
 
 // Internal dependencies
 
-import { uniqueValue } from './../utils.js';
-import { allowedBlocks, layoutTemplates, prefixIt } from './assets.js';
-import { FormContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
+import { uniqueValue, prefixIt } from './../utils.js';
+import { allowedBlocks, layoutTemplates } from './assets.js';
+import { FormContext, RecaptchaContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
 
 import ZuForm from './../components/form.js';
 import ZuPlainEdit from './../components/plain-edit.js';
@@ -40,12 +40,13 @@ const ZuFormEdit = ({
 		postId,
 		postLink,
 		loader,
+		useRecaptcha,
 	} = attributes;
 
 	// Sync form changes with information stored on the server ----------------]
 
 	// * * *
-	// need to update form attributes on events:
+	// need to update form store on events:
 	// * * *
 	// + create: { name, 'CREATE_FORM', value(=templateName) }
 	// + purge: { name, 'PURGE_FORM' }
@@ -108,6 +109,21 @@ const ZuFormEdit = ({
 		setWithoutTitle(val);
 	}, [title, setAttributes]);
 
+	// ReCAPTCHA --------------------------------------------------------------]
+
+	const [ recaptcha, setRecaptcha ] = useState({
+		enabled: useRecaptcha,
+		isDark: true,
+		isCompact: false,
+	});
+
+	const enableRecaptcha = useCallback(val => {
+		setAttributes({ useRecaptcha: val });
+		setRecaptcha(value => ({ ...value, enabled: val }));
+	}, [setAttributes]);
+
+
+
 // <PanelBody title={ __('Plugin options', 'zu-contact') }>
 // 	<PluginOptionsEdit/>
 // </PanelBody>
@@ -132,6 +148,22 @@ const ZuFormEdit = ({
 						checked={ withoutTitle }
 						onChange={ disableTitle }
 					/>
+					<ToggleControl
+						label={ __('Enable reCAPTCHA', 'zu-contact') }
+						checked={ useRecaptcha }
+						onChange={ enableRecaptcha }
+					/>
+					<ToggleControl
+						label={ __('Dark reCAPTCHA', 'zu-contact') }
+						checked={ recaptcha.isDark }
+						onChange={ val => setRecaptcha(value => ({ ...value, isDark: val })) }
+					/>
+					<ToggleControl
+						label={ __('Compact reCAPTCHA', 'zu-contact') }
+						checked={ recaptcha.isCompact }
+						onChange={ val => setRecaptcha(value => ({ ...value, isCompact: val })) }
+					/>
+
 				</PanelBody>
 
 				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>
@@ -162,18 +194,20 @@ const ZuFormEdit = ({
 				noajax,
 				postId,
 				postLink,
-				titleEdit,
-				loaderEdit }
+				loaderEdit,
+				titleEdit }
 			}>
 				<FormContext.Provider value={ updateField }>
-					<InnerBlocks
-						allowedBlocks={ allowedBlocks }
-						template={ layoutTemplates[templateName] }
-						templateLock={ false }
-						templateInsertUpdatesSelection={ false }
-						renderAppender={ () => ( null ) }
-						__experimentalCaptureToolbars={ true }
-					/>
+					<RecaptchaContext.Provider value={ recaptcha }>
+						<InnerBlocks
+							allowedBlocks={ allowedBlocks }
+							template={ layoutTemplates[templateName] }
+							templateLock={ false }
+							templateInsertUpdatesSelection={ false }
+							renderAppender={ () => ( null ) }
+							__experimentalCaptureToolbars={ true }
+						/>
+					</RecaptchaContext.Provider>
 				</FormContext.Provider>
 			</ZuForm>
 		</>
@@ -183,7 +217,6 @@ const ZuFormEdit = ({
 export default compose([
 	withSelect(select => {
 		const { getCurrentPostId, getEditedPostSlug } = select('core/editor');
-
 		return {
 			currentPostId: getCurrentPostId(),
 			editedPostSlug: getEditedPostSlug(),

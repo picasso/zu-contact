@@ -5,8 +5,7 @@ const { forwardRef } = wp.element;
 
 // Internal dependencies
 
-import { mergeClasses } from './../utils.js';
-import { prefixIt } from './../assets.js';
+import { mergeClasses, prefixIt } from './../utils.js';
 
 const fieldPrefix = 'components-zu-field';
 const inputClass = '__zu-control';
@@ -17,6 +16,8 @@ const ZuField = ({
 		validationEdit,
 		submitEdit,
 		placeholderEdit,
+		recaptchaEdit,
+
 		temporaryValue,
 		onChange,
 
@@ -99,21 +100,24 @@ const ZuField = ({
 	);
 
 	return (
-		<div className={ mergeClasses(
-			fieldPrefix,
-			prefixIt('control'), {
-				__submit: type === 'submit',
-				__success: true,
-				__error: validationEdit,
-			}, className)
-		}>
-			{ type === 'checkbox' ? null : controlLabel }
-			<div className={ mergeClasses(prefixIt('input'), type) }>
-				{ control }
-				{ type === 'checkbox' ? controlLabel : null }
-				{ controlValidation }
+		<>
+			{ recaptchaEdit }
+			<div className={ mergeClasses(
+				fieldPrefix,
+				prefixIt('control'), {
+					__submit: type === 'submit',
+					__success: true,
+					__error: validationEdit,
+				}, className)
+			}>
+				{ type === 'checkbox' ? null : controlLabel }
+				<div className={ mergeClasses(prefixIt('input'), type) }>
+					{ control }
+					{ type === 'checkbox' ? controlLabel : null }
+					{ controlValidation }
+				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 

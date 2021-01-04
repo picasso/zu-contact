@@ -105,4 +105,11 @@ trait zu_ContactReCAPTCHA {
 		$data = json_decode($verify_response);
 		return $data->success;
 	}
+
+	private function ajax_recaptcha_data() {
+		return [
+			'options'	=> $this->get_option('recaptcha', []),
+			'errors'	=> $this->recaptcha_error_messages(null, true),
+		];
+	}
 }

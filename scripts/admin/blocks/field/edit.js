@@ -18,12 +18,13 @@ const { SelectItemControl, AdvTextControl } = wp.zukit.components;
 import { uniqueValue } from './../utils.js';
 import { name as blockName } from './metadata.js';
 import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
-import { useFormContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
+import { useFormContext, useRecaptchaContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
 
 import ZuSubmitEdit from './edit-submit.js';
 import ZuFieldBlockControls from './field-block-controls.js';
 import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
+import ZuRecaptcha from './../components/recaptcha.js';
 
 const fieldPrefix = `${ZuField.fieldPrefix}__settings`;
 const getRequiredValue = (type, prev = null) => get(prev, 'requiredValue') || requiredDefaults[type];
@@ -54,19 +55,19 @@ const ZuFieldEdit = ({
 	const inputRef = useRef();
 	const modeRef = useRef({
 		required: false,
-		invalid: false,
+		invalid: false, // not yet implemented!
 		placeholder: false,
 	});
 
 	// Sync field changes with information stored on the server ---------------]
 	// * * *
-	// need to update field attributes on events:
+	// need to update form store on events:
 	// * * *
 	// + ADD_FIELD: { id, type, required, requiredValue }
 	// + REMOVE_FIELD:
-	// + UPDATE_FIELD 'type': { 'updated': 'type' }, { id, type, required, requiredValue }
-	// + UPDATE_FIELD 'requiredValue': { 'updated': 'requiredValue' }, temporaryRequired
-	// + UPDATE_FIELD 'required': { 'updated': 'required' }, required
+	// + UPDATE_FIELD (type): { 'updated': 'type' }, { id, type, required, requiredValue }
+	// + UPDATE_FIELD (requiredValue): { 'updated': 'requiredValue' }, temporaryRequired
+	// + UPDATE_FIELD (required): { 'updated': 'required' }, required
 	// + RENAME_FIELD: newId
 	const updateField = useFormContext();
 
@@ -86,7 +87,7 @@ const ZuFieldEdit = ({
 			updateField({
 				type: TYPES.ADD_FIELD,
 				id,
-			// here we use callback with prevValue to merge with data from the store (if any)
+			// here we use callback with 'prevValue' to merge with data from the store (if any)
 			}, prevValue => {
 				const requiredValue = getRequiredValue(type, prevValue);
 				setTemporaryRequired(requiredValue);
@@ -202,6 +203,14 @@ const ZuFieldEdit = ({
 		}
 	}, [isEditingPlaceholder]);
 
+	// Recaptcha helpers ------------------------------------------------------]
+
+	const recaptcha = useRecaptchaContext();
+
+	const recaptchaEdit = type !== 'submit' ? null : (
+		<ZuRecaptcha { ...recaptcha }/>
+	);
+
 	// Other helpers ----------------------------------------------------------]
 
 	const submitEdit = <ZuSubmitEdit { ...{ type, label, setAttributes } }/>;
@@ -286,6 +295,7 @@ const ZuFieldEdit = ({
 				validationEdit={ validationEdit }
 				submitEdit={ submitEdit }
 				placeholderEdit={ placeholderEdit }
+				recaptchaEdit={ recaptchaEdit }
 				temporaryValue={ temporaryValue }
 				onChange={ onChangeValue }
 				{ ...{ className, id, type, required, value, placeholder, label, rows } }

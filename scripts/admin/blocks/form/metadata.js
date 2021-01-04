@@ -53,13 +53,17 @@ const attributes = {
         selector: '.zu-loader',
         source: 'html',
     },
+    useRecaptcha: {
+        type: 'boolean',
+        default: false,
+    },
 };
 
 const metadata = {
     name,
     title,
     /* translators: block description */
-    description: __(' Simple but smart and modern Ajax contact form.', 'zu-contact'),
+    description: __('Simple but smart and modern Ajax contact form.', 'zu-contact'),
     category: 'layout',
     keywords: [
         /* translators: block keyword */
