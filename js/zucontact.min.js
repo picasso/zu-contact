@@ -235,9 +235,9 @@
 					'data-expired-callback': Fn_expired,
 					'data-error-callback': Fn_network,
 				});
-				errorMessages.invalid = $recaptcha.data('invalid');
-				errorMessages.expired = $recaptcha.data('expired');
-				errorMessages.network = $recaptcha.data('network');
+				errorMessages.invalid = jsdata.recaptcha.invalid;
+				errorMessages.expired = jsdata.recaptcha.expired;
+				errorMessages.network = jsdata.recaptcha.network;
 			}
 		}
 

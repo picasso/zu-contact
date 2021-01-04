@@ -18,12 +18,13 @@ trait zu_ContactAjax {
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'action'	=> $this->ajax_action,
 			'locale'	=> get_locale(),
+			'recaptcha'	=> $this->ajax_recaptcha_data($is_frontend),
 		] : [
 			'store'		=> $this->get_ajax_forms(),
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'types'		=> zu_ContactFieldDefaults::as_data(),
 			'templates'	=> $this->templates(),
-			'recaptcha'	=> $this->ajax_recaptcha_data(),
+			'recaptcha'	=> $this->ajax_recaptcha_data($is_frontend),
 		];
 	}
 

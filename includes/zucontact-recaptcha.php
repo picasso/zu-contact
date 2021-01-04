@@ -41,7 +41,6 @@ trait zu_ContactReCAPTCHA {
 		// only 'false' is taken into account, all other values are 'true'
 		if($enabled === false) return '';
 
-		$errors = $this->recaptcha_error_messages(null, true);
 		$recaptcha = $this->get_option('recaptcha', []);
 
 		return empty($recaptcha['sitekey'] ?? null) ? '' : zu_sprintf(
@@ -49,17 +48,11 @@ trait zu_ContactReCAPTCHA {
 				class="g-recaptcha"
 				data-sitekey="%1$s"
 				data-theme="%2$s"
-				data-size="%3$s"
-				data-invalid="%4$s"
-				data-expired="%5$s"
-				data-network="%6$s">
+				data-size="%3$s">
 			</div>',
 			$recaptcha['sitekey'] ?? null,
 			$recaptcha['theme'] ?? 'light',
-			$recaptcha['size'] ?? 'normal',
-			$errors['invalid'],
-			$errors['expired'],
-			$errors['network']
+			$recaptcha['size'] ?? 'normal'
 		);
 	}
 
@@ -106,10 +99,7 @@ trait zu_ContactReCAPTCHA {
 		return $data->success;
 	}
 
-	private function ajax_recaptcha_data() {
-		return [
-			'options'	=> $this->get_option('recaptcha', []),
-			'errors'	=> $this->recaptcha_error_messages(null, true),
-		];
+	private function ajax_recaptcha_data($is_frontend) {
+		return $is_frontend ? $this->recaptcha_error_messages(null, true) : $this->get_option('recaptcha', []);
 	}
 }
