@@ -8,8 +8,8 @@ const { Loader } = wp.zukit.components;
 
 // Internal dependencies
 
-import { mergeClasses, toBool } from './../utils.js';
-import { prefixIt, mail as okIcon, flag as errorIcon } from './../assets.js';
+import { mergeClasses, toBool, prefixIt } from './../utils.js';
+import { mail as okIcon, flag as errorIcon } from './../assets.js';
 
 const formPrefix = 'components-zu-form';
 const defaultMessage = null;
@@ -18,6 +18,7 @@ const ZuForm = ({
 		className,
 		titleEdit,
 		loaderEdit,
+		// recaptchaEdit,
 
 		postId,
 		postLink,
@@ -79,6 +80,7 @@ const ZuForm = ({
 					<input type="hidden" className="__postLink" name={ prefixIt('_post_link', '[]') } value={ postLink }/>
 					<input type="hidden" className="__postId" name={ prefixIt('_post_id', '[]') } value={ postId }/>
 					{ children }
+
 				</form>
 			</div>
 		</div>

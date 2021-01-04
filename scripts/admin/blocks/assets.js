@@ -1,19 +1,18 @@
 // WordPress dependencies
 
-const { isNil } = lodash;
+const { defaults } = lodash;
 
 // Internal dependencies
 
-import { externalData } from './utils.js';
-
+import { pluginData } from './utils.js';
 import { getColor } from './icons.js';
 
-// Gets JSON data (CSS prefix, form action, etc.) from PHP
-export const pluginDefaults = externalData('zucontact_blocks_data', {
+// Create plugin defaults from JSON data (CSS prefix, form templates, etc.)
+export const pluginDefaults = defaults(pluginData, {
 	prefix: 'zuc',
-	action: 'submit',
 	templates: {},
 	types: {},
+	recaptcha: {},
 	// просто чтобы избежать предупреждения ESLint, CodeKit не понимает 'export * from'
 	alertColor: getColor('red')
 });
@@ -21,11 +20,3 @@ export const pluginDefaults = externalData('zucontact_blocks_data', {
 // re-export all named imports ------------------------------------------------]
 
 export * from './icons.js';
-
-const { prefix: cssPrefix } = pluginDefaults;
-
-export function prefixIt(name, divider = '-') {
-	if(isNil(name)) return cssPrefix;
-	if(divider === '[]') return `${cssPrefix}[${name}]`;
-	return `${cssPrefix}${divider}${name}`;
-}

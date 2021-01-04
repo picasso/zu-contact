@@ -16,7 +16,7 @@ const { __ } = wp.i18n;
 
 // Internal dependencies
 
-import { form, contact, booking, subscribe, pluginDefaults, prefixIt } from './../assets.js';
+import { form, contact, booking, subscribe, pluginDefaults } from './../assets.js';
 
 const { templates = {} } = pluginDefaults;
 
@@ -33,7 +33,6 @@ export const layoutOptions = [
 
 export const fieldBlock = 'zu/field';
 export const allowedBlocks = [ fieldBlock ];
-export { prefixIt };
 
 // Create template object based on layout options
 // 'contact': [

@@ -16,7 +16,7 @@ const { __ } = wp.i18n;
 
 // Internal dependencies
 
-import { types as typesSvg, iconColor, pluginDefaults, prefixIt } from './../assets.js';
+import { types as typesSvg, iconColor, pluginDefaults } from './../assets.js';
 
 const { types: fullTypeDefaults = {} } = pluginDefaults;
 
@@ -48,4 +48,4 @@ export const assets = {
 	svg: typesSvg,
 };
 
-export { prefixIt, iconColor };
+export { iconColor };
