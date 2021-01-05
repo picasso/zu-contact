@@ -204,6 +204,7 @@
 		function reVerified() {
 			switchHeading(true);
 			markReCaptcha(false);
+			removePrevErrors();
 		}
 
 		function reExpired() {
