@@ -21,7 +21,6 @@
 	var Fn_network = `${Cs_prefix}_network`;
 
 	var MessageSplitWidth = 960;
-	var DefaultErrMessage = 'There was a problem: <b>maybe an error?</b>';
 	// set 0 for production
 	var debugDelay = 0;
 
@@ -37,10 +36,11 @@
 		$button = $form.find(Ds_submit);
 
 		var errorMessages = {
-			generic: $status.find('.message').data('errmsg'),
+			generic: jsdata.error,
 			invalid: '',
 			expired: '',
-		}
+			network: '',
+		};
 
 		var AdminBarHeight = $('#wpadminbar').height() || 0;
 
@@ -89,7 +89,7 @@
 
 			var msgLimit = 80;
 			var $message = $status.find('.message');
-			if(message === undefined) message = errorMessages.generic;
+			if(message === undefined) message = errorMessages.generic
 
 			// maybe we have general AJAX, server or reCAPTCHA errors
 			var errMessage = errors.ajax || errors.recaptcha || null;
@@ -116,7 +116,7 @@
 		function processPostData(data) {
 
 			var errors = data.errors || {};
-			processMessage(errors, data.message || DefaultErrMessage);
+			processMessage(errors, data.message);
 			switchHeading(false, !data.is_valid, data.is_valid === true);
 			removePrevErrors();
 

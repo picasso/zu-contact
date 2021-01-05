@@ -19,7 +19,9 @@ trait zu_ContactAjax {
 			'action'	=> $this->ajax_action,
 			'locale'	=> get_locale(),
 			'recaptcha'	=> $this->ajax_recaptcha_data($is_frontend),
+			'error'		=> $this->error_message(),
 		] : [
+			'locale'	=> get_locale(),
 			'store'		=> $this->get_ajax_forms(),
 			'prefix'	=> zu_ContactFields::$css_prefix,
 			'types'		=> zu_ContactFieldDefaults::as_data(),

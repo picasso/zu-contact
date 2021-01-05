@@ -122,12 +122,12 @@ trait zu_ContactForm {
         // to compensate CSS specificity of in-line style="visibility:hidden;"
         // "visibility:hidden;" is used to hide status when form CSS is missing
         $output = zu_sprintf(
-            '<div id="%9$s-%10$s" class="%1$s">
+            '<div id="%8$s-%9$s" class="%1$s">
                 %4$s%7$s
-                <div class="%9$s-status%2$s" style="visibility:hidden;opacity:0;">
+                <div class="%8$s-status%2$s" style="visibility:hidden;opacity:0;">
                     <span class="icon-ok">%5$s</span>
                     <span class="icon-error">%6$s</span>
-                    <span class="message" data-errmsg="%8$s">%3$s</span>
+                    <span class="message">%3$s</span>
                 </div>',
                 $this->snippets('merge_classes', [
                     $classes,
@@ -149,7 +149,6 @@ trait zu_ContactForm {
     	            'subdir'			=> 'images/',
     			]),
                 $subheading,
-                $this->error_message($errors),
                 $css_prefix,
                 $name
         );
@@ -213,13 +212,15 @@ trait zu_ContactForm {
         return $message;
     }
 
-    private function error_message($errors) {
+    private function error_message($errors = null) {
         $key = 'fields';
-        $reserved_keys = $this->snippets('array_prefix', $this->available_errors(), '_');
-        foreach($reserved_keys as $val) {
-            if(array_key_exists($val, $errors)) {
-                $key = ltrim($val, '_');
-                break;
+        if(is_array($errors)) {
+            $reserved_keys = $this->snippets('array_prefix', $this->available_errors(), '_');
+            foreach($reserved_keys as $val) {
+                if(array_key_exists($val, $errors)) {
+                    $key = ltrim($val, '_');
+                    break;
+                }
             }
         }
         $template = $key === 'fields' ? '%1$s <b>%2$s</b>' : '%1$s <b><span>%2$s</span></b>';
