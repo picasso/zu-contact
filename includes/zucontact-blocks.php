@@ -6,7 +6,7 @@ class zu_ContactBlocks extends zukit_Blocks {
 	protected function config() {
 		return [
 			'namespace'	=> 'zu',
-			'blocks'	=> ['form', 'field'],
+			'blocks'	=> ['form', 'field', 'recaptcha'],
 		];
 	}
 
