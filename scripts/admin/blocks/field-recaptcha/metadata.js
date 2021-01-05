@@ -4,7 +4,7 @@ const { __ } = wp.i18n;
 
 // Internal dependencies
 
-import { field as icon, iconColor } from './../assets.js';
+import { recaptcha as icon, iconColor } from './../assets.js';
 
 const name = 'zu/recaptcha';
 const title = __('ReCAPTCHA v2');
@@ -28,7 +28,7 @@ const metadata = {
     name,
     title,
     /* translators: block description */
-    description: __('Field which gives an "I’m not a robot" checkbox.', 'zu-contact'),
+    description: __('Field that provides the form with an "I\'m not a robot" checkbox.', 'zu-contact'),
     category: 'layout',
     keywords: [
         /* translators: block keyword */

@@ -147,7 +147,7 @@ const ZuFormEdit = ({
 					/>
 					<ToggleControl
 						label={ __('Enable reCAPTCHA', 'zu-contact') }
-						checked={ reClientId }
+						checked={ reClientId || false }
 						onChange={ enableRecaptcha }
 					/>
 				</PanelBody>
