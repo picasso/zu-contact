@@ -41,7 +41,7 @@ const metadata = {
     icon: { src: icon, foreground: iconColor },
     parent: ['zu/form'],
     supports: {
-		align: ['left', 'right', 'center'],
+		align: false,
         reusable: false,
         html: false,
 	},

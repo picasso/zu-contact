@@ -161,24 +161,27 @@ $zuc-loader-size: 40px;
 
 // Field ----------------------------------------------------------------------]
 
-.#{$zuc-field-class} {
-    // outline-width: 0;
-    outline-color: transparent;
-    outline-offset: 5px;
-    transition: outline-width .5s ease-in-out;
-    .is-selected.wp-block[data-type="zu/field"] & { // :not(.is-hovered)
-        outline: 1px dashed rgba($brand-color, 0.3);
-    }
-
-    .wp-block[data-type="zu/field"]:focus &, .wp-block[data-type="zu/field"]:hover & {
-        // outline-width: 0 !important;
-        outline-color: transparent !important;
-    }
-}
-
-.wp-block[data-type="zu/field"] {
-	margin-top: 0;
+.wp-block[data-type="zu/field"], .wp-block[data-type="zu/recaptcha"]  {
+    margin-top: 0;
 	margin-bottom: 0;
+
+    .#{$zuc-field-class}, .g-recaptcha {
+        outline-color: transparent;
+        outline-offset: 5px;
+        transition: outline-width .5s ease-in-out;
+    }
+
+    &.is-selected {
+        .#{$zuc-field-class}, .g-recaptcha {
+            outline: 1px dashed rgba($brand-color, 0.3);
+        }
+    }
+
+    &:focus, &:hover {
+        .#{$zuc-field-class}, .g-recaptcha {
+            outline-color: transparent !important;
+        }
+    }
 }
 
 .#{$zuc-field-class}__settings {
