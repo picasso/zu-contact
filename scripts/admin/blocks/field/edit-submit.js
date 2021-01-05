@@ -1,16 +1,21 @@
 // WordPress dependencies
 
-// const { get, set, has, includes, map } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
-const { Button, Icon, Modal } = wp.components;
+const { Button } = wp.components;
 const { useState, useCallback, useRef } = wp.element;
 const { withSelect } = wp.data;
 
+// Zukit dependencies
+
+const { ModalMessage } = wp.zukit.components;
+
 // Internal dependencies
 
-import { required } from './../assets.js';
 import ZuPlainEdit from './../components/plain-edit.js';
+
+const submitMessage = __('Sorry, but the form submission doesn\'t work in **Edit** mode.\n'+
+					'To test the form go to [Preview]($link1) mode.', 'zu-contact');
 
 const ZuSubmitEdit = ({
 		type,
@@ -24,8 +29,6 @@ const ZuSubmitEdit = ({
 
 	const [ isOpen, setOpen ] = useState(false);
 	const spacebarRef = useRef(null);
-
-	const closeModal = useCallback(() => setOpen(false), []);
 
 	const submitKeyDown = useCallback(ev => {
 		const node = String(ev.target.nodeName || ev.target.tagName).toLowerCase();
@@ -44,9 +47,6 @@ const ZuSubmitEdit = ({
 		spacebarRef.current = false;
 	}, []);
 
-	const message = __('Sorry, but the form submission doesn\'t work in Edit mode.\n'+
-						'To test the form go to Preview mode.', 'zu-contact');
-
 	return (type !== 'submit') ? null : (
 		<>
 			<button className="__edit-submit" onClick={ submitClick } onKeyDown={ submitKeyDown }>
@@ -57,43 +57,23 @@ const ZuSubmitEdit = ({
 					setAttributes={ setAttributes }
 				/>
 			</button>
-			{ isOpen && (
-				<Modal
-					className="zukit-modal"
-					title={ __('Warning', 'zu-contact') }
-					closeLabel={ __('Close') }
-					onRequestClose={ closeModal }
+			<ModalMessage
+				isOpen={ isOpen }
+				icon="warning"
+				message={ submitMessage }
+				links={ previewLink }
+				onClose={ () => setOpen(false) }
+			>
+				<Button
+					isTertiary
+					icon="external"
+					href={ permalink }
+					target="zu-form-view"
+					rel="external noreferrer noopener"
 				>
-					<div className="__content-wrapper">
-						<Icon className="__gold __icon" icon={ required }/>
-						<div>
-							{ message.split('\n').map((line, key) => <p key={ key }>{ line }</p>) }
-						</div>
-					</div>
-					<div className="__button-wrapper">
-						<Button
-							isTertiary
-							icon="external"
-							href={ permalink }
-							target="zu-form-view"
-							rel="external noreferrer noopener"
-						>
-							{ permalinkLabel }
-						</Button>
-						<Button
-							isSecondary
-							href={ previewLink }
-							target="zu-form-preview"
-							rel="external noreferrer noopener"
-						>
-							{ __('Preview') }
-						</Button>
-						<Button isPrimary onClick={ closeModal }>
-							{ __('Close') }
-						</Button>
-					</div>
-				</Modal>
-			) }
+					{ permalinkLabel }
+				</Button>
+			</ModalMessage>
 		</>
 	);
 }

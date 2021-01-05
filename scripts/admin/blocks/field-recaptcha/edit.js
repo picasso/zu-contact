@@ -57,7 +57,7 @@ const ZuRecaptchaEdit = ({
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __('reCAPTCHA Settings', 'zu-contact') }>
+				<PanelBody title={ __('Settings') }>
 					<ToggleControl
 						label={ __('Use Dark Theme', 'zu-contact') }
 						checked={ theme === 'dark' }

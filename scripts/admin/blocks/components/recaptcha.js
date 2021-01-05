@@ -1,17 +1,21 @@
 // WordPress dependencies
 
-// const { isNil } = lodash;
 const { __ } = wp.i18n;
-const { Button, Icon, Modal } = wp.components;
+const { select } = wp.data;
 const { useCallback, useState } = wp.element;
+
+// Zukit dependencies
+
+const { ModalMessage } = wp.zukit.components;
 
 // Internal dependencies
 
 import { mergeClasses } from './../utils.js';
-import { pluginDefaults, required } from './../assets.js';
+import { pluginDefaults } from './../assets.js';
 
-const stubMessage = __('This is just a visual emulation of Google reCAPTCHA, it doesn\'t work in Edit mode.\n'+
-					'To test reCAPTCHA go to Preview mode.', 'zu-contact');
+const stubMessage = __('This is just a visual emulation of **Google reCAPTCHA**.\n'+
+						'It doesn\'t work in **Edit** mode. '+
+						'To test reCAPTCHA go to [Preview]($link1) mode.', 'zu-contact');
 
 const ZuRecaptchaStub = ({
 		isCompact,
@@ -21,12 +25,12 @@ const ZuRecaptchaStub = ({
 
 	const [ isOpen, setOpen ] = useState(false);
 
-	const closeModal = useCallback(() => setOpen(false), []);
-
 	const recaptchaClick = useCallback(ev => {
 		setOpen(true);
 		ev.preventDefault();
 	}, []);
+
+	const { getEditedPostPreviewLink } = select('core/editor');
 
 	return (
 		<>
@@ -81,26 +85,13 @@ const ZuRecaptchaStub = ({
 					</div>
 				</div>
 			</div>
-			{ isOpen && (
-				<Modal
-					className="zukit-modal"
-					title={ __('Warning', 'zu-contact') }
-					closeLabel={ __('Close') }
-					onRequestClose={ closeModal }
-				>
-					<div className="__content-wrapper">
-						<Icon className="__gold __icon" icon={ required }/>
-						<div>
-							{ stubMessage.split('\n').map((line, key) => <p key={ key }>{ line }</p>) }
-						</div>
-					</div>
-					<div className="__button-wrapper">
-						<Button isPrimary onClick={ closeModal }>
-							{ __('Close') }
-						</Button>
-					</div>
-				</Modal>
-			) }
+			<ModalMessage
+				isOpen={ isOpen }
+				icon="warning"
+				message={ stubMessage }
+				links={ getEditedPostPreviewLink() }
+				onClose={ () => setOpen(false) }
+			/>
 		</>
 	);
 };

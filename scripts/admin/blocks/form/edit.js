@@ -229,5 +229,4 @@ export default compose([
 				removeBlock(reClientId, false),
 		};
 	}),
-
 ])(ZuFormEdit);
