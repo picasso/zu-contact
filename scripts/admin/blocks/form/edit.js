@@ -1,11 +1,12 @@
 // WordPress dependencies
 
-const { isNil, trim } = lodash;
+const { isNil, trim, reduce } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
+const { createBlock } = wp.blocks;
 const { PanelBody, ToggleControl } = wp.components;
 const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
-const { withSelect } = wp.data;
+const { withSelect, withDispatch } = wp.data;
 const { useCallback, useEffect, useState, useRef } = wp.element;
 
 // Zukit dependencies
@@ -16,8 +17,8 @@ const { useLoaders } = wp.zukit.data;
 // Internal dependencies
 
 import { uniqueValue, prefixIt } from './../utils.js';
-import { allowedBlocks, layoutTemplates } from './assets.js';
-import { FormContext, RecaptchaContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
+import { allowedBlocks, layoutTemplates, recaptchaBlockName, recaptchaDefaults } from './assets.js';
+import { FormContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
 
 import ZuForm from './../components/form.js';
 import ZuPlainEdit from './../components/plain-edit.js';
@@ -31,6 +32,10 @@ const ZuFormEdit = ({
 		editedPostSlug,
 		attributes,
 		setAttributes,
+
+		reClientId,
+		enableRe,
+
 }) => {
 
 	const {
@@ -40,7 +45,7 @@ const ZuFormEdit = ({
 		postId,
 		postLink,
 		loader,
-		useRecaptcha,
+		// useRecaptcha,
 	} = attributes;
 
 	// Sync form changes with information stored on the server ----------------]
@@ -111,18 +116,10 @@ const ZuFormEdit = ({
 
 	// ReCAPTCHA --------------------------------------------------------------]
 
-	const [ recaptcha, setRecaptcha ] = useState({
-		enabled: useRecaptcha,
-		isDark: true,
-		isCompact: false,
-	});
-
 	const enableRecaptcha = useCallback(val => {
 		setAttributes({ useRecaptcha: val });
-		setRecaptcha(value => ({ ...value, enabled: val }));
-	}, [setAttributes]);
-
-
+		enableRe(val);
+	}, [setAttributes, enableRe]);
 
 // <PanelBody title={ __('Plugin options', 'zu-contact') }>
 // 	<PluginOptionsEdit/>
@@ -150,20 +147,9 @@ const ZuFormEdit = ({
 					/>
 					<ToggleControl
 						label={ __('Enable reCAPTCHA', 'zu-contact') }
-						checked={ useRecaptcha }
+						checked={ reClientId }
 						onChange={ enableRecaptcha }
 					/>
-					<ToggleControl
-						label={ __('Dark reCAPTCHA', 'zu-contact') }
-						checked={ recaptcha.isDark }
-						onChange={ val => setRecaptcha(value => ({ ...value, isDark: val })) }
-					/>
-					<ToggleControl
-						label={ __('Compact reCAPTCHA', 'zu-contact') }
-						checked={ recaptcha.isCompact }
-						onChange={ val => setRecaptcha(value => ({ ...value, isCompact: val })) }
-					/>
-
 				</PanelBody>
 
 				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>
@@ -198,16 +184,14 @@ const ZuFormEdit = ({
 				titleEdit }
 			}>
 				<FormContext.Provider value={ updateField }>
-					<RecaptchaContext.Provider value={ recaptcha }>
-						<InnerBlocks
-							allowedBlocks={ allowedBlocks }
-							template={ layoutTemplates[templateName] }
-							templateLock={ false }
-							templateInsertUpdatesSelection={ false }
-							renderAppender={ () => ( null ) }
-							__experimentalCaptureToolbars={ true }
-						/>
-					</RecaptchaContext.Provider>
+					<InnerBlocks
+						allowedBlocks={ allowedBlocks }
+						template={ layoutTemplates[templateName] }
+						templateLock={ false }
+						templateInsertUpdatesSelection={ false }
+						renderAppender={ () => ( null ) }
+						__experimentalCaptureToolbars={ true }
+					/>
 				</FormContext.Provider>
 			</ZuForm>
 		</>
@@ -215,11 +199,35 @@ const ZuFormEdit = ({
 }
 
 export default compose([
-	withSelect(select => {
+	withSelect(( select, { clientId }) => {
 		const { getCurrentPostId, getEditedPostSlug } = select('core/editor');
+		const { getBlockOrder, getBlock } = select('core/block-editor');
+		const fieldIds = getBlockOrder(clientId);
+		const reClientId= reduce(fieldIds, (reId, id) => {
+			const block = getBlock(id);
+			return block.name === recaptchaBlockName ? block.clientId : reId;
+		}, null);
+
 		return {
 			currentPostId: getCurrentPostId(),
 			editedPostSlug: getEditedPostSlug(),
+			insertIndex: fieldIds.length ? fieldIds.length - 1 : 0,
+			reClientId,
 		};
 	}),
+	withDispatch(( dispatch, { clientId, insertIndex, reClientId }) => {
+		const { removeBlock, insertBlock } = dispatch('core/block-editor');
+		return {
+			enableRe: val => val ?
+				insertBlock(
+					createBlock(recaptchaBlockName, { ...recaptchaDefaults }),
+					insertIndex,
+					clientId,
+					false
+				)
+			:
+				removeBlock(reClientId, false),
+		};
+	}),
+
 ])(ZuFormEdit);

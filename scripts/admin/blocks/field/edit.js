@@ -18,13 +18,12 @@ const { SelectItemControl, AdvTextControl } = wp.zukit.components;
 import { uniqueValue } from './../utils.js';
 import { name as blockName } from './metadata.js';
 import { assets, typeDefaults, requiredDefaults, iconColor } from './assets.js';
-import { useFormContext, useRecaptchaContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
+import { useFormContext, useOnFieldRemove, TYPES } from './../data/form-context.js';
 
 import ZuSubmitEdit from './edit-submit.js';
 import ZuFieldBlockControls from './field-block-controls.js';
 import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
-import ZuRecaptcha from './../components/recaptcha.js';
 
 const fieldPrefix = `${ZuField.fieldPrefix}__settings`;
 const getRequiredValue = (type, prev = null) => get(prev, 'requiredValue') || requiredDefaults[type];
@@ -203,14 +202,6 @@ const ZuFieldEdit = ({
 		}
 	}, [isEditingPlaceholder]);
 
-	// Recaptcha helpers ------------------------------------------------------]
-
-	const recaptcha = useRecaptchaContext();
-
-	const recaptchaEdit = type !== 'submit' ? null : (
-		<ZuRecaptcha { ...recaptcha }/>
-	);
-
 	// Other helpers ----------------------------------------------------------]
 
 	const submitEdit = <ZuSubmitEdit { ...{ type, label, setAttributes } }/>;
@@ -295,7 +286,6 @@ const ZuFieldEdit = ({
 				validationEdit={ validationEdit }
 				submitEdit={ submitEdit }
 				placeholderEdit={ placeholderEdit }
-				recaptchaEdit={ recaptchaEdit }
 				temporaryValue={ temporaryValue }
 				onChange={ onChangeValue }
 				{ ...{ className, id, type, required, value, placeholder, label, rows } }

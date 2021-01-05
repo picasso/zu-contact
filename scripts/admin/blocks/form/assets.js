@@ -17,8 +17,9 @@ const { __ } = wp.i18n;
 // Internal dependencies
 
 import { form, contact, booking, subscribe, pluginDefaults } from './../assets.js';
+import { name as recaptchaBlockName } from './../field-recaptcha/metadata.js';
 
-const { templates = {} } = pluginDefaults;
+const { templates = {}, recaptcha } = pluginDefaults;
 
 // Options & Values
 
@@ -32,7 +33,8 @@ export const layoutOptions = [
 ];
 
 export const fieldBlock = 'zu/field';
-export const allowedBlocks = [ fieldBlock ];
+export const allowedBlocks = [ fieldBlock, recaptchaBlockName ];
+export { recaptchaBlockName, recaptcha as recaptchaDefaults };
 
 // Create template object based on layout options
 // 'contact': [

@@ -14,11 +14,13 @@ if(!supportsCollections) registerCategory();
 
 import * as form from './blocks/form/index.js';
 import * as field from './blocks/field/index.js';
+import * as recaptcha from './blocks/field-recaptcha/index.js';
 
 export function registerBlocks() {
 	[
 		form,
 		field,
+		recaptcha,
 
 	].forEach(block => {
 

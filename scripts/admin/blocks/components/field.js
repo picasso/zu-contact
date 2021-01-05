@@ -1,6 +1,5 @@
 // WordPress dependencies
 
-// const { isArray, get } = lodash;
 const { forwardRef } = wp.element;
 
 // Internal dependencies
@@ -11,12 +10,10 @@ const fieldPrefix = 'components-zu-field';
 const inputClass = '__zu-control';
 
 const ZuField = ({
-		// isEditor,
 		labelEdit,
 		validationEdit,
 		submitEdit,
 		placeholderEdit,
-		recaptchaEdit,
 
 		temporaryValue,
 		onChange,
@@ -101,7 +98,6 @@ const ZuField = ({
 
 	return (
 		<>
-			{ recaptchaEdit }
 			<div className={ mergeClasses(
 				fieldPrefix,
 				prefixIt('control'), {

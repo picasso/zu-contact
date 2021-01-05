@@ -8,17 +8,16 @@ const { useCallback, useState } = wp.element;
 // Internal dependencies
 
 import { mergeClasses } from './../utils.js';
-import { required } from './../assets.js';
-// import { useGetOption } from './../options/store.js';
+import { pluginDefaults, required } from './../assets.js';
 
-const ZuRecaptcha = ({
-		enabled,
-		// setAttributes,
+const stubMessage = __('This is just a visual emulation of Google reCAPTCHA, it doesn\'t work in Edit mode.\n'+
+					'To test reCAPTCHA go to Preview mode.', 'zu-contact');
+
+const ZuRecaptchaStub = ({
 		isCompact,
 		isDark,
+		locale = 'en',
 }) => {
-
-	// const recaptchaEnabled = true; //useGetOption('use_recaptcha');
 
 	const [ isOpen, setOpen ] = useState(false);
 
@@ -28,12 +27,6 @@ const ZuRecaptcha = ({
 		setOpen(true);
 		ev.preventDefault();
 	}, []);
-
-
-	const message = __('This is just a visual emulation of Google reCAPTCHA, it doesn\'t work in Edit mode.\n'+
-						'To test reCAPTCHA go to Preview mode.', 'zu-contact');
-
-	if(!enabled) return null;
 
 	return (
 		<>
@@ -58,7 +51,7 @@ const ZuRecaptcha = ({
 					<div className="rc-inline-block">
 						<div className="rc-anchor-center-container">
 							<label className="rc-anchor-center-item rc-anchor-checkbox-label">
-								Я не робот
+								{ __('I\'m not a robot', 'zu-contact') }
 							</label>
 						</div>
 					</div>
@@ -82,9 +75,9 @@ const ZuRecaptcha = ({
 						}
 					</div>
 					<div className="rc-anchor-pt">
-						<a href="https://www.google.com/intl/ru/policies/privacy/">Конфиденциальность</a>
+						<a href={ `https://www.google.com/intl/${locale}/policies/privacy/` }>{ __('Privacy', 'zu-contact') }</a>
 						<span aria-hidden="true"> - </span>
-						<a href="https://www.google.com/intl/ru/policies/terms/">Условия использования</a>
+						<a href={ `https://www.google.com/intl/${locale}/policies/terms/` }>{ __('Terms', 'zu-contact') }</a>
 					</div>
 				</div>
 			</div>
@@ -98,7 +91,7 @@ const ZuRecaptcha = ({
 					<div className="__content-wrapper">
 						<Icon className="__gold __icon" icon={ required }/>
 						<div>
-							{ message.split('\n').map((line, key) => <p key={ key }>{ line }</p>) }
+							{ stubMessage.split('\n').map((line, key) => <p key={ key }>{ line }</p>) }
 						</div>
 					</div>
 					<div className="__button-wrapper">
@@ -109,6 +102,30 @@ const ZuRecaptcha = ({
 				</Modal>
 			) }
 		</>
+	);
+};
+
+const { locale, recaptcha: { sitekey: recaptchaSitekey = '' } } = pluginDefaults;
+
+const ZuRecaptcha = ({
+		withStub,
+		size,
+		theme,
+}) => {
+	return (
+		<div className="g-recaptcha"
+			data-sitekey={ recaptchaSitekey }
+			data-theme={ theme }
+			data-size={ size }
+		>
+			{ withStub && (
+				<ZuRecaptchaStub
+					isCompact={ size === 'compact' }
+					isDark={ theme === 'dark' }
+					locale={ locale }
+				/>
+			) }
+		</div>
 	);
 };
 

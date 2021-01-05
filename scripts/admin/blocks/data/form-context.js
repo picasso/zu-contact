@@ -19,13 +19,6 @@ export function useFormContext() {
 	return useContext(FormContext);
 }
 
-export const RecaptchaContext = createContext();
-RecaptchaContext.displayName = 'ZuRecaptchaContext';
-
-export function useRecaptchaContext() {
-	return useContext(RecaptchaContext);
-}
-
 export const useUpdateForm = (fname) => {
     const update = useUpdateFormGeneric();
 
