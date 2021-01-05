@@ -85,7 +85,7 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	protected function blocks() {
+	protected function blocks_init() {
 		return new zu_ContactBlocks;
 	}
 
@@ -152,6 +152,12 @@ class zu_Contact extends zukit_Plugin {
 	protected function enqueue_more($is_frontend, $hook) {
 		if($is_frontend) {
 			$this->register_recaptcha();
+		}
+	}
+
+	public function blocks_enqueue_more($is_frontend, $block_name, $attributes) {
+		if($is_frontend && $this->blocks->is_frontend_block($block_name)) {
+			$this->enqueue_recaptcha_with_block($attributes);
 		}
 	}
 }

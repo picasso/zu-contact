@@ -100,6 +100,22 @@ trait zu_ContactReCAPTCHA {
 	}
 
 	private function ajax_recaptcha_data($is_frontend) {
-		return $is_frontend ? $this->recaptcha_error_messages(null, true) : $this->get_option('recaptcha', []);
+
+		if($is_frontend) return $this->recaptcha_error_messages(null, true);
+
+		$recaptcha = $this->get_option('recaptcha', []);
+		unset($recaptcha['secret']);
+		return $recaptcha;
+	}
+
+	private function enqueue_recaptcha_with_block($attrs) {
+		foreach($attrs as $block_attr) {
+			$recaptcha_enabled = $block_attr['useRecaptcha'] ?? false;
+			// we can enqueue recaptcha only once, and there can be many blocks
+			if($recaptcha_enabled) {
+				$this->maybe_enqueue_recaptcha($recaptcha_enabled);
+				break;
+			}
+		}
 	}
 }

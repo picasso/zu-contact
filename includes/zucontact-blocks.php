@@ -10,11 +10,13 @@ class zu_ContactBlocks extends zukit_Blocks {
 		];
 	}
 
-	// protected function should_load_css($is_frontend) {
-	// 	return false;
-	// }
+	protected function frontend_blocks() { return 'form'; }
 
 	protected function js_data($is_frontend) {
 		return $is_frontend ? null :  $this->plugin->ajax_data(false);
+	}
+
+	public function is_frontend_block($block) {
+		return $this->is_block($block, $this->frontend_blocks());
 	}
 }
