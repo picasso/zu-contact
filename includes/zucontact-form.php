@@ -182,9 +182,10 @@ trait zu_ContactForm {
 
     public function templates() {
         $forms = [];
+        $ajax_forms = $this->get_ajax_forms(true);
         foreach($this->available_forms() as $name) {
             $form = $this->get_form($name);
-            if($form === false) continue;
+            if($form === false || in_array($name, $ajax_forms)) continue;
             $forms[$name] = [
                 'name'      => $name,
                 'title'     => $this->subheading(null, $name),

@@ -112,9 +112,9 @@ trait zu_ContactAjax {
 		}
 	}
 
-	private function get_ajax_forms() {
+	private function get_ajax_forms($names_only = false) {
 		$forms = $this->get_option($this->ajax_forms_key, []);
 		$post_id = get_the_ID();
-		return $forms[$post_id] ?? [];
+		return $names_only ? array_keys($forms) : ($forms[$post_id] ?? []);
 	}
 }
