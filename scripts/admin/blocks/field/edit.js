@@ -26,7 +26,8 @@ import ZuField from './../components/field.js';
 import ZuPlainEdit from './../components/plain-edit.js';
 
 const fieldPrefix = `${ZuField.fieldPrefix}__settings`;
-const getRequiredValue = (type, prev = null) => get(prev, 'requiredValue') || requiredDefaults[type];
+const getRequiredValue = (type, prev = null, id = null) =>
+		get(prev, 'requiredValue') || requiredDefaults[id] || requiredDefaults[type];
 
 const ZuFieldEdit = ({
 		attributes,
@@ -73,22 +74,28 @@ const ZuFieldEdit = ({
 	// create 'text' field as default if no attributes found
 	useEffect(() => {
 		if(isNil(id)) {
+			// !!: here we are only after adding a new field, it is always of type 'text'
 			const newAttrs = typeDefaults[type || 'text'];
 			// avoid duplicate field id
 			const uniqueId = uniqueValue(newAttrs.id, availableFieldIds, 'id');
-			const newAttrsWithId = { ...newAttrs, id: uniqueId } ;
+			const newAttrsWithId = { ...newAttrs, id: uniqueId };
 			setAttributes(newAttrsWithId);
+
+			const requiredValue = getRequiredValue(type);
+			setTemporaryRequired(requiredValue);
+
 			updateField({
 				type: TYPES.ADD_FIELD,
 				id: uniqueId
-			}, { ...newAttrsWithId, requiredValue: getRequiredValue(newAttrsWithId.type) });
+			}, { ...newAttrsWithId, requiredValue });
 		} else {
+			// !!: here we are after creating a form from a template or after refreshing the page
 			updateField({
 				type: TYPES.ADD_FIELD,
 				id,
 			// here we use callback with 'prevValue' to merge with data from the store (if any)
 			}, prevValue => {
-				const requiredValue = getRequiredValue(type, prevValue);
+				const requiredValue = getRequiredValue(type, prevValue, id);
 				setTemporaryRequired(requiredValue);
 				return { ...prevValue, id, type, required, requiredValue }
 			});
@@ -132,7 +139,7 @@ const ZuFieldEdit = ({
 	// Required helpers -------------------------------------------------------]
 
 	const [ isEditingRequired, setIsEditingRequired ] = useState(false);
-	const [ temporaryRequired, setTemporaryRequired ] = useState(getRequiredValue(type));
+	const [ temporaryRequired, setTemporaryRequired ] = useState(null);
 	const requiredEditRef = useRef();
 
 	const validationEdit = (!isEditingRequired || type === 'submit') ? null : (
