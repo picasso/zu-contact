@@ -1,6 +1,6 @@
 // WordPress dependencies
 
-const { isNil, trim, reduce } = lodash;
+const { isNil, trim, reduce, noop } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
 const { createBlock } = wp.blocks;
@@ -57,8 +57,8 @@ const ZuFormEdit = ({
 	// + purge: { name, 'PURGE_FORM' }
 	// + rename: { name, 'RENAME_FORM', value(=newName) }
 
-	const [ updateForm, updateField ] = useUpdateForm(name);
-	const [ templateName, setTemplateName ] = useState();
+	const [ updateForm = noop, updateField ] = useUpdateForm(name);
+	const [ templateName, setTemplateName ] = useState('contact');
 
 	useOnFormRemove(clientId, postId, name, updateForm);
 

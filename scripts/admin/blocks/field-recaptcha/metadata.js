@@ -7,7 +7,7 @@ const { __ } = wp.i18n;
 import { recaptcha as icon, iconColor } from './../assets.js';
 
 const name = 'zu/recaptcha';
-const title = __('ReCAPTCHA v2');
+const title = __('reCAPTCHA');
 
 const attributes = {
     theme: {
@@ -45,6 +45,13 @@ const metadata = {
         reusable: false,
         html: false,
 	},
+
+    example: {
+		attributes: {
+            theme: 'light',
+            withStub: true,
+		},
+    },
 
     attributes,
 };

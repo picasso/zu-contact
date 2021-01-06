@@ -20,8 +20,8 @@ const ZuForm = ({
 		loaderEdit,
 		// recaptchaEdit,
 
-		postId,
-		postLink,
+		postId = '',
+		postLink = '',
 
 		name,
 		title,

@@ -81,6 +81,13 @@ const metadata = {
 		align: false,
 	},
 
+    example: {
+		attributes: {
+            name: 'contact',
+            title: __('Contact Us', 'zu-contact'),
+        },
+    },
+
     attributes,
 };
 

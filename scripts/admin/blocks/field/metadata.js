@@ -57,7 +57,7 @@ const metadata = {
     name,
     title,
     /* translators: block description */
-    description: __('Form field of various types and flexible settings.', 'zu-contact'),
+    description: __('Form field of various types with flexible settings.', 'zu-contact'),
     category: 'layout',
     keywords: [
         /* translators: block keyword */
@@ -74,6 +74,16 @@ const metadata = {
         reusable: false,
         html: false,
 	},
+
+    example: {
+		attributes: {
+            id: 'email',
+            label: __('Email', 'zu-contact'),
+            type: 'email',
+            required: true,
+            placeholder: __('Your Email Address', 'zu-contact'),
+		},
+    },
 
     attributes,
 };

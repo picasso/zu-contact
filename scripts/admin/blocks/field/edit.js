@@ -1,6 +1,6 @@
 // WordPress dependencies
 
-const { isNil, get, set, has, map, indexOf } = lodash;
+const { isNil, get, set, has, map, indexOf, noop } = lodash;
 const { __ } = wp.i18n;
 const { compose } = wp.compose;
 const { PanelBody, ToggleControl } = wp.components;
@@ -68,7 +68,7 @@ const ZuFieldEdit = ({
 	// + UPDATE_FIELD (requiredValue): { 'updated': 'requiredValue' }, temporaryRequired
 	// + UPDATE_FIELD (required): { 'updated': 'required' }, required
 	// + RENAME_FIELD: newId
-	const updateField = useFormContext();
+	const updateField = useFormContext() || noop;
 
 	// create 'text' field as default if no attributes found
 	useEffect(() => {
