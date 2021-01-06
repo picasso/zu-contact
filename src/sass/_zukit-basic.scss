@@ -1,5 +1,7 @@
 @import "variables";
 
+$brand-color: $violet-color;
+
 $admin-grey-color: #e5e5e5;
 $admin-light-yellow: #ffffa5;
 $admin-light-brown: #f2d592; //#d5b464;
@@ -14,7 +16,6 @@ $admin-blue-color: $some-blue;
 $admin-gold-color: #e8a723;
 $admin-red-color: $some-red;
 
-$link-blue: #0073aa;
 $hover-darken: 10;
 $hover-shadow: 15;
 
@@ -56,3 +57,11 @@ $plugin-icon-width: 100px;
 $plugin-icon-height: 80px;
 
 $select-item-size: 80px;
+
+// class prefixes -------------------------------------------------------------]
+
+$selectitem-component-class: zukit-select-item;
+$listinput-component-class: zukit-list-input;
+$advtext-component-class: zukit-text-control;
+$loader-component-class: zukit-loader-control;
+$modal-component-class: zukit-modal;
