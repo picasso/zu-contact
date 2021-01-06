@@ -21,7 +21,7 @@ Unfortunately WordPress does not come with built-in functionality for a simple c
 
 The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload... but why do you need it?*). To a certain extent, you can personalize the form and its fields. The form is added to the page using the shortcode `[zu-contact]` or `[zu-booking]`.
 
-> &#x23F0; In the near future, I plan to finish Gutenberg Custom Block and then the possibilities for personalizing the form will increase significantly.
+&#x2757; You can also add a form to a page using the Gutenberg Custom Block __Zu Form__ - with this block, the possibilities for customizing your form are greatly increased.
 
 ### Features
 

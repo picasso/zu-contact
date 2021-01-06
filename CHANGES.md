@@ -1,3 +1,6 @@
+#### 1.0.9 / 2021-01-06
+* intermediate version for testing the latest changes
+
 #### 1.0.8 / 2020-12-08
 * added assets for WordPress.org
 
