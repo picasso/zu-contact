@@ -1,6 +1,6 @@
 <?php
 
-// Plugin Ajax Trait ----------------------------------------------------------]
+// Plugin Ajax/REST API Trait -------------------------------------------------]
 //
 // const READABLE = 'GET'
 // const CREATABLE = 'POST'
@@ -9,19 +9,28 @@
 
 trait zukit_Ajax {
 
-	private $api_prefix	= 'zukit';
-	private $api_version = 1;
-	private $routes = [];
+	private $zukit_api_prefix = 'zukit';
+	private $zukit_api_version = 1;
+	private $zukit_routes;
+
+	private $api_prefix;
+	private $api_version;
+	private $routes;
+
 	private $nonce;
 	private $ajax_error;
 
-	private static $rest_registered = false;
+	private static $zukit_rest_registered = false;
+
+	protected function api_routes() {}
 
 	private function ajax_config() {
 
-		$this->nonce = $this->config['nonce'] ?? $this->prefix.'_ajax_nonce';
+		$this->nonce = $this->get('nonce') ?? $this->prefix.'_ajax_nonce';
+		$this->api_prefix = $this->get('api_prefix') ?? $this->prefix;
+		$this->api_version = $this->get('api_version') ?? 1;
 
-		$this->routes = [
+		$this->zukit_routes = [
 			// make action via ajax call
 			'action'		=> [
 				'methods' 		=> WP_REST_Server::CREATABLE,
@@ -49,7 +58,7 @@ trait zukit_Ajax {
 					],
 					'key'		=> [
 						'default'			=> false,
-						'sanitize_callback' => 'sanitize_key',
+						'sanitize_callback' => [$this, 'sanitize_path'],
 					],
 				],
 				'permission'	=> 'edit_posts',
@@ -75,22 +84,76 @@ trait zukit_Ajax {
 				],
 				'permission'	=> 'edit_posts',
 			],
+			// get some data by key
+			'zudata'		=> [
+				'methods' 		=> WP_REST_Server::READABLE,
+				'callback'		=> 'get_zudata',
+				'args'			=> [
+					'key'		=> [
+						'default'			=> false,
+						'sanitize_callback' => 'sanitize_key',
+					],
+				],
+				'permission'	=> 'edit_posts',
+			],
+			// get custom data by 'key'
+			'cuget'		=> [
+				'methods' 		=> WP_REST_Server::READABLE,
+				'callback'		=> 'get_custom',
+				'args'			=> [
+					'key'		=> [
+						'default'			=> false,
+						'sanitize_callback' => 'sanitize_key',
+					],
+				],
+				'permission'	=> 'edit_posts',
+			],
+			// set custom data for requested 'key'
+			// if value for 'key' is 'null' then this data will be deleted
+			'cuset'		=> [
+				'methods' 		=> WP_REST_Server::CREATABLE,
+				'callback'		=> 'set_custom',
+				'args'			=> [
+					'key'		=> [
+						'default'			=> false,
+						'sanitize_callback' => 'sanitize_key',
+					],
+					'keys'		=> [
+						'default'			=> [],
+						'sanitize_callback' => [$this, 'sanitize_paths'],
+					],
+					'values'	=> [
+						'default'			=> [],
+						// 'sanitize_callback' => 'sanitize_key',
+					],
+				],
+				'permission'	=> 'edit_posts',
+			],
 
 		];
 
+		$this->routes = $this->api_routes() ?? [];
+
+		add_action('rest_api_init' , [$this, 'init_zukit_api']);
 		add_action('rest_api_init' , [$this, 'init_api']);
 	}
 
+	public function init_zukit_api() {
+		// prevent 'register_rest_route' for Zukit be called many times from different plugins
+		if(self::$zukit_rest_registered) return;
+		$this->init_routes($this->zukit_routes, $this->zukit_api_prefix, $this->zukit_api_version);
+		self::$zukit_rest_registered = true;
+	}
+
 	public function init_api() {
-		// prevent 'register_rest_route' be called many times from different plugins
-		if(self::$rest_registered) return;
+		$this->init_routes($this->routes, $this->api_prefix, $this->api_version);
+	}
 
-		foreach($this->routes as $route => $params) {
+	private function init_routes($routes, $api_prefix, $api_version) {
 
-			$namespace = sprintf('%1$s/v%2$s',
-				$this->api_prefix,
-				$this->api_version
-			);
+		$namespace = sprintf('%1$s/v%2$s', $api_prefix, $api_version);
+		foreach($routes as $route => $params) {
+
 			$endpoint = sprintf('/%1$s', $route);
 
 			register_rest_route($namespace, $endpoint, [
@@ -102,8 +165,14 @@ trait zukit_Ajax {
                 },
 			]);
 		}
+	}
 
-		self::$rest_registered = true;
+	public function api_basics() {
+		return [
+			'router'	=> $this->get_router_name(),
+			'root'		=> $this->api_prefix,
+			'verion'	=> $this->api_version,
+		];
 	}
 
 	// Sanitize helpers -------------------------------------------------------]
@@ -287,7 +356,106 @@ trait zukit_Ajax {
 			}
 		}
 		// if $result is false - something went wrong - then return null
-		return rest_ensure_response($result || (object) null);
+		return rest_ensure_response($result ?? (object) null);
+	}
+
+	protected function extend_zudata($key, $params) {}
+
+	public function get_zudata($request) {
+
+		$params =  $request->get_params();
+
+		$key = $params['key'];
+		$result = null;
+
+		// if $router is defined then use it, otherwise use $this
+		// because some methods are plugin dependent and some are not
+		$request_router = $this->get_router($params, false);
+		$router = is_null($request_router) ? $this : $request_router;
+
+		// collect data for REST API
+		switch($key) {
+			case 'loaders':
+				$loader_index = $params['loaderIndex'] ?? null;
+				$duration = $params['duration'] ?? 0.8;
+
+				if($loader_index !== null) {
+					$result = $this->snippets('loader', -1, $duration);
+					$result = array_key_exists($loader_index, $result) ? $result[$loader_index] : (object) null;
+				} else {
+					$result = [];
+					foreach($this->snippets('loader', -1, $duration) as $index => $value) {
+						$result[$index] = $value;
+					}
+				}
+				break;
+
+			case 'svg':
+				$name = $params['name'] ?? 'logo';
+				$folder = $params['folder'] ?? 'images/';
+				$result = $this->snippets('insert_svg_from_file', $router->dir, $name, [
+		            'preserve_ratio'	=> true,
+		            'strip_xml'			=> true,
+		            'subdir'			=> $folder,
+				]);
+				break;
+
+			// process 'zudata' from all loaded plugins/theme
+			default:
+				if($request_router !== null) {
+					$result = $request_router->extend_zudata($key, $params) ?? null;
+				} else {
+					foreach($this->instance_by_router() as $plugin_router) {
+						$result = $plugin_router->extend_zudata($key, $params) ?? null;
+						if(!empty($result)) break;
+					}
+				}
+		}
+
+		// if $result is empty - something went wrong - then return empty object
+		return rest_ensure_response(empty($result) ? (object) null :  $result);
+	}
+
+
+	// Custom Data Routes which could be extended -----------------------------]
+
+	protected function get_custom_value($request_id, $params) {}
+
+	public function get_custom($request) {
+
+		$params =  $request->get_params();
+
+		$request_id = $params['key'];
+		$result = null;
+
+		foreach($this->instance_by_router() as $plugin_router) {
+			$result = $plugin_router->get_custom_value($request_id, $params) ?? null;
+			if(!is_null($result)) break;
+		}
+
+		// if $result is empty - something went wrong - then return empty object
+		return rest_ensure_response(is_null($result) ? (object) null :  $result);
+	}
+
+	protected function set_custom_value($request_id, $keys, $values) {}
+
+	public function set_custom($request) {
+
+		$params =  $request->get_params();
+
+		$request_id = $params['key'];
+		$keys = $params['keys'];
+		$values = $params['values'];
+		$result = null;
+
+		foreach($this->instance_by_router() as $plugin_router) {
+			$result = $plugin_router->set_custom_value($request_id, $keys, $values) ?? null;
+			if(!is_null($result)) break;
+		}
+
+		// if $result is empty - something went wrong - then return empty object,
+		// otherwise return 'false' or 'true' ('set_option' returns 'false' or 'options')
+		return rest_ensure_response(is_null($result) ? (object) null : $result !== false);
 	}
 
 	// Ajax Actions Helpers ---------------------------------------------------]
@@ -296,18 +464,30 @@ trait zukit_Ajax {
 		$this->ajax_error = false;
 	}
 
+	private function get_router_name() {
+		return $this->admin_slug();
+	}
+
 	// $rest_router serves to identify the plugin that currently uses the REST API,
 	// since all plugins inherit the same Zukit_plugin class and identification
 	// is required to determine which of the active plugins should respond to ajax requests
-	private function get_router($params) {
+	private function get_router($params, $log_errors = true) {
 
 		$this->reset_ajax_error();
 
-		$router_slug = $params['router'] ?? '';
-		$rest_router = $this->instance_by_slug($router_slug);
+		$router = $params['router'] ?? '';
+		$rest_router = $this->instance_by_router($router);
 
 		if($rest_router instanceof zukit_Plugin) return $rest_router;
-		$this->ajax_error(__('Active router not defined', 'zukit'), $params);
+
+		$message = __('Active router not defined', 'zukit');
+		$this->ajax_error($message, $params);
+
+		if($log_errors) {
+			// also log the error as it is quite severe
+			$this->log_error($params, $message);
+		}
+
 		return null;
 	}
 

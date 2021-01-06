@@ -72,11 +72,11 @@ class zukit_Singleton {
 
     // Scripts management -----------------------------------------------------]
 
-    protected function zukit_dirname($subdir = null) {
+    public function zukit_dirname($subdir = null) {
         return dirname(self::$zukit_file).(empty($subdir) ? '' : '/'.ltrim($subdir, '/'));
 	}
 
-    protected function get_zukit_filepath($is_style, $file, $absolute_marker = true) {
+    public function get_zukit_filepath($is_style, $file, $absolute_marker = true) {
         // $dir = dirname(self::$zukit_file).'/dist';
 		$filename = sprintf($is_style ? '%2$s/%1$s.css' : '%2$s/%1$s.min.js', $file, $this->zukit_dirname('dist'));
 		return $absolute_marker ? ('!'.$filename) : $filename;
@@ -115,9 +115,13 @@ class zukit_Singleton {
 
     public function enqueue_only($is_style = null, $handle = null) {
         $handle = is_null($handle) ? $this->create_handle() : $handle;
+
+        $style_handle = is_array($handle) ? ($handle[0] ?? null) : $handle;
+        $script_handle = is_array($handle) ? ($handle[1] ?? null) : $handle;
+
         // if $is_style is null - then enqueue both (style and script)
-        if($is_style === true || $is_style === null) wp_enqueue_style($handle);
-        if($is_style === false || $is_style === null) wp_enqueue_script($handle);
+        if($is_style === true || $is_style === null) wp_enqueue_style($style_handle);
+        if($is_style === false || $is_style === null) wp_enqueue_script($script_handle);
     }
 
     protected function create_handle($file = null) {
@@ -198,7 +202,7 @@ class zukit_Singleton {
                 'async_defer'   => $this->async_defer,
                 'prefix'        => $this->prefix,
                 'dir'           => $this->dir,
-            ], ['enqueue_style_or_script' => 'No file found to enqueue!']);
+            ], 'No file found to enqueue!');
         }
 		return $handle;
 	}
@@ -213,7 +217,7 @@ class zukit_Singleton {
         } else {
             if($is_absolute) {
                 $filename = str_replace($this->dir, '', $file);
-                if($file === 'zukit') {
+                if(substr($file, 0, 5) === 'zukit') {
                     $filepath = $this->get_zukit_filepath($is_style, $file, false);
                     $src = plugin_dir_url(self::$zukit_file).str_replace(plugin_dir_path(self::$zukit_file), '', $filepath);
                 }
@@ -238,7 +242,7 @@ class zukit_Singleton {
 
     // Basic error handling ---------------------------------------------------]
 
-    public static function log_with_context($context, $error) {
+    public static function log_with_context($context, $error, $line_shift) {
         $log = PHP_EOL.'* * * without context';
         if(is_string($context)) $log = PHP_EOL.'* * * '.$context;
         else if(!empty($context)) $log = preg_replace(
@@ -256,6 +260,10 @@ class zukit_Singleton {
         );
         $log .= PHP_EOL.str_repeat('=', strlen($log) - 1);
         $log .= PHP_EOL.var_export($error, true).PHP_EOL;
+        // add function and line
+        $log_line = self::backtrace_line($line_shift);
+        $log_line .= PHP_EOL.str_repeat('=', strlen($log_line));
+        $log = PHP_EOL.$log_line.$log;
         error_log($log);
     }
 
@@ -265,22 +273,39 @@ class zukit_Singleton {
         else self::$log_filter = $class;
     }
 
-    public static function log(...$params) {
+    public static function log($context, ...$params) {
         // filter when $log_filter is not 'null'
         if(self::$log_filter !== null && self::$log_filter !== static::class) return;
-
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-        $context = sprintf(
-            'debug %4$s:%3$s() [%1$s:%2$s]',
-            explode('wp-content', $backtrace[0]['file'])[1] ?? '?',
-            $backtrace[0]['line'],
-            $backtrace[0]['function'],
-            static::class
-        );
-        self::log_with_context($context, $params);
+        self::log_with_context($context, $params, 0);
     }
 
-    public function log_error($error, $context = null) {
-        self::log_with_context($context, $error);
+    public function log_error($error, $context = null, $line_shift = 0) {
+        self::log_with_context($context, $error, $line_shift);
+    }
+
+    private static function backtrace_line($line_shift = 0) {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        // NOTE: to research backtrace structure
+        // error_log(var_export($backtrace, true));
+        $line = 3 + $line_shift;
+        return sprintf(
+            'DEBUG %5$s%4$s%3$s() [%1$s:%2$s]',
+            explode('wp-content', $backtrace[$line]['file'])[1] ?? '?',
+            $backtrace[$line]['line'],
+            $backtrace[$line]['function'],
+            isset($backtrace[$line]['class']) ? '::' : '',
+            $backtrace[$line]['class'] ?? ''
+        );
+    }
+}
+
+if(!function_exists('_zlg')) {
+    function _zlg(...$params) {
+        if(count($params) === 2 && is_string($params[1]) && substr($params[1], 0, 1) === '$') {
+            zukit_Singleton::log_with_context($params[1], $params[0], 0);
+
+        } else {
+            zukit_Singleton::log_with_context(null, $params, 0);
+        }
     }
 }

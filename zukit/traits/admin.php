@@ -22,7 +22,7 @@ trait zukit_Admin {
 		$this->ops = array_merge($defaults, $options);
 
 		// if Zukit is requred then add the admin slug and class instance to the static property
-		if($this->config['zukit']) self::$zukit_items[$this->ops['slug']] = $this;
+		if($this->get('zukit')) self::$zukit_items[$this->ops['slug']] = $this;
 
 		// Activation/Deactivation Hooks --------------------------------------]
 
@@ -54,9 +54,7 @@ trait zukit_Admin {
 	protected function info() {
 		$domain = $this->text_domain();
 		$link = $this->data['AuthorURI'];
-		// !obsolete! preg_replace('/.*href="([^\"]+).*/ims', '$1', $this->data['Author']);
 		$desc = $this->data['Description'];
-		// !obsolete! trim(preg_replace('/<cite>.+<\/cite>/i', '', $this->data['Description']));
 		return [
 			'version'		=> $this->version,
 			// yes, I know that should not use a variable as a text string
@@ -65,8 +63,8 @@ trait zukit_Admin {
 			'author'		=> __($this->data['Author'], $domain),
 			'link'			=> __($link, $domain),
 			'description'	=> __($desc, $domain),
-			'icon'			=> $this->config['icon'],
-			'colors'		=> $this->config['colors'],
+			'icon'			=> $this->get('icon'),
+			'colors'		=> $this->get('colors'),
 			'more' 			=> $this->extend_info(),
 		];
 	}
@@ -88,8 +86,9 @@ trait zukit_Admin {
 		return false;
 	}
 
-	private function instance_by_slug($slug) {
-		return self::$zukit_items[$slug] ?? null;
+	private function instance_by_router($router = null) {
+		// $router is $this->admin_slug()
+		return is_null($router) ? self::$zukit_items : (self::$zukit_items[$router] ?? null);
 	}
 
 	public function admin_menu() {
