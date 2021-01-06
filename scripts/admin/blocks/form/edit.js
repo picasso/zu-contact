@@ -41,7 +41,6 @@ const ZuFormEdit = ({
 	const {
 		name,
 		title,
-		noajax,
 		postId,
 		postLink,
 		loader,
@@ -83,15 +82,6 @@ const ZuFormEdit = ({
 
 	const loaderEdit = <Loader.WithOptions className={ prefixIt('loader') } id={ loader }/>;
 
-	// Layouts ----------------------------------------------------------------]
-
-	const setLayout = useCallback(layout => {
-		const uniqueName = uniqueValue(layout.name, getUsedNames());
-		setTemplateName(layout.name);
-		setAttributes({ name: uniqueName, title: layout.title });
-		updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
-	}, [updateForm, setAttributes]);
-
 	// Title ------------------------------------------------------------------]
 
 	const [ withoutTitle, setWithoutTitle ] = useState(!title);
@@ -124,6 +114,16 @@ const ZuFormEdit = ({
 // <PanelBody title={ __('Plugin options', 'zu-contact') }>
 // 	<PluginOptionsEdit/>
 // </PanelBody>
+
+	// Layouts ----------------------------------------------------------------]
+
+	const setLayout = useCallback(layout => {
+		const uniqueName = uniqueValue(layout.name, getUsedNames());
+		setTemplateName(layout.name);
+		setAttributes({ name: uniqueName, title: layout.title });
+		setWithoutTitle(!layout.title)
+		updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
+	}, [updateForm, setAttributes]);
 
 	// if the name is not defined - display the layout selection
 	if(!name) {
@@ -173,11 +173,10 @@ const ZuFormEdit = ({
 					withoutValues={ getUsedNames() }
 				/>
 			</InspectorAdvancedControls>
-			<ZuForm { ...{
+			<ZuForm isEditor { ...{
 				className,
 				name,
 				title,
-				noajax,
 				postId,
 				postLink,
 				loaderEdit,

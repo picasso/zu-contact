@@ -8,24 +8,23 @@ const { Loader } = wp.zukit.components;
 
 // Internal dependencies
 
-import { mergeClasses, toBool, prefixIt } from './../utils.js';
+import { mergeClasses, prefixIt } from './../utils.js';
 import { mail as okIcon, flag as errorIcon } from './../assets.js';
 
 const formPrefix = 'components-zu-form';
 const defaultMessage = null;
 
 const ZuForm = ({
+		isEditor,
 		className,
 		titleEdit,
 		loaderEdit,
-		// recaptchaEdit,
 
 		postId = '',
 		postLink = '',
 
 		name,
 		title,
-		noajax,
 
 		loaderHTML,
 		withoutNonce,
@@ -55,11 +54,10 @@ const ZuForm = ({
 				prefixIt('container'),
 				name,
 				formPrefix,
-				{ '__edit-mode': titleEdit },
+				{ '__edit-mode': isEditor },
 				className)
 			}
 			data-id={ name }
-			data-noajax={ toBool(noajax, true) }
 		>
 			{ formLoader }
 			{ formTitle }
