@@ -78,6 +78,7 @@ trait zu_ContactAjax {
 		$value = $values['value'];
 
 		$forms = $this->get_option($this->ajax_forms_key, []);
+// _zlg($forms, '$forms set_custom_value');
 		if(empty($post_id)) return null;
 
 		if($value === null) {
@@ -122,7 +123,8 @@ trait zu_ContactAjax {
 
 	private function get_ajax_forms($names_only = false) {
 		$forms = $this->get_option($this->ajax_forms_key, []);
+// _zlg($forms, '$forms get_ajax_forms');
 		$post_id = get_the_ID();
-		return $names_only ? array_keys($forms) : ($forms[$post_id] ?? []);
+		return $names_only ? array_keys($forms) : ($forms[$post_id] ?? (object) null);
 	}
 }

@@ -1,6 +1,21 @@
 // // WordPress dependencies
 
-const { isFunction, isPlainObject, isEmpty, has, get, set, unset, pull, pick, keys} = lodash;
+const {
+    isFunction,
+    isPlainObject,
+    isEmpty,
+    isEqual,
+    isUndefined,
+    omitBy,
+    has,
+    get,
+    set,
+    unset,
+    pull,
+    pick,
+    keys,
+    cloneDeep,
+} = lodash;
 const { registerStore, select, dispatch, useDispatch } = wp.data;
 const { apiFetch } = wp;
 
@@ -17,6 +32,7 @@ import { pluginDefaults } from './../assets.js';
 const ZUCONTACT_STORE = 'zucontact/form';
 const fetchKey = 'zucontact_forms';
 const formsKey = 'forms';
+const dirtyKey = 'dirty';
 const fieldsKey = 'fields';
 
 export const TYPES = {
@@ -34,7 +50,16 @@ export const TYPES = {
 
 const initialState = {
     [formsKey]: get(pluginDefaults, 'store', {}),
+    [dirtyKey]: false,
 };
+
+// we need this to compare in Reducer if there are changes
+const initialForms = cloneDeep(initialState[formsKey]);
+
+const pickAttributes = value => {
+    const picked = pick(value, ['id', 'type', 'required', 'requiredValue']);
+    return omitBy(picked, isUndefined); // without undefined
+}
 
 function formReducer(state = initialState, action) {
 
@@ -43,13 +68,21 @@ function formReducer(state = initialState, action) {
         set(state, [formsKey], { ...get(state, [formsKey], {}) });
     }
 
+    function markDirty(state) {
+        set(state, [dirtyKey], !isEqual(state[formsKey], initialForms));
+    }
+
     const { type, name, updated, id, value } = action;
     const fieldPath = [formsKey, name, fieldsKey, id];
     const formPath = [formsKey, name];
     const callback = isFunction(value) ? value : () => value;
 
     switch(type) {
+        // do not prepare anything for these cases, they are special
         case TYPES.ADD_FIELD:
+        case TYPES.REMOVE_FIELD:
+            break;
+
         case TYPES.RENAME_FIELD:
         case TYPES.UPDATE_FIELD:
             shallowClone(state, fieldPath);
@@ -65,13 +98,17 @@ function formReducer(state = initialState, action) {
     const prevValue = get(state, id ? fieldPath : formPath, {});
 
     switch(type) {
-        case TYPES.ADD_FIELD:
-            set(state, fieldPath, callback(prevValue));
+        case TYPES.ADD_FIELD: {
+            const newField = pickAttributes(callback(prevValue));
+            if(!isEqual(prevValue, newField)) {
+                shallowClone(state, fieldPath);
+                set(state, fieldPath, newField);
+            }}
             break;
 
         case TYPES.REMOVE_FIELD:
             // guard! - if the form was removed before the field
-            if(has(state, formPath)) state = shallowClone(state, fieldPath);
+            if(has(state, formPath)) shallowClone(state, fieldPath);
             unset(state, fieldPath);
             break;
 
@@ -82,7 +119,7 @@ function formReducer(state = initialState, action) {
 
         case TYPES.UPDATE_FIELD:
             if(updated === 'type') {
-                const newValue = callback(prevValue);
+                const newValue = pickAttributes(callback(prevValue));
                 unset(state, fieldPath);
                 set(state, [ ...pull(fieldPath, id), newValue.id ], newValue);
             } else {
@@ -105,11 +142,12 @@ function formReducer(state = initialState, action) {
             break;
 
         case TYPES.PERSIST_FORMS:
-            // set(state, [formsKey, action.name, 'saved'], true);
+            if(action.result) set(state, [dirtyKey], false);
             break;
     }
 
-    // Zubug.data({ action, updated: get(state, id ? fieldPath : formPath) });
+    markDirty(state);
+// Zubug.data({ action, updated: get(state, id ? fieldPath : formPath), state });
     return state;
 }
 
@@ -118,7 +156,7 @@ const formActions = {
         return {
 			...(isPlainObject(action) ? action : { type: action }),
             name,
-			value: isPlainObject(value) ? pick(value, ['id', 'type', 'required', 'requiredValue']) : value,
+			value: isPlainObject(value) ? pickAttributes(value) : value,
 		};
     },
     * persistForms(id, value) {
@@ -129,31 +167,32 @@ const formActions = {
 
         return isNull(result) ? undefined : {
             type: TYPES.PERSIST_FORMS,
-            name,
+            result,
         };
     },
 };
+
+const emptyObject = {};
 
 registerStore(ZUCONTACT_STORE, {
     reducer: formReducer,
     actions: formActions,
     selectors: {
-        getForms(state) {
-            return get(state, formsKey, {});
+        getDirtyForms(state) {
+            const dirty = get(state, dirtyKey, false);
+            return dirty ? get(state, formsKey, emptyObject) : null;
         },
     },
     controls: {},
 });
 
-// const emptyArray = [];
-// const emptyObject = {};
-
 // Custom hooks & helpers -----------------------------------------------------]
 
-export const getForms = (name = null) => {
-    const { getForms } = select(ZUCONTACT_STORE);
-    const forms = isFunction(getForms) ? getForms() : null;
-    return name ? get(forms, name, null) : forms;
+const getUpdatedForms = () => {
+    const { getDirtyForms } = select(ZUCONTACT_STORE);
+    const forms = isFunction(getDirtyForms) ? getDirtyForms() : null;
+    if(!isFunction(getDirtyForms)) Zubug.info('!getDirtyForms NOT Function');
+    return forms;
 }
 
 // Custom hook which set Forms data
@@ -163,7 +202,7 @@ export const useUpdateForm = () => {
 };
 
 export const persistForms = () => {
-    const forms = getForms();
+    const forms = getUpdatedForms();
     if(forms) {
         const { persistForms: persist } = dispatch(ZUCONTACT_STORE);
         const { getCurrentPostId } = select('core/editor');
@@ -171,7 +210,7 @@ export const persistForms = () => {
 
         if(postId && isFunction(persist)) {
             persist(postId, isEmpty(forms) ? null : forms);
-            // Zubug.info('PERSIST', { postId, forms });
+// Zubug.info('PERSIST', { postId, forms });
         }
     }
 }
