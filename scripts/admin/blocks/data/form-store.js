@@ -54,7 +54,7 @@ const initialState = {
 };
 
 // we need this to compare in Reducer if there are changes
-const initialForms = cloneDeep(initialState[formsKey]);
+let storedForms = cloneDeep(initialState[formsKey]);
 
 const pickAttributes = value => {
     const picked = pick(value, ['id', 'type', 'required', 'requiredValue']);
@@ -69,7 +69,7 @@ function formReducer(state = initialState, action) {
     }
 
     function markDirty(state) {
-        set(state, [dirtyKey], !isEqual(state[formsKey], initialForms));
+        set(state, [dirtyKey], !isEqual(state[formsKey], storedForms));
     }
 
     const { type, name, updated, id, value } = action;
@@ -142,7 +142,7 @@ function formReducer(state = initialState, action) {
             break;
 
         case TYPES.PERSIST_FORMS:
-            if(action.result) set(state, [dirtyKey], false);
+            storedForms = cloneDeep(state[formsKey])
             break;
     }
 
@@ -167,7 +167,6 @@ const formActions = {
 
         return isNull(result) ? undefined : {
             type: TYPES.PERSIST_FORMS,
-            result,
         };
     },
 };
