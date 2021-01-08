@@ -42,7 +42,6 @@ const attributes = {
     },
     loader: {
         type: 'string',
-        default: 'none',
         selector: '.zu-loader svg',
         source: 'attribute',
         attribute: 'data-id',

@@ -80,6 +80,14 @@ const ZuFormEdit = ({
 	// get all possible options for 'loaders'
 	const loaders = useLoaders();
 
+	// setup default loader if none
+	useEffect(() => {
+		if(loaders && isNil(loader)) {
+			// NOTE: change '0' to 0 after release
+			setAttributes({ loader: '0', loaderHTML: loaders[0] })
+		}
+	}, [loader, loaders, setAttributes]);
+
 	const loaderEdit = <Loader.WithOptions className={ prefixIt('loader') } id={ loader }/>;
 
 	// Title ------------------------------------------------------------------]
