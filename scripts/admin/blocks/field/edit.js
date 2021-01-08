@@ -74,11 +74,11 @@ const ZuFieldEdit = ({
 	// create 'text' field as default if no attributes found
 	useEffect(() => {
 		if(isNil(id)) {
-			// !!: here we are only after adding a new field, it is always of type 'text'
+			// !!-> here we are only after adding a new field, it is always of type 'text'
 			const newAttrs = typeDefaults[type || 'text'];
 			// avoid duplicate field id
 			const uniqueId = uniqueValue(newAttrs.id, availableFieldIds, 'id');
-			const newAttrsWithId = { ...newAttrs, id: uniqueId };
+			const newAttrsWithId = { ...newAttrs, required: false, id: uniqueId };
 			setAttributes(newAttrsWithId);
 
 			const requiredValue = getRequiredValue(type);
@@ -89,7 +89,7 @@ const ZuFieldEdit = ({
 				id: uniqueId
 			}, { ...newAttrsWithId, requiredValue });
 		} else {
-			// !!: here we are after creating a form from a template or after refreshing the page
+			// !!-> here we are after creating a form from a template or after refreshing the page
 			updateField({
 				type: TYPES.ADD_FIELD,
 				id,
@@ -216,7 +216,7 @@ const ZuFieldEdit = ({
 	const onChangeValue = (event) => setTemporaryValue(event.target[type === 'checkbox' ? 'checked' : 'value']);
 
 	const selectType = useCallback(selected => {
-		const { type, id } = attributes;
+		const { type, id, required } = attributes;
 		if(selected === type) return;
 
 		// keep current attributes, maybe they will be used later
@@ -227,8 +227,8 @@ const ZuFieldEdit = ({
 		const newAttrs = has(attrRef.current, selected) ? attrRef.current[selected] : typeDefaults[selected];
 		const newRequired = has(requiredRef.current, selected) ? requiredRef.current[selected] : getRequiredValue(selected);
 
-		// avoid duplicate field id
-		const newAttrsWithId = { ...newAttrs, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') };
+		// avoid duplicate field id and add 'required' attribute
+		const newAttrsWithId = { ...newAttrs, required, id: uniqueValue(newAttrs.id, availableFieldIds, 'id') };
 		setAttributes(newAttrsWithId);
 		setTemporaryRequired(newRequired);
 		updateField({
