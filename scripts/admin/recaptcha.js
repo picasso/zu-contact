@@ -63,7 +63,6 @@ const ZucontactRecaptcha = ({
 					{ restore }
 					<Button
 						isSecondary
-						isLarge
 						className="__plugin_actions __auto magenta"
 						label={ data.resetAll }
 						icon="image-rotate"

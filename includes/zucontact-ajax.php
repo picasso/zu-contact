@@ -55,22 +55,6 @@ trait zu_ContactAjax {
 		);
 	}
 
-	// protected function get_custom_value($request_id, $params) {
-	// 	if($request_id !== $this->custom_rest_id) return null;
-	//
-	// 	$post_id = $params['id'];
-	// 	$form_name = $params['name'];
-	//
-	// 	$forms = $this->get_option($this->ajax_forms_key, []);
-	//
-	// 	if(empty($post_id) || empty($forms)) return null;
-	// 	if(empty($form_name)) return array_key_exists($post_id, $forms) ? $forms[$post_id] : null;
-	// 	else {
-	// 		return array_key_exists($post_id, $forms) &&
-	// 			array_key_exists($form_name, $forms[$post_id]) ? $forms[$post_id][$form_name] : null;
-	// 	}
-	// }
-
 	protected function set_custom_value($request_id, $keys, $values) {
 		if($request_id !== $this->custom_rest_id) return null;
 

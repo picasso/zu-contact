@@ -64,7 +64,7 @@
 		}
 		// 'subscribe' heading is too long for this theme
 		@at-root {
-    		.is-twenty-twenty {
+    		.is-twenty-twenty:not(.block-editor-page) {
 				.#{$zuc-class-prefix}-container.subscribe .#{$zuc-class-prefix}-subheading {
 					font-size: 36px;
 				}
