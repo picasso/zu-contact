@@ -1,16 +1,15 @@
 # Zu Contact: Contact Forms with Gutenberg
 
-![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/zu-contact?style=for-the-badge)
-![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/zu-contact?color=4ab866&style=for-the-badge)
-![WordPress Plugin Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/zu-contact?color=bc2a8d&style=for-the-badge)
+[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/zu-contact?style=for-the-badge)](https://wordpress.org/plugins/zu-contact/)
+[![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/zu-contact?color=4ab866&style=for-the-badge)](https://wordpress.org/plugins/zu-contact/)
+[![WordPress Plugin Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/zu-contact?color=bc2a8d&style=for-the-badge)](https://www.php.net/)
  [![License](https://img.shields.io/badge/license-GPL--2.0%2B-fcbf00.svg?style=for-the-badge)](https://github.com/picasso/zu-contact/blob/master/LICENSE)
 
  <!-- ![WordPress Plugin Downloads](https://img.shields.io/wordpress/plugin/dt/zu-contact?color=00aced&style=for-the-badge) -->
 
-Simple but smart Ajax contact forms. With Gutenberg based settings page.
+Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.
 
 [![Zu Contact, a simple but smart Ajax contact forms.](https://ps.w.org/zu-contact/assets/banner-1544x500.png)](https://github.com/picasso/zu-contact/)
-
 
 
 ## Description
@@ -19,14 +18,17 @@ Unfortunately WordPress does not come with built-in functionality for a simple c
 
 > &#x1F383; Of course, all that plugin has is its lightweight size and simple settings. No unnecessary flexibility and functionality. The simple must remain simple.
 
-The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload... but why do you need it?*). To a certain extent, you can personalize the form and its fields. The form is added to the page using the shortcode `[zu-contact]` or `[zu-booking]`.
+The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload... but why do you need it?*). You can flexibly personalize the form and its fields.
 
-&#x2757; You can also add a form to a page using the Gutenberg Custom Block __Zu Form__ - with this block, the possibilities for customizing your form are greatly increased.
+The form is added to a page using the __Gutenberg Custom Blocks__ - with these blocks, the possibilities for customizing your form are greatly increased.
+
+You can also add a form to a page using the shortcode `[zu-contact]` or `[zu-booking]`.
 
 ### Features
 
 * Lightweight `JS script` & `CSS` (only __4kB__ minified and gzipped)
-* Adding a contact form to any post or page using a shortcode
+* Includes form blocks for the new __Gutenberg__ WordPress block editor
+* Also supports adding a contact form to any post or page using a shortcode
 * Form submission via AJAX (*configurable by settings*)
 * Data validation on the server
 * Support for required fields
@@ -39,6 +41,17 @@ The plugin allows you to add a feedback form or booking form to the page. The da
 * Save messages to the database as comments to a post or page
 * Compatible with the latest version of WordPress
 <!-- * GDPR Compliant -->
+
+### Gutenberg blocks
+
+With custom blocks for Gutenberg WordPress editor you can easily create new contact forms and customize them with great flexibility:
+
+* You can create a form based on templates or from scratch
+* Add and remove form fields
+* Change the position of fields, their type and other attributes
+* Change field labels, placeholders and validation error messages
+* Add to verification form using Google `reCAPTCHA`
+* Change the animation of the form loader (used during form submission)
 
 ### Shortcode attributes
 
@@ -88,6 +101,10 @@ You can also personalize the form by adding attributes to the shortcode:
 2. Download Zu Contact from the [WordPress plugin directory](https://wordpress.org/plugins/zu-contact/). -->
 
 ## Extensions
+
+&#x2757; After creating blocks for the Gutenberg block editor, creating forms in PHP is no longer relevant and practically does not have any advantages over creating a form interactively using Gutenberg blocks. The only benefit I see right now is creating a form in PHP using the `__ ()` functions to access various translations of field labels and other attributes. Therefore, for now, I leave here a description for creating forms in PHP. In the future, I plan to modify this plugin to work with the [QTranslate-XT](https://github.com/qtranslate/qtranslate-xt) plugin, and then this section will completely lose its relevance.
+
+----
 
 Basically, adding new forms is not intended for the user. The simple must remain simple. But it is possible to create new forms using PHP. You just need to add a little code to your theme's `functions.php` file or any other `php` file that will be called on loading (you need to understand a little about how WordPress works).
 
