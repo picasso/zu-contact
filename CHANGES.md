@@ -1,3 +1,22 @@
+#### 1.1.0 / 2021-01-08
+* added `zu_ContactFieldDefaults` class to keep all default values for templates
+* added new forms based on default field values
+* created `zu/form/` and `zu/field` Сustom Blocks
+* added `reCAPTCHA` support and created `zu/recaptcha` Custom Block
+* added support for Ajax created forms
+* added Forms Store notifications
+* added form `Loader`
+* added focus control for editing components
+* added concept of `dirty` forms to avoid unnecessary updates
+* added examples to all Custom Blocks
+* fixed bug with `default` template
+* fixed bug which occurs after `recaptcha` expired
+* moved error messages to `jsdata` (more language independent)
+* __Zukit__ updated
+* updated SVG for icons
+* improved front-end JS and CSS
+* many other small improvements
+
 #### 1.0.9 / 2021-01-06
 * intermediate version for testing the latest changes
 

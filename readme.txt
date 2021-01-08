@@ -2,21 +2,28 @@
 Contributors: dmitryrudakov
 Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
 Requires at least: 5.1
-Tested up to: 5.5.3
+Tested up to: 5.6
 Stable tag: 1.0.8
 License: GPLv2 or later
 Requires PHP: 7.0
 
-Simple but smart Ajax contact forms. With Gutenberg based settings page.
+Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.
 
 == Description ==
 
-The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (this can be disabled using the settings and the form will be submitted as usual). To a certain extent, you can personalize the form and its fields. The form is added to the page using the shortcode `[zu-contact]` or `[zu-booking]`.
+The plugin allows you to add a feedback form or booking form to the page.
+The data is sent to the server via AJAX (this can be disabled using the settings and the form will be submitted as usual).
+You can flexibly personalize the form and its fields.
+
+The form is added to a page using the __Gutenberg Custom Blocks__ - with these blocks, the possibilities for customizing your form are greatly increased.
+
+You can also add a form to a page using the shortcode `[zu-contact]` or `[zu-booking]`.
 
 ### Features
 
 * Lightweight `JS script` & `CSS`
-* Adding a contact form to any post or page using a shortcode
+* Includes form blocks for the new __Gutenberg__ WordPress block editor
+* Also supports adding a contact form to any post or page using a shortcode
 * Form submission via AJAX (*configurable by settings*)
 * Data validation on the server
 * Support for required fields
@@ -28,6 +35,17 @@ The plugin allows you to add a feedback form or booking form to the page. The da
 * Automatically checks all submissions against global database of spam (with [Akismet](https://wordpress.org/plugins/akismet/))
 * Save messages to the database as comments to a post or page
 * Compatible with the latest version of WordPress
+
+### Gutenberg blocks
+
+With custom blocks for Gutenberg WordPress editor you can easily create new contact forms and customize them with great flexibility:
+
+* You can create a form based on templates or from scratch
+* Add and remove form fields
+* Change the position of fields, their type and other attributes
+* Change field labels, placeholders and validation error messages
+* Add to verification form using Google `reCAPTCHA`
+* Change the animation of the form loader (used during form submission)
 
 ### Shortcode attributes
 
@@ -64,10 +82,31 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 
 1. Plugin Settings Page
 2. Google reCAPTCHA Settings Section
-3. Contact Form displaying
-4. Another Contact Form displaying
+3. Editing form fields in the Gutenberg block editor
+4. Editing form attributes in the Gutenberg block editor
+5. Contact Form displaying
+6. Another Contact Form displaying
 
 == Changelog ==
+
+### 1.1.0 ###
+* added `zu_ContactFieldDefaults` class to keep all default values for templates
+* added new forms based on default field values
+* created `zu/form/` and `zu/field` Сustom Blocks
+* added `reCAPTCHA` support and created `zu/recaptcha` Custom Block
+* added support for Ajax created forms
+* added Forms Store notifications
+* added form `Loader`
+* added focus control for editing components
+* added concept of `dirty` forms to avoid unnecessary updates
+* added examples to all Custom Blocks
+* fixed bug with `default` template
+* fixed bug which occurs after `recaptcha` expired
+* moved error messages to `jsdata` (more language independent)
+* __Zukit__ updated
+* updated SVG for icons
+* improved front-end JS and CSS
+* many other small improvements
 
 ### 1.0.8 ###
 * added assets for WordPress.org

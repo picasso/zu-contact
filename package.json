@@ -1,8 +1,8 @@
 {
     "name": "zu-contact",
-    "version": "1.0.12",
+    "version": "1.1.0",
     "author": "Dmitry Rudakov",
-    "description": "Simple but smart Ajax contact forms. With Gutenberg based settings page.",
+    "description": "Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.",
     "license": "GPL-2.0-or-later",
     "repository": {
         "type": "git",

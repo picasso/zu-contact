@@ -221,6 +221,6 @@ Need help? This is a developer's portal for __Zu Contact__ and should not be use
 
 ## [![Google reCAPTCHA Settings Section](https://ps.w.org/zu-contact/assets/screenshot-02.jpg)](https://github.com/picasso/zu-contact/)
 
-## [![Contact Form Displaying](https://ps.w.org/zu-contact/assets/screenshot-03.jpg)](https://github.com/picasso/zu-contact/)
+## [![Contact Form Displaying](https://ps.w.org/zu-contact/assets/screenshot-05.jpg)](https://github.com/picasso/zu-contact/)
 
-## [![Another Contact Form Displaying (Russian)](https://ps.w.org/zu-contact/assets/screenshot-04.jpg)](https://github.com/picasso/zu-contact/)
+## [![Another Contact Form Displaying (Russian)](https://ps.w.org/zu-contact/assets/screenshot-06.jpg)](https://github.com/picasso/zu-contact/)
