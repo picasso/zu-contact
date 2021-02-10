@@ -6,7 +6,6 @@ include_once('zucontact-form.php');
 include_once('zucontact-mailer.php');
 include_once('zucontact-recaptcha.php');
 include_once('zucontact-shortcode.php');
-include_once('zucontact-blocks.php');
 
 class zu_Contact extends zukit_Plugin {
 
@@ -26,15 +25,32 @@ class zu_Contact extends zukit_Plugin {
 			'prefix'			=> 'zucontact',
 			// load 'Zukit' script & CSS
 			'zukit'				=> true,
-			// translations
-			'path'				=> 'lang',
-			'domain'			=> 'zu-contact',
-			// appearance
-			'colors'			=> [
-				'backdrop'			=> '#f7fffb',
-				'header'			=> '#b1eed5',
-				'title'				=> '#016760',
+
+			'translations'		=> [
+				'path'				=> 'lang',
+				'domain'			=> 'zu-contact',
 			],
+
+			// front-end script & style
+			'script'	=> [
+				'deps'			=> ['jquery'],
+				'data'			=> [$this, 'ajax_data'],
+				// we don't want the enqueue frontend script always,
+				// only when shortcode is used
+				'register_only'	=> true,
+			],
+			'style'		=> [
+				'register_only'	=> true,
+			],
+
+			'appearance'		=> [
+				'colors'			=> [
+					'backdrop'			=> '#f7fffb',
+					'header'			=> '#b1eed5',
+					'title'				=> '#016760',
+				],
+			],
+
 			'options'			=> [
 				'use_recaptcha' 	=> false,
 				'custom_css'		=> true,
@@ -42,6 +58,17 @@ class zu_Contact extends zukit_Plugin {
 				'me_or_us'			=> false,
 				'notify'			=> '',
 			],
+
+			'blocks'			=> [
+				'namespace'			=> 'zu',
+				'blocks'			=> ['form', 'field', 'recaptcha'],
+				'frontend_blocks'	=> 'form',
+
+				'script'			=> [
+					'data'	=> [$this, 'ajax_data'],
+				]
+			],
+
 		];
 	}
 
@@ -85,9 +112,9 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	protected function blocks_init() {
-		return new zu_ContactBlocks;
-	}
+	// protected function blocks_init() {
+	// 	return new zu_ContactBlocks;
+	// }
 
 	public function init() {
 
@@ -123,9 +150,9 @@ class zu_Contact extends zukit_Plugin {
 
 	// Script enqueue ---------------------------------------------------------]
 
-	protected function js_data($is_frontend) {
-		return  $is_frontend ? $this->ajax_data() : null;
-	}
+	// protected function js_data($is_frontend) {
+	// 	return  $is_frontend ? $this->ajax_data() : null;
+	// }
 
 	protected function should_load_css($is_frontend, $hook) {
 		return $is_frontend ? $this->is_option('custom_css') : $this->ends_with_slug($hook);
@@ -136,17 +163,17 @@ class zu_Contact extends zukit_Plugin {
 	}
 
 	// we don't want the enqueue frontend script always, only when shortcode is used
-	protected function js_params($is_frontend) {
-		return [
-			'deps'			=> $is_frontend ? ['jquery'] : null,
-			'register_only'	=> $is_frontend ? true : false,
-		];
-	}
-	protected function css_params($is_frontend) {
-		return [
-			'register_only'	=> $is_frontend ? true : false,
-		];
-	}
+	// protected function js_params($is_frontend) {
+	// 	return [
+	// 		'deps'			=> $is_frontend ? ['jquery'] : null,
+	// 		'register_only'	=> $is_frontend ? true : false,
+	// 	];
+	// }
+	// protected function css_params($is_frontend) {
+	// 	return [
+	// 		'register_only'	=> $is_frontend ? true : false,
+	// 	];
+	// }
 
 	// register Google recaptcha script if required
 	protected function enqueue_more($is_frontend, $hook) {
@@ -155,8 +182,9 @@ class zu_Contact extends zukit_Plugin {
 		}
 	}
 
+	// enqueue Google recaptcha script if block 'zu/form' with needed attrs found on page
 	public function blocks_enqueue_more($is_frontend, $block_name, $attributes) {
-		if($is_frontend && $this->blocks->is_frontend_block($block_name)) {
+		if($is_frontend && $block_name === 'zu/form') {
 			$this->enqueue_recaptcha_with_block($attributes);
 		}
 	}

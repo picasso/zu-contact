@@ -51,9 +51,9 @@ const mailer = {
 };
 
 const recaptcha = {
-	sitekey: 	__('Site key', 'zu-contact'),
-	secret: 	__('Secret key', 'zu-contact'),
-	note:	__('For getting started, you need to register your site here: $links Choose the option "reCAPTCHA v2" which gives an "I’m not a robot" Checkbox. Once you entered all needed details you will get your Site key and Secret key.', 'zu-contact'),
+	sitekey: __('Site key', 'zu-contact'),
+	secret: __('Secret key', 'zu-contact'),
+	note: __('For getting started, you need to register your site here: $links Choose the option "reCAPTCHA v2" which gives an "I’m not a robot" Checkbox. Once you entered all needed details you will get your Site key and Secret key.', 'zu-contact'),
 	theme: __('The color theme of the widget', 'zu-contact'),
 	size: __('The size of the widget', 'zu-contact'),
 	themeOptions: [

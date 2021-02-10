@@ -102,7 +102,7 @@ You can also personalize the form by adding attributes to the shortcode:
 
 ## Extensions
 
-&#x2757; After creating blocks for the Gutenberg block editor, creating forms in PHP is no longer relevant and practically does not have any advantages over creating a form interactively using Gutenberg blocks. The only benefit I see right now is creating a form in PHP using the `__ ()` functions to access various translations of field labels and other attributes. Therefore, for now, I leave here a description for creating forms in PHP. In the future, I plan to modify this plugin to work with the [QTranslate-XT](https://github.com/qtranslate/qtranslate-xt) plugin, and then this section will completely lose its relevance.
+&#x2757; After creating blocks for the Gutenberg block editor, creating forms in PHP is no longer relevant and practically does not have any advantages over creating a form interactively using Gutenberg blocks. The only benefit I see right now is creating a form in PHP using the `__()` functions to access various translations of field labels and other attributes. Therefore, for now, I leave here a description for creating forms in PHP. In the future, I plan to modify this plugin to work with the [QTranslate-XT](https://github.com/qtranslate/qtranslate-xt) plugin, and then this section will completely lose its relevance.
 
 ----
 
