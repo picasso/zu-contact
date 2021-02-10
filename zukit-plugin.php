@@ -44,21 +44,32 @@ class zukit_Plugin extends zukit_Singleton {
 			$this->version = $this->data['Version'];
 		}
 
-		$this->config = array_merge([
+		$this->config = array_replace_recursive([
 			'prefix' 	=> 'zuplugin',
 			'suffix' 	=> 'frontend',
+
 			// admin settings
 			'admin' 	=> [],
+
 			// appearance
-			'icon'		=> $this->snippets('insert_svg_from_file', $this->dir, 'logo', [
-	            'preserve_ratio'	=> true,
-	            'strip_xml'			=> true,
-	            'subdir'			=> 'images/',
-			]),
-			'colors'	=> [],
+			'appearance'	=> [
+				'icon'		=> $this->snippets('insert_svg_from_file', $this->dir, 'logo', [
+		            'preserve_ratio'	=> true,
+		            'strip_xml'			=> true,
+		            'subdir'			=> 'images/',
+				]),
+				'colors'	=> [],
+			],
+
 			// translations
-			'path'				=> null,
-			'domain'			=> null,
+			'translations'	=> [
+				'path'				=> null,
+				'domain'			=> null,
+			],
+
+			// custom blocks
+			'blocks'		=> zukit_Blocks::defaults(),
+
 		], $this->config() ?? []);
 
 		$this->prefix = $this->get('prefix') ?? $this->prefix;
@@ -72,8 +83,8 @@ class zukit_Plugin extends zukit_Singleton {
 		add_action('admin_init', [$this, 'admin_init'], 10);
 		add_action('admin_init', function() { $this->do_addons('admin_init'); }, 11);
 
-		add_action('wp_enqueue_scripts', [$this, 'frontend_enqueue'], 10, 1);
-		add_action('wp_enqueue_scripts', function($hook) { $this->do_addons('enqueue', $hook); }, 11, 1);
+		add_action('wp_enqueue_scripts', [$this, 'frontend_enqueue'], 10);
+		add_action('wp_enqueue_scripts', function() { $this->do_addons('enqueue'); }, 11);
 
 		// enqueue 'zukit' helpers & components and its CSS
 		add_action('admin_enqueue_scripts', [$this, 'zukit_enqueue'], 10, 1);
@@ -103,16 +114,15 @@ class zukit_Plugin extends zukit_Singleton {
 
 	public function init() {}
 	public function admin_init() {}
-	protected function blocks_init() {}
 
 	// Translations -----------------------------------------------------------]
 
 	private function text_domain() {
-		return $this->get('domain') ?? $this->data['TextDomain'] ?? $this->prefix;
+		return $this->get('translations.domain') ?? $this->data['TextDomain'] ?? $this->prefix;
 	}
 
 	private function text_path() {
-		$path = $this->get('path') ?? $this->data['DomainPath'];
+		$path = $this->get('translations.path') ?? $this->data['DomainPath'];
 		return empty($path) ? null : $this->sprintf_dir('/%1$s', trim($path, '/'));
 	}
 
@@ -247,19 +257,21 @@ class zukit_Plugin extends zukit_Singleton {
 		else {
 			// sets a value in a nested array based on path (if presented)
 			$pathParts = explode('.', $key);
+			$pathCount = count($pathParts);
 
-			if(count($pathParts) === 1) {
+			if($pathCount === 1) {
 				$options[$key] = $value;
 			} else {
-				$lastKey = $pathParts[count($pathParts)-1];
+				$lastKey = $pathParts[$pathCount-1];
 				$current = &$options;
 				foreach($pathParts as $pathKey) {
-					if($pathKey === $lastKey) break;
+					if($pathCount === 1) break;
 					if(!is_array($current)) {
 						if($this->path_autocreated) $current = [];
 						else return false;
 					}
 					$current = &$current[$pathKey];
+					$pathCount--;
 				}
 				if(!is_array($current)) {
 					if($this->path_autocreated) $current = [];
@@ -282,13 +294,15 @@ class zukit_Plugin extends zukit_Singleton {
 
 		// gets a value in a nested array based on path (if presented)
 		$pathParts = explode('.', $key);
+		$pathCount = count($pathParts);
 		$set = $options;
-		if(count($pathParts) > 1) {
-			$key = $pathParts[count($pathParts)-1];
+		if($pathCount > 1) {
+			$key = $pathParts[$pathCount-1];
 			foreach($pathParts as $pathKey) {
-				if($pathKey === $key) break;
+				if($pathCount === 1) break;
 				if(!is_array($set)) return $default;
 				$set = $set[$pathKey] ?? null;
+				$pathCount--;
 			}
 		}
 
@@ -327,41 +341,38 @@ class zukit_Plugin extends zukit_Singleton {
 		return $this->uri.$path;
 	}
 
-	protected function js_params($is_frontend) {
+	private function script_defaults() {
+
+		// for admin handle will be '<prefix>' and for frontend -> '<prefix>-<suffix>'
+		$admin_handle = $this->get('prefix');
+		$frontend_handle = $this->prefix_it($this->get('suffix'));
+
 		return [
-			'deps'		=> $is_frontend ? [] : ['zukit'],
-			'data'		=> $this->get_js_data($is_frontend),
-			// for admin handle will be '<prefix>' and for frontend -> '<prefix>-<suffix>'
-			'handle'	=> $is_frontend ? $this->prefix_it($this->get('suffix')) : $this->get('prefix'),
+			// front-end script & style
+			'script'	=> [
+				'deps'			=> [],
+				'data'			=> [$this, 'jsdata_defaults'],
+				'handle'		=> $frontend_handle,
+			],
+			'style'		=> [
+				'deps'			=> [],
+				'handle'		=> $frontend_handle,
+			],
+
+			// plugin/theme settings page script & style
+			'settings_script'	=> [
+				'deps'		=> ['zukit'],
+				'data'		=> [$this, 'jsdata_defaults'],
+				'handle'	=> $admin_handle,
+			],
+			'settings_style'	=> [
+				'deps'		=> ['zukit'],
+				'handle'	=> $admin_handle,
+			],
 		];
-	}
-	protected function css_params($is_frontend) {
-		return [
-			'deps'		=> $is_frontend ? [] : ['zukit'],
-			'handle'	=> $is_frontend ? $this->prefix_it($this->get('suffix')) : $this->get('prefix'),
-		];
-	}
-	// Guarantees that if user did not include any requred keys or set it to 'null'
-	// then default values will be added anyway
-	private function js_params_validated($is_frontend) {
-		return $this->params_validated(
-			$this->js_params($is_frontend),
-			self::js_params($is_frontend)
-		);
-		// $params_not_null = array_filter($this->js_params($is_frontend), function($val) { return !is_null($val); });
-		// return array_merge(self::js_params($is_frontend), $params_not_null);
-	}
-	private function css_params_validated($is_frontend) {
-		return $this->params_validated(
-			$this->css_params($is_frontend),
-			self::css_params($is_frontend)
-		);
-		//
-		// $params_not_null = array_filter($this->css_params($is_frontend), function($val) { return !is_null($val); });
-		// return array_merge(self::css_params($is_frontend), $params_not_null);
 	}
 
-	protected function get_js_data($is_frontend) {
+	private function jsdata_defaults($is_frontend) {
 		$default_data = $is_frontend ? [
 			'ajaxurl'       => admin_url('admin-ajax.php'),
 			'nonce'     	=> $this->ajax_nonce(true),
@@ -374,19 +385,50 @@ class zukit_Plugin extends zukit_Singleton {
 			'debug'			=> $this->debug_data(),
 			'actions' 		=> [],
 		];
-		$custom_data = $this->js_data($is_frontend);
-		return array_merge($default_data, is_array($custom_data) ? $custom_data : []);
+		return $default_data;
 	}
 
-	protected function js_data($is_frontend) {}
+	protected function js_params($is_frontend, $defaults = null) {
+		$params = $this->get($is_frontend ? 'script' : 'settings_script', [], $defaults);
+		$params['data'] = $this->get_callable_data($params['data'] ?? null, $is_frontend);
+		return $params;
+	}
+
+	protected function css_params($is_frontend, $defaults = null) {
+		return $this->get($is_frontend ? 'style' : 'settings_style', [], $defaults);
+	}
+
+	// Guarantees that if user did not include any requred keys or set it to 'null'
+	// then default values will be added anyway
+	private function js_params_validated($is_frontend) {
+		return $this->params_validated(
+			$this->js_params($is_frontend),
+			$this->js_params($is_frontend, $this->script_defaults())
+		);
+	}
+	private function css_params_validated($is_frontend) {
+		return $this->params_validated(
+			$this->css_params($is_frontend),
+			$this->css_params($is_frontend, $this->script_defaults())
+		);
+	}
+
+	// protected function js_data($is_frontend) {}
 	protected function should_load_css($is_frontend, $hook) { return false; }
 	protected function should_load_js($is_frontend, $hook) { return false; }
 	protected function enqueue_more($is_frontend, $hook) {}
 
-	public function frontend_enqueue($hook) {
-		if($this->should_load_css(true, $hook)) $this->enqueue_style(null, $this->css_params_validated(true));
-		if($this->should_load_js(true, $hook)) $this->enqueue_script(null, $this->js_params_validated(true));
-		$this->enqueue_more(true, $hook);
+	public function frontend_handles() {
+		$handles = ['script' => null, 'style' => null];
+		if($this->should_load_js(true, null)) $handles['script'] = $this->enqueue_script(null, $this->js_params_validated(true), true);
+		if($this->should_load_css(true, null)) $handles['style'] = $this->enqueue_style(null, $this->css_params_validated(true), true);
+		return $handles;
+	}
+
+	public function frontend_enqueue() {
+		if($this->should_load_css(true, null)) $this->enqueue_style(null, $this->css_params_validated(true));
+		if($this->should_load_js(true, null)) $this->enqueue_script(null, $this->js_params_validated(true));
+		$this->enqueue_more(true, null);
 	}
 
 	// Этот метод используется для загрузки CSS and JS
@@ -452,18 +494,37 @@ class zukit_Plugin extends zukit_Singleton {
 
 	// Helpers ----------------------------------------------------------------]
 
+	// gets a value and if this value is a function or a class method,
+	// then calls it and returns the result of this call
+	public function get_callable_data($data, $is_frontend) {
+		if(is_callable($data)) $data = call_user_func($data, $is_frontend);
+		return $data;
+	}
+
 	public function prefix_it($str, $divider = '-') {
 		return sprintf('%1$s%2$s%3$s', $this->prefix, $divider, $str);
 	}
 
 	public function get($key, $default_value = null, $addon_config = null) {
 		$config = is_null($addon_config) ? $this->config : $addon_config;
+		// If 'key' contains 'path' - then resolve it before get
+		$pathParts = explode('.', $key);
+		$pathCount = count($pathParts);
+		if($pathCount > 1) {
+			$key = $pathParts[$pathCount - 1];
+			foreach($pathParts as $pathKey) {
+				if($pathCount === 1) break;
+				if(!is_array($config)) return $default_value;
+				$config = $config[$pathKey] ?? null;
+				$pathCount--;
+			}
+		}
 		return isset($config[$key]) ? $config[$key] : $default_value;
 	}
 
 	public function params_validated($params, $defaults = []) {
 		$params_not_null = array_filter($params, function($val) { return !is_null($val); });
-		return array_merge($defaults, $params_not_null);
+		return array_replace_recursive($defaults, $params_not_null);
 	}
 
 	private function theme_mark($delimiter = '-', $prefix = 'is-') {
@@ -477,8 +538,12 @@ class zukit_Plugin extends zukit_Singleton {
 	}
 
 	private function blocks_config() {
-		$this->blocks = $this->blocks_init() ?? null;
-		if($this->blocks instanceof zukit_Blocks) $this->register_addon($this->blocks);
+		$blocks = $this->get('blocks.blocks');
+		if(!empty($blocks)) {
+			$this->blocks = $this->get('blocks.instance');
+			if(is_null($this->blocks)) $this->blocks = new zukit_Blocks;
+			if($this->blocks instanceof zukit_Blocks) $this->register_addon($this->blocks);
+		}
 	}
 
 	// Error handling ---------------------------------------------------------]
