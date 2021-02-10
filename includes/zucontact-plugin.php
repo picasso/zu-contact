@@ -44,10 +44,10 @@ class zu_Contact extends zukit_Plugin {
 			],
 
 			'appearance'		=> [
-				'colors'			=> [
-					'backdrop'			=> '#f7fffb',
-					'header'			=> '#b1eed5',
-					'title'				=> '#016760',
+				'colors'	=> [
+					'backdrop'		=> '#f7fffb',
+					'header'		=> '#b1eed5',
+					'title'			=> '#016760',
 				],
 			],
 
@@ -63,12 +63,10 @@ class zu_Contact extends zukit_Plugin {
 				'namespace'			=> 'zu',
 				'blocks'			=> ['form', 'field', 'recaptcha'],
 				'frontend_blocks'	=> 'form',
-
 				'script'			=> [
 					'data'	=> [$this, 'ajax_data'],
 				]
 			],
-
 		];
 	}
 
@@ -112,10 +110,6 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	// protected function blocks_init() {
-	// 	return new zu_ContactBlocks;
-	// }
-
 	public function init() {
 
 		// Add all predefined forms -------------------------------------------]
@@ -150,10 +144,6 @@ class zu_Contact extends zukit_Plugin {
 
 	// Script enqueue ---------------------------------------------------------]
 
-	// protected function js_data($is_frontend) {
-	// 	return  $is_frontend ? $this->ajax_data() : null;
-	// }
-
 	protected function should_load_css($is_frontend, $hook) {
 		return $is_frontend ? $this->is_option('custom_css') : $this->ends_with_slug($hook);
 	}
@@ -161,19 +151,6 @@ class zu_Contact extends zukit_Plugin {
 	protected function should_load_js($is_frontend, $hook) {
 	    return $is_frontend ? true : $this->ends_with_slug($hook);
 	}
-
-	// we don't want the enqueue frontend script always, only when shortcode is used
-	// protected function js_params($is_frontend) {
-	// 	return [
-	// 		'deps'			=> $is_frontend ? ['jquery'] : null,
-	// 		'register_only'	=> $is_frontend ? true : false,
-	// 	];
-	// }
-	// protected function css_params($is_frontend) {
-	// 	return [
-	// 		'register_only'	=> $is_frontend ? true : false,
-	// 	];
-	// }
 
 	// register Google recaptcha script if required
 	protected function enqueue_more($is_frontend, $hook) {
