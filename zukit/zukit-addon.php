@@ -1,5 +1,4 @@
 <?php
-
 // Plugin Addon Class ---------------------------------------------------------]
 
 class zukit_Addon {
@@ -29,16 +28,14 @@ class zukit_Addon {
 
 	protected function config() { return []; }
 	protected function config_defaults() { return []; }
-	protected function is_config($key, $check_value = true) {
-		return $this->plugin->is_option($key, $check_value, $this->config);
-	}
 
-	// 'construct_more' вызывается только после регистрации addon плагином!
+	// 'construct_more' is only called after the add-on is registered by the plugin!
 	protected function construct_more() {}
 
 	public function init() {}
 	public function admin_init() {}
-	public function enqueue($hook) {}
+
+	public function enqueue() {}
 	public function admin_enqueue($hook) {}
 	public function clean() {}
 	public function ajax($action, $value) { return null; }
@@ -78,10 +75,6 @@ class zukit_Addon {
 		return $this->plugin->set_option($this->options_key, $this->options, true);
 	}
 
-	// protected function set_plugin_option($key, $value, $rewrite_array = false) {
-	// 	return $this->plugin->set_option($key, $value, $rewrite_array);
-	// }
-	//
 	protected function is_plugin_option($key, $check_value = true) {
 		return $this->plugin->is_option($key, $check_value);
 	}
@@ -101,7 +94,6 @@ class zukit_Addon {
 		return $this->plugin->enqueue_script($this->filename($file, $params), $params);
 	}
 	protected function admin_enqueue_style($file, $params = []) {
-
 		return $this->plugin->admin_enqueue_style($this->filename($file, $params), $params);
 	}
 	protected function admin_enqueue_script($file, $params = []) {
@@ -126,7 +118,7 @@ class zukit_Addon {
 		$this->plugin->log_error($error, $context, 1);
 	}
 
-	// Common interface plugin methods with availability check ----------------]
+	// Common interface to plugin methods with availability check -------------]
 	// NOTE: only public functions can be called with this helper
 
 	protected function call($func, ...$params) {
@@ -148,9 +140,6 @@ class zukit_Addon {
 
 	protected function get($key, $from_plugin = false, $default_value = null) {
 		return $this->plugin->get($key, $default_value, $from_plugin ? null : $this->config);
-		//
-		// $config = $from_plugin ? $this->plugin->config : $this->config;
-		// return isset($config[$key]) ? $config[$key] : $default_value;
 	}
 
 	private function filename($file, $params) {
