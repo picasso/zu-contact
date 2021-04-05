@@ -26,7 +26,7 @@ You can also add a form to a page using the shortcode `[zu-contact]` or `[zu-boo
 
 ### Features
 
-* Lightweight `JS script` & `CSS` (only __4kB__ minified and gzipped)
+* Lightweight `JS script` & `CSS` (only __4 KB__ minified and gzipped)
 * Includes form blocks for the new __Gutenberg__ WordPress block editor
 * Also supports adding a contact form to any post or page using a shortcode
 * Form submission via AJAX (*configurable by settings*)
