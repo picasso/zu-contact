@@ -19,13 +19,10 @@ const options = {
 	custom_css: {
 		label: 	__('Use plugin CSS?', 'zu-contact'),
 		help:	__('If switched off the plugin stylesheet won\'t be loaded.', 'zu-contact'),
-		// depends: 'responsive',
 	},
 	me_or_us: {
 		label: 	__('Use "Me" instead of "Us"?', 'zu-contact'),
 		help:	__('If switched off - "Us" will be used in the form subheading.', 'zu-contact'),
-		// 2em -> margins above and under the divider
-		divider: 2,
 	},
 };
 

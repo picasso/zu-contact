@@ -6,7 +6,7 @@ const { useCallback } = wp.element;
 // Zukit dependencies
 
 const { renderPage, toggleOption } = wp.zukit.render;
-const { ListInputControl, ZukitPanel } = wp.zukit.components;
+const { ListInputControl, ZukitPanel, ZukitDivider } = wp.zukit.components;
 
 // Internal dependencies
 
@@ -39,6 +39,7 @@ const EditZucontact = ({
 		<>
 			<ZukitPanel title={ title }>
 				{ toggleOption(optionsData, options, updateOptions) }
+				<ZukitDivider/>
 				<ListInputControl
 					strict="email"
 					label={ notify.label }

@@ -80,7 +80,7 @@ const ZucontactMailer = ({
 					value={ settings.from || '' }
 					onChange={ value => updateMailerOptions({ from: value }) }
 				/>
-				<ZukitDivider size={ 2 }/>
+				<ZukitDivider bottomHalf size={ 2 }/>
 				<div className="__flex __right">
 					{ restore }
 					<Button

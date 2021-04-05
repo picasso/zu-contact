@@ -58,7 +58,7 @@ const ZucontactRecaptcha = ({
 					onChange={ value => updateRecaptchaOptions({ size: value }) }
 					options={ data.sizeOptions }
 				/>
-				<ZukitDivider size={ 2 }/>
+				<ZukitDivider bottomHalf size={ 2 }/>
 				<div className="__flex __right">
 					{ restore }
 					<Button
