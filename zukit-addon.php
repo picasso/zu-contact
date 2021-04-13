@@ -88,16 +88,24 @@ class zukit_Addon {
 		return call_user_func_array([$this->plugin, 'sprintf_uri'], $params);
 	}
 	protected function enqueue_style($file, $params = []) {
-		return $this->plugin->enqueue_style($this->filename($file, $params), $params);
+		// $is_style, $is_frontend, $params
+		$params_with_defaults = $this->plugin->enforce_defaults(true, true, $params);
+		return $this->plugin->enqueue_style($this->filename($file, $params), $params_with_defaults);
 	}
 	protected function enqueue_script($file, $params = []) {
-		return $this->plugin->enqueue_script($this->filename($file, $params), $params);
+		$params_with_defaults = $this->plugin->enforce_defaults(false, true, $params);
+		return $this->plugin->enqueue_script($this->filename($file, $params), $params_with_defaults);
 	}
 	protected function admin_enqueue_style($file, $params = []) {
-		return $this->plugin->admin_enqueue_style($this->filename($file, $params), $params);
+		$params_with_defaults = $this->plugin->enforce_defaults(true, false, $params);
+		return $this->plugin->admin_enqueue_style($this->filename($file, $params), $params_with_defaults);
 	}
 	protected function admin_enqueue_script($file, $params = []) {
-		return $this->plugin->admin_enqueue_script($this->filename($file, $params), $params);
+		$params_with_defaults = $this->plugin->enforce_defaults(false, false, $params);
+		return $this->plugin->admin_enqueue_script($this->filename($file, $params), $params_with_defaults);
+	}
+	protected function ends_with_slug($hook, $slug = null) {
+		return $this->plugin->ends_with_slug($hook, $slug);
 	}
 	protected function ajax_error($error, $params = null) {
 		return $this->plugin->ajax_error($error, $params);
@@ -114,8 +122,14 @@ class zukit_Addon {
 	protected function create_notice($status, $message, $actions = []) {
 		return $this->plugin->create_notice($status, $message, $actions);
 	}
-	protected function log_error($error, $context = null) {
-		$this->plugin->log_error($error, $context, 1);
+	protected function log(...$params) {
+        $this->plugin->log_with(0, null, ...$params);
+    }
+	protected function logc($context, ...$params) {
+		$this->plugin->log_with(0, $context, ...$params);
+	}
+	protected function logd(...$params) {
+		$this->plugin->logd(...$params);
 	}
 
 	// Common interface to plugin methods with availability check -------------]

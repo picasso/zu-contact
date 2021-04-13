@@ -14,6 +14,15 @@ trait zukit_AdminMenu {
 
 	public function admin_menu_config() {
 		add_filter('custom_menu_order', [$this, 'admin_menu_modify']);
+		$this->snippets('add_admin_style',
+			'.wp-core-ui .wp-submenu .wp-menu-separator a',
+			'border-top: 1px solid;
+		     opacity: 0.2;
+		     width: 100%;
+		     display: inline-block !important;
+			 pointer-events: none;
+		     cursor: default;'
+		);
 	}
 
 	// 	To modify menu and submenu - pass array with optional keys  ['reorder', 'rename', 'remove', 'separator']
@@ -29,6 +38,7 @@ trait zukit_AdminMenu {
 
 	protected function custom_admin_menu() { return []; }
 	protected function custom_admin_submenu() { return []; }
+	protected function custom_menu_debug() { return false; }
 
 	// Admin menu modify ------------------------------------------------------]
 
@@ -63,7 +73,6 @@ trait zukit_AdminMenu {
 	public function admin_menu_modify($menu_order) {
 	    global $menu, $submenu;
 
-		// $this->debug_print();
 		if($this->get_split_index() === null) return $menu_order;
 
 		// modify main menu items
@@ -136,6 +145,12 @@ trait zukit_AdminMenu {
 					}
 			    }
 			}
+		}
+
+		// output menu order for debug purpose
+		if($this->custom_menu_debug()) {
+			$this->debug_print();
+			$this->debug_print(true);
 		}
 
 	    return $menu_order;
@@ -256,11 +271,17 @@ trait zukit_AdminMenu {
 	private function debug_print($is_menu = false) {
 		global $menu, $submenu;
 
+		$context = sprintf('*%s Order', $is_menu ? 'Menu' : 'Options Subnemu');
+		$selected = $is_menu ? $menu : $submenu[self::$default_menu_id];
+
 		$items = array_map(function($item) {
 			$is_wrong = !(is_array($item) && count($item) > 2);
-			return $is_wrong ? '?' : (empty($item[0]) ? '-----'.$item[2].'-----' : $item[0]);
+			return sprintf('%s',
+				$is_wrong ? '?' : (
+					empty($item[0]) ? '-----'.$item[2].'-----' : strip_tags($item[0])
+				)
+			);
 		}, $is_menu ? $menu : $submenu[self::$default_menu_id]);
-		$this->log_error($items, ['called Class' => static::class]);
-		// _dbug(static::class, $items);
+		$this->logc($context, $items, $selected);
 	}
 }

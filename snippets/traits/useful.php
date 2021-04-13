@@ -17,8 +17,9 @@ trait zusnippets_Useful {
 		);
 	}
 
-	public function format_bytes($bytes, $precision = 0) {
-	    $units = array('Bytes', 'Kb', 'Mb', 'Gb', 'Tb');
+	public function format_bytes($bytes, $precision = 0, $approximately_sign = false) {
+	    $units = array('Bytes', 'KB', 'MB', 'GB', 'TB');
+		$sign = $approximately_sign && $bytes !== 0 ? '~' : '';
 
 	    $bytes = max($bytes, 0);
 	    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -26,7 +27,7 @@ trait zusnippets_Useful {
 
 	    $bytes /= pow(1024, $pow);
 
-	    return round($bytes, $precision) . ' ' . $units[$pow];
+	    return $sign . round($bytes, $precision) . ' ' . $units[$pow];
 	}
 
 	public function insert_svg_from_file($path, $name, $params) {
@@ -47,14 +48,12 @@ trait zusnippets_Useful {
 			empty($subdir) ? '' : '/'
 		);
 		if(!file_exists($filepath)) {
-			
-			$this->log_error([
+			$this->logc('?SVG file not found!', [
 				'path'		=> $path,
 				'name'		=> $name,
 				'params'	=> $params,
 				'filepath'	=> $filepath,
-			], 'SVG file not found!');
-
+			]);
 			return '';
 		}
 
@@ -69,6 +68,22 @@ trait zusnippets_Useful {
 		}
 
 		return $this->remove_space_between_tags($svg);
+	}
+
+	// Checks the validity of the URL 
+	// With default parameters, URLs without protocol and domain are considered valid (relative URLs)
+	// using arguments, you can specify whether the presence of the domain and the protocol is necessary
+	public function validate_url($value, $maybe_without_domain = true, $maybe_without_protocol = true) {
+		$protocol = preg_match('#^https?://#i', $value) ? preg_replace('#(^https?://)(.*)#i', '$1', $value) : '';
+		$domain_missing = !preg_match('#((?:(?:(?:\w[\.\-\+]?)*)\w)+)((?:(?:(?:\w[\.\-\+]?){0,62})\w)+)\.(\w{2,6})#', $value);
+		$site_url = ltrim(get_site_url(null, '', 'http'), 'http://');
+
+		$test_url = sprintf('%1$s%2$s%3$s',
+			$maybe_without_protocol && empty($protocol) ? 'https://' : $protocol,
+			empty($protocol) && $maybe_without_domain && $domain_missing ? $site_url : '',
+			str_replace($protocol, '', $domain_missing ? preg_replace('#^([^/])#', ' $1', $value) : $value)
+		);
+		return filter_var($test_url, FILTER_VALIDATE_URL) !== false;
 	}
 
 	public function to_bool($value) {

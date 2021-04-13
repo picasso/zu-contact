@@ -22,6 +22,77 @@ $divider-component-class: zukit-divider;
 	#wpfooter {
 		display: none;
 	}
+	.interface-interface-skeleton__body,
+	.block-editor-editor-skeleton__body {
+		padding: 0;
+	}
+	.interface-interface-skeleton__sidebar > div,
+	.block-editor-editor-skeleton__sidebar > div {
+	    height: auto;
+	}
+
+	// when WP == 5.4 ---------------------------------------------------------]
+
+	.wp_5_4 {
+		&.block-editor-editor-skeleton {
+			.block-editor-block-list__layout {
+				padding: 0;
+				.block-editor-block-list__block {
+					margin: 0 auto;
+				}
+			}
+			.components-range-control__number {
+				width: auto;
+			}
+		}
+	}
+
+	// when WP version < 5.4 --------------------------------------------------]
+
+	.wp_less_5_4 {
+		&.block-editor-editor-skeleton {
+		    padding: 0;
+		    left: -20px;
+		    width: calc(100% + 20px);
+			.block-editor-editor-skeleton__body {
+			    height: 100%;
+				.block-editor-editor-skeleton__content {
+				    min-height: 100%;
+				    width: calc(100% - 280px);
+					.block-editor-block-list__layout {
+					    padding: 28px 0;
+						.block-editor-block-list__block {
+						    padding: 0 !important;
+						    margin: 0 auto;
+						}
+					}
+					@include breakpoint-width(LESS_SETTINGS_SIDEBAR_BREAK) {
+						width: 100%;
+					}
+				}
+				.block-editor-editor-skeleton__sidebar {
+					.edit-post-sidebar {
+					    top: 32px;
+					}
+					.block-editor-block-inspector .block-editor-block-card {
+					    padding: 16px;
+					}
+				}
+			}
+			.components-button.__plugin_actions {
+			    min-height: 36px;
+			    padding: 6px;
+			    padding-left: 12px;
+			    border-radius: 2px;
+			}
+			.components-range-control__slider {
+				z-index: 0;
+			}
+			.components-range-control__number {
+				width: auto;
+			}
+		}
+	}
 
 	.#{$skeleton-class} {
 	    background-color: white;
@@ -35,9 +106,47 @@ $divider-component-class: zukit-divider;
 				.components-notice__content div {
 					display: inline-block;
 				}
+				// I just don't like notifications with a white background
+				.is-info {
+					background-color: rgba($blue-color, 0.1);
+				}
+				.is-warning {
+					background-color: rgba($orange-bright-color, 0.1);
+				}
+
 				span {
-					color: darken($admin-blue-color, 20%);
-					font-weight: 600;
+					letter-spacing: 0.5px;
+					color: darken($admin-magenta-color, 10%);
+					font-weight: 500;
+					background-color: rgba($admin-magenta-color, 0.05);
+					padding: 0 3px 1px;
+					margin: 0 2px;
+					border-radius: $admin-border-radius;
+				}
+				strong {
+					letter-spacing: 0.5px;
+				}
+				em {
+					font-style: normal;
+					letter-spacing: 0.5px;
+					color: darken($wp-admin-blue-color, 10%);
+					font-weight: 500;
+					background-color: rgba($wp-admin-blue-color, 0.1);
+					padding: 0 3px 1px;
+					margin: 0 2px;
+					border-radius: $admin-border-radius;
+					@include in('^.is-success') {
+						color: darken($green-color, 10%);
+						background-color: rgba($green-color, 0.1);
+					}
+					@include in('^.is-error') {
+						color: darken($red-color, 10%);
+						background-color: rgba($red-color, 0.1);
+					}
+					@include in('^.is-warning') {
+						color: darken($orange-bright-color, 10%);
+						background-color: rgba($orange-bright-color, 0.1);
+					}
 				}
 				.zukit-data {
 					height: auto;
@@ -53,6 +162,7 @@ $divider-component-class: zukit-divider;
 			}
 
 			.#{$skeleton-editor-class} {
+				background-color: transparent;
 				position: relative;
 				padding-top: 50px;
 				flex: 1 1 auto;
@@ -120,6 +230,9 @@ $divider-component-class: zukit-divider;
 			.__select_block {
 				display: flex;
 				justify-content: space-between;
+				@include breakpoint-width(LESS_SETTINGS_BREAK) {
+					flex-direction: column;
+				}
 			}
 			.__select_control {
 				display: flex;
@@ -141,6 +254,36 @@ $divider-component-class: zukit-divider;
 				color: $toggle-help-color;
 				font-size: 13px;
 				font-style: italic;
+				text-align: right;
+				@include breakpoint-width(LESS_SETTINGS_BREAK) {
+					margin-left: 0;
+					text-align: left;
+				}
+			}
+
+			// markdown css
+			.components-base-control__help, .__zu_markdown {
+				span {
+					letter-spacing: 0.5px;
+					color: darken($admin-magenta-color, 10%);
+					font-weight: 500;
+					background-color: rgba($admin-magenta-color, 0.05);
+					padding: 0 3px 1px;
+					margin: 0 2px;
+					border-radius: $admin-border-radius;
+				}
+				strong {
+					letter-spacing: 0.5px;
+				}
+				em {
+					letter-spacing: 0.5px;
+					color: darken($wp-admin-blue-color, 10%);
+					font-weight: 500;
+					background-color: rgba($wp-admin-blue-color, 0.1);
+					padding: 0 3px 1px;
+					margin: 0 2px;
+					border-radius: $admin-border-radius;
+				}
 			}
 
 			.components-toggle-control {
@@ -153,6 +296,13 @@ $divider-component-class: zukit-divider;
 
 				& + .components-toggle-control {
 					margin-bottom: 0;
+				}
+
+				@include breakpoint-width(LESS_SETTINGS_BREAK) {
+					flex-direction: column;
+					.components-base-control__field {
+						margin-bottom: 0.5em;
+					}
 				}
 			}
 
@@ -193,6 +343,10 @@ $divider-component-class: zukit-divider;
 				.components-panel__body-title + div {
 					margin-top: 12px;
 				}
+			}
+
+			@include breakpoint-width(LESS_SETTINGS_SIDEBAR_BREAK) {
+				display: none;
 			}
 		}
 
