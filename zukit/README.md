@@ -1,12 +1,19 @@
-# Zukit
+# Zukit: The Developer Framework for WordPress.
 
-_Framework serves as the basis for creating plugins or themes for WordPress._
+[![Zukit Version](https://img.shields.io/github/package-json/v/picasso/zukit?style=for-the-badge)]()
+[![Zukit: Tested WP Version](https://img.shields.io/github/package-json/testedWP/picasso/zukit?color=4ab866&label=wordpress%20tested&style=for-the-badge)]()
+[![Zukit Required PHP Version](https://img.shields.io/github/package-json/requiresPHP/picasso/zukit?color=bc2a8d&label=php&style=for-the-badge)](https://www.php.net/)
+[![License](https://img.shields.io/github/license/picasso/zukit?color=fcbf00&style=for-the-badge)](https://github.com/picasso/zukit/blob/master/LICENSE)
 
+The __Zukit__ framework serves as the basis for creating plugins or themes for WordPress.
 Implements basic functionality for managing scripts and creating plugin or theme settings page based on Gutenberg functionality.
+
+![ZuKit - The Developer Framework for WordPress.](https://raw.githubusercontent.com/wiki/picasso/zukit/assets/banner-1544x500.png)
+
 
 ## Install
 
-To _use_ __Zukit__ framework in your project, you need to load its classes before referring to the class that inherits the framework methods. There are many ways to do this, but the simplest is [install](https://github.com/picasso/zukit/wiki/%5BMisc%5D-Install) the framework as a `subtree` in your project.
+To _use_ __Zukit__ framework in your project, you need to load its classes before referring to the class that inherits the framework methods. There are many ways to do this, but the easiest one is [to install the framework](https://github.com/picasso/zukit/wiki/%5BMisc%5D-Install) as a `subtree` in your project.
 
 ## Documentation
 
@@ -19,7 +26,7 @@ Documentation is available on the [GitHub wiki](https://github.com/picasso/zukit
 
 ### Structure of "Zukit"
 
-- Folder __dist__ contains _production_ versions of js and css files;
+- Folder __dist__ contains _production_ versions `JS` and `CSS` files;
 - Folder __lang__ contains files needed for translations;
 - Folder __snippets__ contains a collection of various functions that I have accumulated during my work with WordPress. They are combined into one class for ease of use;
 - Folder __traits__ contains traits that are included in the class `zukit_Plugin`. Used to group functionality in a fine-grained and consistent way;
