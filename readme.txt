@@ -3,7 +3,7 @@ Contributors: dmitryrudakov
 Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
 Requires at least: 5.1.0
 Tested up to: 5.7
-Stable tag: 1.1.0
+Stable tag: 1.1.2
 License: GPLv2 or later
 Requires PHP: 7.0.0
 
