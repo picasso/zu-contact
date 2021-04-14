@@ -1,3 +1,13 @@
+#### 1.1.2 / 2021-04-13
+* __Zukit__ updated to `1.2.0`
+* adapted after changing the position of the divider
+* adapted to the latest changes in Zukit
+* improved CSS to be compatible with WP 5.6
+* fixed bug that occurred when changing the field type
+* new screenshots added
+* changed default loader from `none` to 0
+* README updated
+
 #### 1.1.0 / 2021-01-08
 * added `zu_ContactFieldDefaults` class to keep all default values for templates
 * added new forms based on default field values

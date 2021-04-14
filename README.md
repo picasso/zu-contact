@@ -65,11 +65,12 @@ You can also personalize the form by adding attributes to the shortcode:
 * __rows__ - Change rows amount in textarea: `rows=12`
 * __message__ - Set predefined form message: `message="Thanks for your hard work!"`
 
-> &#x2668; Examples
+#### Examples
 
 * With custom subheading and without reCAPTCHA:
 
 `[zu-contact subheading="My Contact Form" recaptcha=false]`
+
 * With custom class, without AJAX and with 8 rows in textarea:
 
 `[zu-contact class="my-contact-form" ajax=false rows=8]`

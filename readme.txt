@@ -1,19 +1,17 @@
 === Zu Contact ===
 Contributors: dmitryrudakov
 Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
-Requires at least: 5.1
-Tested up to: 5.6
-Stable tag: 1.0.8
+Requires at least: 5.1.0
+Tested up to: 5.7
+Stable tag: 1.1.0
 License: GPLv2 or later
-Requires PHP: 7.0
+Requires PHP: 7.0.0
 
 Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.
 
 == Description ==
 
-The plugin allows you to add a feedback form or booking form to the page.
-The data is sent to the server via AJAX (this can be disabled using the settings and the form will be submitted as usual).
-You can flexibly personalize the form and its fields.
+The plugin allows you to add a feedback form or booking form to the page. The data is sent to the server via AJAX (*this can be disabled using the settings and the form will be submitted as usual, with a page reload... but why do you need it?*). You can flexibly personalize the form and its fields.
 
 The form is added to a page using the __Gutenberg Custom Blocks__ - with these blocks, the possibilities for customizing your form are greatly increased.
 
@@ -71,9 +69,7 @@ You can also personalize the form by adding attributes to the shortcode:
 
 == Installation ==
 
-Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
-
-1. Upload the `zu-contact` folder to your `/wp-content/plugins/` directory.
+1. Upload the `zu-contact` folder to the `/wp-content/plugins/` directory.
 2. Activate the plugin using the `Plugins` menu in your WordPress admin panel.
 3. You can adjust the necessary settings using your WordPress admin panel in "Settings > Zu Contact".
 4. Create a page or a post and insert the shortcode `[zu-contact]` or `[zu-booking]` into the text.
@@ -84,10 +80,20 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 2. Google reCAPTCHA Settings Section
 3. Editing form fields in the Gutenberg block editor
 4. Editing form attributes in the Gutenberg block editor
-5. Contact Form displaying
-6. Another Contact Form displaying
+5. Contact Form Displaying
+6. Another Contact Form Displaying (Russian)
 
 == Changelog ==
+
+### 1.1.2 ###
+* __Zukit__ updated to `1.2.0`
+* adapted after changing the position of the divider
+* adapted to the latest changes in Zukit
+* improved CSS to be compatible with WP 5.6
+* fixed bug that occurred when changing the field type
+* new screenshots added
+* changed default loader from `none` to 0
+* README updated
 
 ### 1.1.0 ###
 * added `zu_ContactFieldDefaults` class to keep all default values for templates
@@ -106,6 +112,9 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 * updated SVG for icons
 * improved front-end JS and CSS
 * many other small improvements
+
+### 1.0.9 ###
+* intermediate version for testing the latest changes
 
 ### 1.0.8 ###
 * added assets for WordPress.org
@@ -170,10 +179,6 @@ Plugin only works under __WordPress 5.1__ or higher and __PHP 7.0__ or higher
 ### 0.9.7 ###
 * refactoring after adaptation for `Zukit` (not finished)
 
----
-__Attention!__ Breaking changes in version 0.9.7.
----
-
 ### 0.9.3 ###
 * all forms now are added to DB as comments
 
@@ -202,12 +207,3 @@ __Attention!__ Breaking changes in version 0.9.7.
 * added language dictionaries for `en` and `ru`
 * bug fixing
 
-### 0.7.5 ###
-* added _draft_ `booking` form
-* added template for `booking` form
-* submenu of settings moved in `ZU+` section
-
-### 0.7.4 ###
-* adaptation to ZU+
-* added support for list of emails to be notified
-* bug fixing
