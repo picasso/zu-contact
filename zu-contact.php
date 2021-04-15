@@ -8,8 +8,8 @@ Author: Dmitry Rudakov
 Author URI: https://dmitryrudakov.com/about/
 Text Domain: zu-contact
 Domain Path: /lang/
-Requires at least: 5.1.0
-Requires PHP: 7.0.0
+Requires at least: 5.3.0
+Requires PHP: 7.2.0
 */
 
 // Prohibit direct script loading
