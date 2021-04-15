@@ -11,7 +11,7 @@ trait zu_ContactMailer {
 			add_action('phpmailer_init', [$this, 'php_mailer']);
 			add_action('wp_mail_failed', function($error) {
 				$this->last_smtp_error = $error;
-			    return $this->log_error($error, 'wp_mail_failed!');
+			    return $this->logc('!wp_mail_failed', $error);
 			});
 		}
 	}

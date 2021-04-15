@@ -88,12 +88,12 @@ trait zu_ContactAjax {
 				$form = new zu_ContactFields($this->ajax_form_name($post_id, $name));
 				foreach($data['fields'] ?? [] as $field) {
 					if(!isset($field['type']) || !isset($field['id'])) {
-						$this->log_error([
+						$this->logc('?Incorrect field structure encountered', [
 			                '$name'		=> $name,
 			                '$post_id'	=> $post_id,
 			                '$field'	=> $field,
 			                '$forms'	=> $forms,
-			            ], 'Incorrect field structure encountered!');
+			            ]);
 					}
 					$form->add($field['type'], $field['required'] ?? false, [
 						'id'			=> $field['id'],
