@@ -8,11 +8,12 @@ trait zu_ContactReCAPTCHA {
 
 	private function recaptcha_info() {
 		$recaptcha = $this->get_option('recaptcha', []);
-		return $this->is_option('use_recaptcha') ? [
+		$value = empty($recaptcha['sitekey']) ? __('Not Activated', 'zu-contact') : __('Activated', 'zu-contact');
+		return [
 			'label'		=> __('Google reCAPTCHA', 'zu-contact'),
-			'value'		=> empty($recaptcha['sitekey']) ? __('Not Activated', 'zu-contact') : __('Activated', 'zu-contact'),
+			'value'		=> $this->is_option('use_recaptcha') ? $value : null,
 			'depends' 	=> ['use_recaptcha', 'recaptcha.sitekey'],
-		] : null;
+		];
 	}
 
 	private function maybe_enqueue_recaptcha($enabled = true) {
