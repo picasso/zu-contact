@@ -1,7 +1,7 @@
 # Zu Contact: Contact Forms with Gutenberg
 
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/zu-contact?style=for-the-badge)](https://wordpress.org/plugins/zu-contact/)
-[![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/zu-contact?color=4ab866&style=for-the-badge)](https://wordpress.org/plugins/zu-contact/)
+[![WordPress Plugin: Tested WP Version](https://img.shields.io/wordpress/plugin/tested/zu-contact?color=4ab866&style=for-the-badge)](https://wordpress.org/)
 [![WordPress Plugin Required PHP Version](https://img.shields.io/wordpress/plugin/required-php/zu-contact?color=bc2a8d&style=for-the-badge)](https://www.php.net/)
  [![License](https://img.shields.io/badge/license-GPL--2.0%2B-fcbf00.svg?style=for-the-badge)](https://github.com/picasso/zu-contact/blob/master/LICENSE)
 
