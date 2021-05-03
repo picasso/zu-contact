@@ -1,11 +1,11 @@
 === Zu Contact ===
 Contributors: dmitryrudakov
 Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
-Requires at least: 5.1.0
-Tested up to: 5.7
-Stable tag: 1.1.2
+Requires at least: 5.3.0
+Tested up to: 5.7.1
+Stable tag: 1.1.3
 License: GPLv2 or later
-Requires PHP: 7.0.0
+Requires PHP: 7.2.0
 
 Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.
 
@@ -84,6 +84,12 @@ You can also personalize the form by adding attributes to the shortcode:
 6. Another Contact Form Displaying (Russian)
 
 == Changelog ==
+
+### 1.1.3 ###
+* __Zukit__ updated to version 1.2.2
+* according to the changes in __Zukit__, rows in `Plugin Info` are now hidden through the value equal to null
+* min `php` and `wp` versions updated
+* replace `log_error` with `logc` method
 
 ### 1.1.2 ###
 * __Zukit__ updated to `1.2.0`
@@ -202,8 +208,4 @@ You can also personalize the form by adding attributes to the shortcode:
 * added `$rows_in_message` attribute for forms
 * dynamically added classes with form margins
 * css optimization
-
-### 0.7.6 ###
-* added language dictionaries for `en` and `ru`
-* bug fixing
 

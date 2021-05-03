@@ -1,3 +1,9 @@
+#### 1.1.3 / 2021-05-03
+* __Zukit__ updated to version 1.2.2
+* according to the changes in __Zukit__, rows in `Plugin Info` are now hidden through the value equal to null
+* min `php` and `wp` versions updated
+* replace `log_error` with `logc` method
+
 #### 1.1.2 / 2021-04-13
 * __Zukit__ updated to `1.2.0`
 * adapted after changing the position of the divider
