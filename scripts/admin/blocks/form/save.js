@@ -15,7 +15,7 @@ const save = ({ className, attributes }) => {
 		noajax,
 		loaderHTML,
 	} = attributes;
-	
+
 	return (
 		<ZuForm { ...{ className, name, title, noajax, postId, postLink, loaderHTML } }>
 			<InnerBlocks.Content />
