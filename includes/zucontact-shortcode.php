@@ -4,17 +4,17 @@
 trait zu_ContactShortcode {
 
 	private function init_shortcode() {
-		add_shortcode('zu-contact', [$this, 'shortcode']);
+		add_shortcode('zu-contact', [$this, 'contact_shortcode']);
 		add_shortcode('zu-booking', [$this, 'booking_shortcode']);
 	}
 
 	public function booking_shortcode($atts, $content = null) {
-		return $this->shortcode(array_merge(['form' => 'booking'], $atts), $content);
+		return $this->contact_shortcode(array_merge(['form' => 'booking'], $atts), $content);
 	}
 
-	public function shortcode($atts, $content = null) {
+	public function contact_shortcode($atts, $content = null) {
 
-		extract($this->snippets('shortcode_atts_with_cast', $atts, [
+		$atts = $this->snippets('shortcode_atts_with_cast', [
 			'form' 				=> 'contact',
 			'class' 			=> '',
 			'ajax' 				=> true,
@@ -22,10 +22,8 @@ trait zu_ContactShortcode {
 			'subheading'		=> null,
 			'recaptcha'			=> -1,
 			'rows'				=> -1,
-		], [
-			'ajax' 				=> 'bool',
-			'recaptcha'			=> 'bool',
-		]));
+		], $atts, ['ajax', 'recaptcha']);
+		extract($atts, EXTR_OVERWRITE);
 
 		// if $ajax is true enqueue both css and script (null), otherwise css only (true)
 		$this->enqueue_only($ajax ? null : true);
