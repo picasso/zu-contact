@@ -1,11 +1,11 @@
 <?php
 // Includes all traits --------------------------------------------------------]
 
-include_once('zucontact-ajax.php');
-include_once('zucontact-form.php');
-include_once('zucontact-mailer.php');
-include_once('zucontact-recaptcha.php');
-include_once('zucontact-shortcode.php');
+include_once('traits/ajax.php');
+include_once('traits/form.php');
+include_once('traits/mailer.php');
+include_once('traits/recaptcha.php');
+include_once('traits/shortcode.php');
 
 class zu_Contact extends zukit_Plugin {
 
