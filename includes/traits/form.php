@@ -1,7 +1,7 @@
 <?php
-require_once('defaults.php');
-require_once('fields.php');
-require_once('data.php');
+require_once(__DIR__.'/../contact/defaults.php');
+require_once(__DIR__.'/../contact/fields.php');
+require_once(__DIR__.'/../contact/data.php');
 
 // Form helpers ---------------------------------------------------------------]
 
