@@ -110,11 +110,13 @@ trait zu_ContactReCAPTCHA {
 	}
 
 	private function enqueue_recaptcha_with_block($attrs) {
+		// on the page there may be several blocks,
+		// so '$attrs' is an array of attributes for all blocks on the page
 		foreach($attrs as $block_attr) {
 			$recaptcha_enabled = $block_attr['useRecaptcha'] ?? false;
-			// we can enqueue recaptcha only once, and there can be many blocks
 			if($recaptcha_enabled) {
 				$this->maybe_enqueue_recaptcha($recaptcha_enabled);
+				// we can enqueue reCaptcha only once, therefore, we interrupt the loop
 				break;
 			}
 		}
