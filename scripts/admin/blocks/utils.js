@@ -12,7 +12,7 @@ export const {
     toJSON,
     uniqueValue,
 
-    getColor,
+    getColorGetter,
     hexToRGBA,
     brandAssets,
 
@@ -25,6 +25,9 @@ export const {
 
  // Gets JSON data from PHP
  export const pluginData = externalData('zucontact_blocks_data');
+ // Creates custom color getter
+ export const getColor = getColorGetter('zucontact_blocks_data');
+
  const { prefix: cssPrefix = 'zuc' } = pluginData;
 
  export function prefixIt(name, divider = '-') {

@@ -9,6 +9,7 @@ import { getColor, hexToRGBA } from './utils.js';
 
 // Custom foreground icon color based on the Zu Blocks branding
 export const iconColor = getColor('violet');
+const adminBlueColor = getColor('wp-admin-blue');
 export { getColor };
 
 // ZU Blocks icons
@@ -121,8 +122,6 @@ function typeIcon(type, frameOpacity = 0.3) {
 
 	if(type === null) return keys(types);
 	if(!has(types, type)) return null;
-
-	const adminBlueColor = getColor('wp_admin_blue');
 
 return (
 <SVG

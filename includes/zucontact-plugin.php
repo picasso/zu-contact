@@ -65,7 +65,8 @@ class zu_Contact extends zukit_Plugin {
 				'frontend_blocks'	=> 'form',
 				'script'			=> [
 					'data'	=> [$this, 'ajax_data'],
-				]
+				],
+				'extended_colors'	=> ['filter' => 'wp-admin-blue'],
 			],
 		];
 	}
