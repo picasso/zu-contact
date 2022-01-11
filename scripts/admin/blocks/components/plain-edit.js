@@ -14,7 +14,6 @@ const ZuPlainEdit = ({
 		value,
 		placeholder,
 		setAttributes,
-		keepOnFocus = true,
 }, ref) => {
 
 	const setText = useCallback(val => {
@@ -32,7 +31,6 @@ const ZuPlainEdit = ({
 			value={ value }
 			onChange={ setText }
 			placeholder={ placeholder }
-			keepPlaceholderOnFocus={ keepOnFocus }
 			__unstablePastePlainText
 		/>
 	);
