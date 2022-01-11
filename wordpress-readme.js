@@ -10,7 +10,7 @@ const debugTokens = false;
 const options = {
     contributors: 'dmitryrudakov',
     tags: 'gutenberg, ajax, contact form, feedback, email, feedback form, contact',
-    tested: '5.7.1',
+    tested: '5.8.3',
     license: 'GPLv2 or later',
 
     pluginfile: 'zu-contact.php',

@@ -4,7 +4,7 @@ Plugin Name: Zu Contact
 Plugin URI: https://wordpress.org/plugins/zu-contact/
 GitHub Plugin URI: https://github.com/picasso/zu-contact
 Description: Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg based settings page.
-Version: 1.1.3
+Version: 1.1.5
 Author: Dmitry Rudakov
 Author URI: https://dmitryrudakov.com/about/
 Text Domain: zu-contact
@@ -16,7 +16,8 @@ Requires PHP: 7.2.0
 // Prohibit direct script loading
 defined('ABSPATH') || die('No direct script access allowed!');
 
-add_action('plugins_loaded', function() { 	// DEBUG-ONLY
+// DEBUG-ONLY
+// add_action('plugins_loaded', function() {
 
 // Always load Zukit even if we don't use it later ('wp_doing_ajax' or 'wp_doing_cron')
 // as other plugins or themes may want to use it
@@ -36,4 +37,5 @@ if(Zukit::is_compatible(__FILE__)) {
 	zucontact(__FILE__);
 }
 
-});
+// DEBUG-ONLY
+// });

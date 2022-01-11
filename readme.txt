@@ -2,8 +2,8 @@
 Contributors: dmitryrudakov
 Tags: gutenberg, ajax, contact form, feedback, email, feedback form, contact
 Requires at least: 5.3.0
-Tested up to: 5.7.1
-Stable tag: 1.1.3
+Tested up to: 5.8.3
+Stable tag: 1.1.5
 License: GPLv2 or later
 Requires PHP: 7.2.0
 
@@ -84,6 +84,16 @@ You can also personalize the form by adding attributes to the shortcode:
 6. Another Contact Form Displaying (Russian)
 
 == Changelog ==
+
+### 1.1.5 ###
+* tested for compatibility with WP 5.8.3
+* moved `contact fields` classes to a separate folder
+* moved traits files to a separate folder
+* __Zukit__ updated to version 1.4.8
+* fixed bug with `getColor` method
+* removed `keepPlaceholderOnFocus` because the prop has been removed from `RichText` component
+* fixed bug with `shortcode_atts_with_cast` snippet
+* other small improvements
 
 ### 1.1.3 ###
 * __Zukit__ updated to version 1.2.2
@@ -198,14 +208,4 @@ You can also personalize the form by adding attributes to the shortcode:
 * added `rows` attribute to shortcode
 * added `me_or_us` option to select between predefined headings and messages
 * improved  js error processing
-
-### 0.8.2 ###
-* added `subheading` attribute
-* added new fields types: `number`, `tel`, `url`
-* improved  js error processing
-* added support of `carbon-copy` attribute
-* updated language dictionaries
-* added `$rows_in_message` attribute for forms
-* dynamically added classes with form margins
-* css optimization
 

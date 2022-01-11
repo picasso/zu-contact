@@ -1,3 +1,13 @@
+#### 1.1.5 / 2022-01-11
+* tested for compatibility with WP 5.8.3
+* moved `contact fields` classes to a separate folder
+* moved traits files to a separate folder
+* __Zukit__ updated to version 1.4.8
+* fixed bug with `getColor` method
+* removed `keepPlaceholderOnFocus` because the prop has been removed from `RichText` component
+* fixed bug with `shortcode_atts_with_cast` snippet
+* other small improvements
+
 #### 1.1.3 / 2021-05-03
 * __Zukit__ updated to version 1.2.2
 * according to the changes in __Zukit__, rows in `Plugin Info` are now hidden through the value equal to null
