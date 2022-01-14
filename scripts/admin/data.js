@@ -1,6 +1,5 @@
 // WordPress dependencies
 
-// const { map, has } = lodash;
 const { __ } = wp.i18n;
 
 // Internal dependencies
@@ -68,7 +67,7 @@ const panels = {
 	recaptcha_keys: {
 		value: true,
 		label: 	__('Google reCAPTCHA', 'zu-contact'),
-		// Это позволит исключить эту панель когда значение option is false
+		// this will hide this panel when the option value is false 
 		depends: 'use_recaptcha',
 	},
 	mailer: {

@@ -1,5 +1,3 @@
-// WordPress dependencies
-
 // Internal dependencies
 
 import ZuRecaptcha from './../components/recaptcha.js';

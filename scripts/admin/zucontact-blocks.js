@@ -6,7 +6,7 @@ const { registerBlockType } = wp.blocks;
 
 import { registerCollection, registerCategory, brandAssets } from './blocks/utils.js';
 
-// Register ZU blocks collection or category
+// register ZU blocks collection or category
 const supportsCollections = registerCollection();
 if(!supportsCollections) registerCategory();
 

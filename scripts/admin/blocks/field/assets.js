@@ -3,17 +3,6 @@
 const { isArray, isNil, get, map, transform, includes, omit, omitBy } = lodash;
 const { __ } = wp.i18n;
 
-// 'text'+
-// 'textarea'+
-// 'email'+
-// 'url'+
-// 'tel'+
-// 'checkbox'+
-// 'submit'+
-// 'number'+
-
-// recaptcha
-
 // Internal dependencies
 
 import { types as typesSvg, iconColor, pluginDefaults } from './../assets.js';

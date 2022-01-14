@@ -1,7 +1,3 @@
-// WordPress dependencies
-
-// const { isNil } = lodash;
-
 // Zukit dependencies
 
 const { Loader } = wp.zukit.components;

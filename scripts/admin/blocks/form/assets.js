@@ -3,17 +3,6 @@
 const { map, transform, get, pick } = lodash;
 const { __ } = wp.i18n;
 
-// form
-// field
-// layout
-// placeholder
-// required
-// remove
-// add
-//
-// recaptcha
-
-
 // Internal dependencies
 
 import { form, contact, booking, subscribe, pluginDefaults } from './../assets.js';
@@ -48,7 +37,7 @@ export const layoutTemplates = transform(templates, (values, layout, name)  => {
 export const assets = {
 	layoutOptions,
 	svg: {
-		form, //: { src: form, foreground: iconColor },
+		form,
 		contact,
 		booking,
 		subscribe,

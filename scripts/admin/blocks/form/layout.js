@@ -57,5 +57,4 @@ const FormLayout = ({
 	);
 }
 
-// FormLayout.Preview = LayoutPreview;
 export default FormLayout;

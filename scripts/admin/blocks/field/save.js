@@ -1,5 +1,3 @@
-// WordPress dependencies
-
 // Internal dependencies
 
 import ZuField from './../components/field.js';

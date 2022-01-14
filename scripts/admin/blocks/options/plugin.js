@@ -2,8 +2,7 @@
 
 const { isNil, map } = lodash;
 const { __ } = wp.i18n;
-// const { compose } = wp.compose;
-const { Spinner, SelectControl, TextControl, Button, PanelBody } = wp.components; // ToggleControl, PanelRow
+const { Spinner, SelectControl, TextControl, Button, PanelBody } = wp.components;
 const { RawHTML, useState } = wp.element;
 
 // Zukit dependencies

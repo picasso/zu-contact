@@ -1,4 +1,4 @@
-// // WordPress dependencies
+// WordPress dependencies
 
 const {
     isFunction,
