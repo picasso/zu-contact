@@ -136,8 +136,8 @@ class zu_Contact extends zukit_Plugin {
 		return [
 			'reorder'	=>	[
 				[
-					'menu'			=> 	'zucontact-settings',
-					'after_index2'	=>	'zuplus-settings',
+					'menu'		=> 	'zucontact-settings',
+					'after'		=>	'zuplus-settings',
 				],
 			],
 		];
