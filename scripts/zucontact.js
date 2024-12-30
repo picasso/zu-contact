@@ -192,7 +192,7 @@
 			}); // end of $.ajax
 		}
 
-		$form.submit(function(e) {
+		$form.on('submit', function(e) {
 			e.preventDefault();
 			if(needsReCaptcha()) return false;
 			ajaxLoading(true);
