@@ -1,5 +1,5 @@
 <?php
-// Includes all traits --------------------------------------------------------]
+// Includes all traits ----------------------------------------------------------------------------]
 
 include_once('traits/ajax.php');
 include_once('traits/form.php');
@@ -18,7 +18,7 @@ class zu_Contact extends zukit_Plugin {
 
 	protected function construct_more() {
 		$this->path_autocreated = true;
-    }
+	}
 
 	protected function config() {
 		return  [
@@ -71,7 +71,7 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	// Add plugin info debug actions ------------------------------------------]
+	// Add plugin info debug actions --------------------------------------------------------------]
 
 	protected function extend_info() {
 		$stats = $this->stats();
@@ -113,15 +113,15 @@ class zu_Contact extends zukit_Plugin {
 
 	public function init() {
 
-		// Add all predefined forms -------------------------------------------]
+		// Add all predefined forms ---------------------------------------------------------------]
 
-		foreach(glob(dirname(__FILE__).'/forms/*.php') as $filename) {
+		foreach (glob(dirname(__FILE__) . '/forms/*.php') as $filename) {
 			include_once($filename);
 		}
 
 		$this->register_ajax_forms();
 
-		// Some 'inits' from traits -------------------------------------------]
+		// Some 'inits' from traits ---------------------------------------------------------------]
 
 		$this->init_messages();
 		$this->init_ajax();
@@ -129,7 +129,7 @@ class zu_Contact extends zukit_Plugin {
 		$this->init_mailer();
 	}
 
-	// Custom menu position ---------------------------------------------------]
+	// Custom menu position -----------------------------------------------------------------------]
 
 	protected function custom_admin_submenu() {
 
@@ -143,32 +143,32 @@ class zu_Contact extends zukit_Plugin {
 		];
 	}
 
-	// Script enqueue ---------------------------------------------------------]
+	// Script enqueue -----------------------------------------------------------------------------]
 
 	protected function should_load_css($is_frontend, $hook) {
 		return $is_frontend ? $this->is_option('custom_css') : $this->ends_with_slug($hook);
 	}
 
 	protected function should_load_js($is_frontend, $hook) {
-	    return $is_frontend ? true : $this->ends_with_slug($hook);
+		return $is_frontend ? true : $this->ends_with_slug($hook);
 	}
 
 	// register Google recaptcha script if required
 	protected function enqueue_more($is_frontend, $hook) {
-		if($is_frontend) {
+		if ($is_frontend) {
 			$this->register_recaptcha();
 		}
 	}
 
 	// enqueue Google recaptcha script if block 'zu/form' with needed attrs found on page
 	public function blocks_enqueue_more($is_frontend, $block_name, $attributes) {
-		if($is_frontend && $block_name === 'zu/form') {
+		if ($is_frontend && $block_name === 'zu/form') {
 			$this->enqueue_recaptcha_with_block($attributes);
 		}
 	}
 }
 
-// Entry Point ----------------------------------------------------------------]
+// Entry Point ------------------------------------------------------------------------------------]
 
 function zucontact($file = null) {
 	return zu_Contact::instance($file);

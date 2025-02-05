@@ -1,5 +1,5 @@
 <?php
-// Google reCAPTCHA V2 helpers ------------------------------------------------]
+// Google reCAPTCHA V2 helpers --------------------------------------------------------------------]
 //
 trait zu_ContactReCAPTCHA {
 
@@ -18,13 +18,13 @@ trait zu_ContactReCAPTCHA {
 
 	private function maybe_enqueue_recaptcha($enabled = true) {
 		// only 'false' is taken into account, all other values are 'true'
-		if($enabled === false) return;
-		if($this->recaptcha_handle) $this->enqueue_only(false, $this->recaptcha_handle);
+		if ($enabled === false) return;
+		if ($this->recaptcha_handle) $this->enqueue_only(false, $this->recaptcha_handle);
 	}
 
 	private function register_recaptcha() {
 		// load Google recaptcha script if required
-		if($this->is_option('use_recaptcha')) {
+		if ($this->is_option('use_recaptcha')) {
 			$this->recaptcha_handle = $this->prefix_it('recaptcha2');
 			$absolute_path = 'https://www.google.com/recaptcha/api.js?hl=' . get_locale();
 			$this->enqueue_script($absolute_path, [
@@ -40,7 +40,7 @@ trait zu_ContactReCAPTCHA {
 
 	private function get_recaptcha($enabled = true) {
 		// only 'false' is taken into account, all other values are 'true'
-		if($enabled === false) return '';
+		if ($enabled === false) return '';
 
 		$recaptcha = $this->get_option('recaptcha', []);
 
@@ -69,15 +69,15 @@ trait zu_ContactReCAPTCHA {
 
 	private function check_recaptcha($data) {
 
-		if($data instanceof zu_ContactData) {
+		if ($data instanceof zu_ContactData) {
 			$recaptcha = $this->get_option('recaptcha', []);
 			$secret = $recaptcha['secret'] ?? null;
 			$response = $data->recaptcha;
 
 			// check recaptcha but only if we have private key
-			if(!empty($secret) && !empty($response)) {
+			if (!empty($secret) && !empty($response)) {
 				$check = $this->verify_response($secret, $response);
-				if(!$check) $data->add_error('recaptcha', $this->recaptcha_error_messages('failed'));
+				if (!$check) $data->add_error('recaptcha', $this->recaptcha_error_messages('failed'));
 				else return true;
 			}
 		}
@@ -102,7 +102,7 @@ trait zu_ContactReCAPTCHA {
 
 	private function ajax_recaptcha_data($is_frontend) {
 
-		if($is_frontend) return $this->recaptcha_error_messages(null, true);
+		if ($is_frontend) return $this->recaptcha_error_messages(null, true);
 
 		$recaptcha = $this->get_option('recaptcha', []);
 		unset($recaptcha['secret']);
@@ -112,9 +112,9 @@ trait zu_ContactReCAPTCHA {
 	private function enqueue_recaptcha_with_block($attrs) {
 		// on the page there may be several blocks,
 		// so '$attrs' is an array of attributes for all blocks on the page
-		foreach($attrs as $block_attr) {
+		foreach ($attrs as $block_attr) {
 			$recaptcha_enabled = $block_attr['useRecaptcha'] ?? false;
-			if($recaptcha_enabled) {
+			if ($recaptcha_enabled) {
 				$this->maybe_enqueue_recaptcha($recaptcha_enabled);
 				// we can enqueue reCaptcha only once, therefore, we interrupt the loop
 				break;

@@ -13,8 +13,8 @@ class zu_ContactFieldDefaults {
 	public static function as_data() {
 		$defaults = self::defaults();
 		unset($defaults['unknown']);
-		foreach($defaults as $type => $value) {
-			if(!isset($value['type'])) $defaults[$type]['type'] = $type;
+		foreach ($defaults as $type => $value) {
+			if (!isset($value['type'])) $defaults[$type]['type'] = $type;
 		}
 		return $defaults;
 	}
@@ -30,7 +30,7 @@ class zu_ContactFieldDefaults {
 
 	private static function defaults() {
 
-		if(self::$defaults !== null) return self::$defaults;
+		if (self::$defaults !== null) return self::$defaults;
 
 		self::$defaults = [
 			'text'		=> [
