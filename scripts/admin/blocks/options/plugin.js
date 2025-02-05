@@ -124,7 +124,7 @@ const PluginOptionsEdit = () => {
 					value={svgName}
 					onChange={setSvgName}
 				/>
-				<Button isSecondary onClick={() => setCurrentSvg(svgName)}>
+				<Button variant="secondary" onClick={() => setCurrentSvg(svgName)}>
 					{'Update SVG'}
 				</Button>
 			</PanelBody>

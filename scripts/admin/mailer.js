@@ -81,7 +81,7 @@ const ZucontactMailer = ({ data, options, updateOptions }) => {
 			<div className="__flex __right">
 				{restore}
 				<Button
-					isSecondary
+					variant="secondary"
 					className="__plugin_actions __auto magenta"
 					label={data.resetAll}
 					icon="image-rotate"

@@ -64,7 +64,7 @@ const ZuSubmitEdit = ({
 				onClose={() => setOpen(false)}
 			>
 				<Button
-					isTertiary
+					variant="tertiary"
 					icon="external"
 					href={permalink}
 					target="zu-form-view"
