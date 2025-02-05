@@ -1,3 +1,27 @@
+#### 1.2.1 / 2025-02-05
+
+* __Zukit__ updated to version 2.0.1
+* update outdated npm packages
+* add __Prettier__ and its config
+* replace __ESLint__ config with v9
+* add `markdownlint` and fix `.md` files
+* add `wp-scripts` build and webpack configs for it
+* migrate SASS files to avoid deprecation warnings
+* refactor JS  with `lodash-es` and prettier rules
+* replace wordpress import from `const` to `import`
+* replace `const $ = jQuery` with `import`
+* set `engines` for the project
+* fix PHP formatting and some errors found by `intelephense`
+* fix deprecated jQuery `removeAttr` for `disabled`
+* improve Ajax error processing in JS
+* CSS font improvement for `input` and `textarea`
+* __WP Blocks__: opting into the new 40px default height
+* __WP Blocks__: opting into the new margin-free styles
+* __WP Blocks__: fix deprecated `Button` props
+* __WP Blocks__: replace deprecated `registerStore`
+* fix `FILTER_SANITIZE_STRING`' deprecation
+* update `gitattributes` ignore
+
 #### 1.1.5 / 2022-01-11
 
 * tested for compatibility with WP 5.8.3
