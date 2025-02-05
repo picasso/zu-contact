@@ -50,6 +50,7 @@ const ZucontactRecaptcha = ({ data, options, updateOptions }) => {
 				value={settings.theme || 'light'}
 				onChange={(value) => updateRecaptchaOptions({ theme: value })}
 				options={data.themeOptions}
+				__nextHasNoMarginBottom
 			/>
 			<SelectControl
 				className="__block_label"
@@ -57,6 +58,7 @@ const ZucontactRecaptcha = ({ data, options, updateOptions }) => {
 				value={settings.size || 'normal'}
 				onChange={(value) => updateRecaptchaOptions({ size: value })}
 				options={data.sizeOptions}
+				__nextHasNoMarginBottom
 			/>
 			<ZukitDivider bottomHalf size={2} />
 			<div className="__flex __right">

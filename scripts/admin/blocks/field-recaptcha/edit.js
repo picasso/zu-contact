@@ -19,11 +19,13 @@ const ZuRecaptchaEdit = ({ attributes, setAttributes }) => {
 						label={__('Use Dark Theme', 'zu-contact')}
 						checked={theme === 'dark'}
 						onChange={(val) => setAttributes({ theme: val ? 'dark' : 'light' })}
+						__nextHasNoMarginBottom
 					/>
 					<ToggleControl
 						label={__('Use Compact Widget Size', 'zu-contact')}
 						checked={size === 'compact'}
 						onChange={(val) => setAttributes({ size: val ? 'compact' : 'normal' })}
+						__nextHasNoMarginBottom
 					/>
 				</PanelBody>
 			</InspectorControls>

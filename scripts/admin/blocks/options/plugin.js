@@ -80,6 +80,7 @@ const PluginOptionsEdit = () => {
 					value={0}
 					onChange={(value) => dev.log('Folder with Id=', value)}
 					options={folderOptions}
+					__nextHasNoMarginBottom
 				/>
 			)}
 
@@ -101,6 +102,7 @@ const PluginOptionsEdit = () => {
 					value={0}
 					onChange={(value) => dev.log('Gallery with Id=', value)}
 					options={galleryOptions}
+					__nextHasNoMarginBottom
 				/>
 			)}
 
@@ -115,6 +117,7 @@ const PluginOptionsEdit = () => {
 					value={theme}
 					onChange={(value) => setOption(recaptchaTheme.key, value)}
 					options={recaptchaTheme.options}
+					__nextHasNoMarginBottom
 				/>
 			)}
 			<PanelBody title={__('SVG Tester', 'zu-contact')} initialOpen={true}>
@@ -123,6 +126,7 @@ const PluginOptionsEdit = () => {
 					label={__('SVG Name', 'zu-contact')}
 					value={svgName}
 					onChange={setSvgName}
+					__nextHasNoMarginBottom
 				/>
 				<Button variant="secondary" onClick={() => setCurrentSvg(svgName)}>
 					{'Update SVG'}

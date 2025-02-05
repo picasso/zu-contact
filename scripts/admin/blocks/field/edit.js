@@ -287,6 +287,7 @@ const ZuFieldEdit = ({
 							label={__('This is a required field.', 'zu-contact')}
 							checked={!!required}
 							onChange={onChangeRequired}
+							__nextHasNoMarginBottom
 						/>
 					)}
 				</PanelBody>

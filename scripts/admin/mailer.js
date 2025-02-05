@@ -49,12 +49,14 @@ const ZucontactMailer = ({ data, options, updateOptions }) => {
 				help={data.ssl_help}
 				checked={!!settings.ssl}
 				onChange={() => updateMailerOptions({ ssl: !settings.ssl })}
+				__nextHasNoMarginBottom
 			/>
 			<ToggleControl
 				label={data.auth}
 				help={data.auth_help}
 				checked={!!settings.auth}
 				onChange={() => updateMailerOptions({ auth: !settings.auth })}
+				__nextHasNoMarginBottom
 			/>
 			{settings.auth && (
 				<>

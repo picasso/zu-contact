@@ -157,11 +157,13 @@ const ZuFormEdit = ({
 						label={__('Without Form Heading', 'zu-contact')}
 						checked={withoutTitle}
 						onChange={disableTitle}
+						__nextHasNoMarginBottom
 					/>
 					<ToggleControl
 						label={__('Enable reCAPTCHA', 'zu-contact')}
 						checked={reClientId || false}
 						onChange={enableRecaptcha}
+						__nextHasNoMarginBottom
 					/>
 				</PanelBody>
 
