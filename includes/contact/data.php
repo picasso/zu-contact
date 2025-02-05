@@ -2,24 +2,24 @@
 // Class for holding and validating data captured from the contact form
 //
 class zu_ContactData {
-	public $name;
-	public $email;
-	public $message;
+	public string $name;
+	public string $email;
+	public string $message;
 
 	public $post_id;
-	public $post_link;
-	public $spam;
-	public $was_sent;
-	public $was_notified;
+	public string $post_link;
+	public bool $spam;
+	public bool $was_sent;
+	public bool $was_notified;
 	public $recaptcha;
 
 	public $attributes;
 	public $errors;
-	public $form;
+	public zu_ContactFields $form;
 
-	private $prefix;
+	private string $prefix;
 	private $available_errors;
-	private $was_checked;
+	private int $was_checked;
 
 	function __construct() {
 
@@ -131,7 +131,11 @@ class zu_ContactData {
 		$field_type = $field['type'] ?? '';
 
 		if ($field_type === 'text' || $field_type === 'textarea') {
-			return filter_var($form[$field_id], FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES);
+			return filter_var(
+				$form[$field_id],
+				FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+				FILTER_FLAG_NO_ENCODE_QUOTES
+			);
 		}
 		if ($field_type === 'email') return filter_var($form[$field_id], FILTER_SANITIZE_EMAIL);
 		if ($field_type === 'url') return filter_var($form[$field_id], FILTER_SANITIZE_URL);
@@ -156,7 +160,6 @@ class zu_ContactData {
 				$field_type = $field['type'];
 				$value = $this->attributes[$field_id];
 				// convert required message from Array or String
-				// TODO: !! public function get_required($value, &$required, &$required_valid) {
 				$this->form->get_required($field['required'], $required, $required_valid);
 				//email || email invalid address
 				if ($field_type === 'email') {
