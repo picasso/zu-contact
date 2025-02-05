@@ -16,8 +16,8 @@ import {
 } from 'lodash-es'
 
 // wordpress dependencies
-import { dispatch, registerStore, select, useDispatch } from '@wordpress/data'
-const { apiFetch } = wp
+import apiFetch from '@wordpress/api-fetch'
+import { createReduxStore, dispatch, register, select, useDispatch } from '@wordpress/data'
 
 // Zukit dependencies
 const { isNull, requestURL } = wp.zukit.data
@@ -174,7 +174,7 @@ const formActions = {
 
 const emptyObject = {}
 
-registerStore(ZUCONTACT_STORE, {
+const store = createReduxStore(ZUCONTACT_STORE, {
 	reducer: formReducer,
 	actions: formActions,
 	selectors: {
@@ -185,6 +185,7 @@ registerStore(ZUCONTACT_STORE, {
 	},
 	controls: {},
 })
+register(store)
 
 // Custom hooks & helpers -----------------------------------------------------]
 
