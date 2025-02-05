@@ -115,13 +115,11 @@ $zuc-transition-cubic: cubic-bezier(0.33, 0, 0.2, 1) !default;
 }
 
 %sans_font {
-	.is-twenty-twenty & {
-		font-family:
-			'Inter var',
-			-apple-system,
-			BlinkMacSystemFont,
-			'Helvetica Neue',
-			Helvetica,
-			sans-serif !important;
-	}
+	font-family:
+		'Inter var',
+		-apple-system,
+		BlinkMacSystemFont,
+		'Helvetica Neue',
+		Helvetica,
+		sans-serif !important;
 }
