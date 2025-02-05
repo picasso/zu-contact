@@ -1,268 +1,278 @@
-(function($) {
-	// eslint-disable-next-line no-undef
-	var jsdata = (typeof zucontact_jsdata !== 'undefined' && zucontact_jsdata.data !== undefined) ? zucontact_jsdata.data : {};
+import $ from 'jquery'
 
-	var Cs_prefix = jsdata.prefix;
-	var Cs_processed = `${Cs_prefix}-processed`;
-	var Cs_errors = `${Cs_prefix}-general-errors`;
-	var Cs_error = '__error';
+const jsdata = window.zucontact_jsdata?.data ? window.zucontact_jsdata.data : {}
 
-	var Ds_container = `.${Cs_prefix}-container`;
-	var Ds_subheading = `.${Cs_prefix}-subheading`;
-	var Ds_loader = `.${Cs_prefix}-loader`;
-	var Ds_status = `.${Cs_prefix}-status`;
-	var Ds_control= `.${Cs_prefix}-control`
-	var Ds_submit = `#${Cs_prefix}-submit`;
-	var Ds_validation = '.__validation';
-	var Ds_nonce = `#${Cs_prefix}-nonce`;
+const Cs_prefix = jsdata.prefix
+const Cs_processed = `${Cs_prefix}-processed`
+const Cs_errors = `${Cs_prefix}-general-errors`
+const Cs_error = '__error'
 
-	var Fn_verified = `${Cs_prefix}_verified`;
-	var Fn_expired = `${Cs_prefix}_expired`;
-	var Fn_network = `${Cs_prefix}_network`;
+const Ds_container = `.${Cs_prefix}-container`
+const Ds_subheading = `.${Cs_prefix}-subheading`
+const Ds_loader = `.${Cs_prefix}-loader`
+const Ds_status = `.${Cs_prefix}-status`
+const Ds_control = `.${Cs_prefix}-control`
+const Ds_submit = `#${Cs_prefix}-submit`
+const Ds_validation = '.__validation'
+const Ds_nonce = `#${Cs_prefix}-nonce`
 
-	var MessageSplitWidth = 960;
-	// set 0 for production
-	var debugDelay = 0;
+const Fn_verified = `${Cs_prefix}_verified`
+const Fn_expired = `${Cs_prefix}_expired`
+const Fn_network = `${Cs_prefix}_network`
 
-	$(document).ready( function() {
+const MessageSplitWidth = 960
+// set 0 for production
+const debugDelay = 0
 
-		// Cache selectors
-		var $body = $('body'),
-		$container = $(Ds_container),
-		$loader = $(Ds_loader),
-		$subheading = $container.find(Ds_subheading),
-		$status = $container.find(Ds_status),
-		$form = $container.find('form'),
-		$button = $form.find(Ds_submit);
+$(function () {
+	// cache selectors
+	const $body = $('body')
+	const $container = $(Ds_container)
+	const $loader = $(Ds_loader)
+	const $subheading = $container.find(Ds_subheading)
+	const $status = $container.find(Ds_status)
+	const $form = $container.find('form')
+	const $button = $form.find(Ds_submit)
 
-		var errorMessages = {
-			generic: jsdata.error,
-			invalid: '',
-			expired: '',
-			network: '',
-		};
+	const errorMessages = {
+		generic: jsdata.error,
+		invalid: '',
+		expired: '',
+		network: '',
+	}
 
-		var AdminBarHeight = $('#wpadminbar').height() || 0;
+	const AdminBarHeight = $('#wpadminbar').height() || 0
 
-		if($container.length) {
-			// add classes which could be used in others elements
-			initAndInjectInlineStyle();
-			// init reCAPTCHA callbacks if needed
-			initReCaptcha();
-		} else {
-			// something wrong but we do not want to break JS
-			return;
-		}
+	function initAndInjectInlineStyle() {
+		const offset = $container.parent().offset().top
+		const container_margin = Math.floor($container.offset().top - offset)
+		const status_margin = Math.floor($status.offset().top - offset)
+		const form_margin = Math.floor($form.offset().top - offset)
 
-		function initAndInjectInlineStyle() {
-			var offset = $container.parent().offset().top;
-			var container_margin = Math.floor($container.offset().top - offset);
-			var status_margin = Math.floor($status.offset().top - offset);
-			var form_margin = Math.floor($form.offset().top - offset);
-
-			$(`<style type="text/css">
+		$(`<style type="text/css">
 				.${Cs_prefix}-container-margin{margin-top:${container_margin}px !important;}
 				.${Cs_prefix}-subheading-margin{margin-top:${status_margin}px !important;}
 				.${Cs_prefix}-form-margin{margin-top:${form_margin}px !important;}
-			</style>`)
-				.appendTo('body');
+			</style>`).appendTo('body')
 
-			$status.removeAttr('style');
-			// center the heading in the middle of the status bar
-			if($subheading.length) {
-				var top_center = ($status.outerHeight() - $subheading.outerHeight())/2;
-				$subheading.css({top: status_margin - container_margin + top_center});
-			}
-
-			// set nonce value - it may be absent if it's Ajax form
-			$container.find(Ds_nonce).val(jsdata.nonce);
+		$status.removeAttr('style')
+		// center the heading in the middle of the status bar
+		if ($subheading.length) {
+			const top_center = ($status.outerHeight() - $subheading.outerHeight()) / 2
+			$subheading.css({ top: status_margin - container_margin + top_center })
 		}
 
-		function removePrevErrors() {
-			$form.find(`.${Cs_prefix}-control.${Cs_error}`)
-				.removeClass(Cs_error)
-				.find(Ds_validation)
-				.html('');
+		// set nonce value - it may be absent if it's Ajax form
+		$container.find(Ds_nonce).val(jsdata.nonce)
+	}
+
+	function initReCaptcha() {
+		const $recaptcha = $('.g-recaptcha')
+		if ($recaptcha.length) {
+			// eslint-disable-next-line no-use-before-define
+			window[Fn_verified] = reVerified
+			// eslint-disable-next-line no-use-before-define
+			window[Fn_expired] = reExpired
+			// eslint-disable-next-line no-use-before-define
+			window[Fn_network] = reNetwork
+			$recaptcha.attr({
+				'data-callback': Fn_verified,
+				'data-expired-callback': Fn_expired,
+				'data-error-callback': Fn_network,
+			})
+			errorMessages.invalid = jsdata.recaptcha.invalid
+			errorMessages.expired = jsdata.recaptcha.expired
+			errorMessages.network = jsdata.recaptcha.network
 		}
+	}
 
-		function processMessage(errors, message) {
+	if ($container.length) {
+		// add classes which could be used in others elements
+		initAndInjectInlineStyle()
+		// init reCAPTCHA callbacks if needed
+		initReCaptcha()
+	} else {
+		// something wrong but we do not want to break JS
+		return
+	}
 
-			var msgLimit = 80;
-			var $message = $status.find('.message');
-			if(message === undefined) message = errorMessages.generic
+	function removePrevErrors() {
+		$form
+			.find(`.${Cs_prefix}-control.${Cs_error}`)
+			.removeClass(Cs_error)
+			.find(Ds_validation)
+			.html('')
+	}
 
-			// maybe we have general AJAX, server or reCAPTCHA errors
-			var errMessage = errors.ajax || errors.recaptcha || null;
-			if(errMessage && errMessage.length > msgLimit) errMessage = `${errMessage.substring(0, msgLimit)}...`;
-			errMessage = errMessage ? `<span>${errMessage}</span>` : null;
+	function processMessage(errors, message) {
+		const msgLimit = 80
+		const $message = $status.find('.message')
+		if (message === undefined) message = errorMessages.generic
 
-			if(errMessage) message = message.replace(/<b>[^<]+/g, `<b>${errMessage}`);
-			if($status.outerWidth() < MessageSplitWidth) message = message.replace(/\./, '.<br/>');
-			$message.html(message);
-
-			if(errors.recaptcha && errors.recaptcha.length) {
-				markReCaptcha(true);
-				resetReCaptcha();
-			}
+		// maybe we have general AJAX, server or reCAPTCHA errors
+		let errMessage = errors.ajax || errors.recaptcha || null
+		if (errMessage && errMessage.length > msgLimit) {
+			errMessage = `${errMessage.substring(0, msgLimit)}...`
 		}
+		errMessage = errMessage ? `<span>${errMessage}</span>` : null
 
-		function switchHeading(isHeading, isError, isSuccess) {
-			$subheading[isHeading ? 'addClass': 'removeClass']('before_posting');
-			$container[isHeading ? 'removeClass': 'addClass'](Cs_processed);
-			$container[isError ? 'addClass': 'removeClass'](Cs_errors);
-			$status[isError ? 'addClass': 'removeClass']('was-error')[isSuccess ? 'addClass': 'removeClass']('sent');
+		if (errMessage) message = message.replace(/<b>[^<]+/g, `<b>${errMessage}`)
+		if ($status.outerWidth() < MessageSplitWidth) message = message.replace(/\./, '.<br/>')
+		$message.html(message)
+
+		if (errors.recaptcha && errors.recaptcha.length) {
+			// eslint-disable-next-line no-use-before-define
+			markReCaptcha(true)
+			// eslint-disable-next-line no-use-before-define
+			resetReCaptcha()
 		}
+	}
 
-		function processPostData(data) {
+	function switchHeading(isHeading, isError, isSuccess) {
+		$subheading[isHeading ? 'addClass' : 'removeClass']('before_posting')
+		$container[isHeading ? 'removeClass' : 'addClass'](Cs_processed)
+		$container[isError ? 'addClass' : 'removeClass'](Cs_errors)
+		$status[isError ? 'addClass' : 'removeClass']('was-error')[
+			isSuccess ? 'addClass' : 'removeClass'
+		]('sent')
+	}
 
-			var errors = data.errors || {};
-			processMessage(errors, data.message);
-			switchHeading(false, !data.is_valid, data.is_valid === true);
-			removePrevErrors();
-
-			if(data.is_valid !== true) {
-				$.each(errors, function(name, value) {
-					var $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`);
-					if($validated.length) {
-						$validated.html(value);
-						$validated.closest(Ds_control).addClass(Cs_error);
-					}
-				});
-			}
-
-			// we need to delay the form animation until the errors animation completes
-			setTimeout(function() { ajaxLoading(false); }, 300);
+	function ajaxLoading(initiated) {
+		if (initiated) {
+			$button.attr('disabled', 'disabled')
+			// put loader to center
+			const topCss = ($status.outerHeight() - $loader.outerHeight()) / 2
+			const leftCss = ($status.outerWidth() - $loader.outerWidth()) / 2
+			$loader.css({ top: topCss, left: leftCss })
+		} else {
+			$button.removeAttr('disabled')
 		}
+		$body.toggleClass('ajaxed', initiated)
+	}
 
-		function maybeScrollTop() {
-			var fixedHeaderHeight = $('.site-header.fixed').height() || 0;
-			var docViewTop = $(window).scrollTop() + AdminBarHeight + fixedHeaderHeight,
-				docViewBottom = docViewTop + $(window).height() - AdminBarHeight - fixedHeaderHeight,
-				formTop = $container.offset().top,
-				formBottom = formTop + $container.height();
+	function processPostData(data) {
+		const errors = data.errors || {}
+		processMessage(errors, data.message)
+		switchHeading(false, !data.is_valid, data.is_valid === true)
+		removePrevErrors()
 
-			if(formBottom > docViewBottom || formTop < docViewTop) {
-				var shift = docViewTop - (docViewTop - formTop) - (AdminBarHeight * 2) - fixedHeaderHeight;
-				$('html,body').animate({
-					scrollTop: shift > 0 ? shift : 0
-				}, 'slow');
-			}
-		}
-
-		function ajaxLoading(initiated) {
-			if(initiated) {
-				$button.attr('disabled', 'disabled');
-				// put loader to center
-				var topCss = ($status.outerHeight() - $loader.outerHeight())/2;
-				var leftCss = ($status.outerWidth() - $loader.outerWidth())/2;
-				$loader.css({ top: topCss, left: leftCss });
-			} else {
-				$button.removeAttr('disabled');
-			}
-			$body.toggleClass('ajaxed', initiated);
-		}
-
-		function ajaxCall() {
-			maybeScrollTop();
-
-			$.ajax({
-				type: 'post',
-				dataType: 'json',
-				cache: false,
-				url: jsdata.ajaxurl,
-				data: `${$form.serialize()}&action=${jsdata.action}`,
-
-				success: function(data) { processPostData(data.data); },
-				error: function(jqXHR, textStatus, errorThrown) {
-
-					var smtp = jqXHR.responseText.match(/SMTP Error:[^<]+/ig) || [];
-					var data = { ajax: smtp[0] ? smtp[0] : `${jqXHR.status} : ${errorThrown}.` };
-					processPostData({
-						is_valid: false,
-						errors: data,
-					});
-					if(smtp.length === 0 && window.console && window.console.log) {
-						window.console.log({
-							textStatus: textStatus,
-							errorThrown: errorThrown,
-							jqXHR: jqXHR,
-						});
-					}
+		if (data.is_valid !== true) {
+			$.each(errors, function (name, value) {
+				const $validated = $form.find(`span[for="${Cs_prefix}-${name}"]`)
+				if ($validated.length) {
+					$validated.html(value)
+					$validated.closest(Ds_control).addClass(Cs_error)
 				}
-			}); // end of $.ajax
+			})
 		}
 
-		$form.on('submit', function(e) {
-			e.preventDefault();
-			if(needsReCaptcha()) return false;
-			ajaxLoading(true);
-			setTimeout(ajaxCall, debugDelay);
-		});
+		// we need to delay the form animation until the errors animation completes
+		setTimeout(function () {
+			ajaxLoading(false)
+		}, 300)
+	}
 
-		// Google reCAPTCHA V2 helpers ----------------------------------------]
+	function maybeScrollTop() {
+		const fixedHeaderHeight = $('.site-header.fixed').height() || 0
+		const docViewTop = $(window).scrollTop() + AdminBarHeight + fixedHeaderHeight,
+			docViewBottom = docViewTop + $(window).height() - AdminBarHeight - fixedHeaderHeight,
+			formTop = $container.offset().top,
+			formBottom = formTop + $container.height()
 
-		function reVerified() {
-			switchHeading(true);
-			markReCaptcha(false);
-			removePrevErrors();
+		if (formBottom > docViewBottom || formTop < docViewTop) {
+			const shift =
+				docViewTop - (docViewTop - formTop) - AdminBarHeight * 2 - fixedHeaderHeight
+			$('html,body').animate(
+				{
+					scrollTop: shift > 0 ? shift : 0,
+				},
+				'slow',
+			)
 		}
+	}
 
-		function reExpired() {
-			maybeScrollTop();
-			processMessage({ recaptcha: errorMessages.expired });
-			switchHeading(false, true);
-			markReCaptcha(true);
-		}
+	function ajaxCall() {
+		maybeScrollTop()
 
-		function reNetwork() {
-			maybeScrollTop();
-			processMessage({ recaptcha: errorMessages.network });
-			switchHeading(false, true);
-			markReCaptcha(true);
-		}
+		$.ajax({
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			url: jsdata.ajaxurl,
+			data: `${$form.serialize()}&action=${jsdata.action}`,
 
-		function markReCaptcha(isError) {
-			$('.g-recaptcha')[isError ? 'addClass': 'removeClass'](Cs_error);
-		}
+			success(data) {
+				processPostData(data.data)
+			},
+			error(jqXHR, textStatus, errorThrown) {
+				const smtp = jqXHR.responseText.match(/SMTP Error:[^<]+/gi) || []
+				const data = { ajax: smtp[0] ? smtp[0] : `${jqXHR.status} : ${errorThrown}.` }
+				processPostData({
+					is_valid: false,
+					errors: data,
+				})
+				if (smtp.length === 0 && window.console && window.console.log) {
+					window.console.log({
+						textStatus,
+						errorThrown,
+						jqXHR,
+					})
+				}
+			},
+		}) // end of $.ajax
+	}
 
-		function initReCaptcha() {
-			var $recaptcha = $('.g-recaptcha');
-			if($recaptcha.length) {
-				window[Fn_verified] = reVerified;
-				window[Fn_expired] = reExpired;
-				window[Fn_network] = reNetwork;
-				$recaptcha.attr({
-					'data-callback': Fn_verified,
-					'data-expired-callback': Fn_expired,
-					'data-error-callback': Fn_network,
-				});
-				errorMessages.invalid = jsdata.recaptcha.invalid;
-				errorMessages.expired = jsdata.recaptcha.expired;
-				errorMessages.network = jsdata.recaptcha.network;
-			}
-		}
+	// Google reCAPTCHA V2 helpers ----------------------------------------------------------------]
 
-		function resetReCaptcha() {
+	function markReCaptcha(isError) {
+		$('.g-recaptcha')[isError ? 'addClass' : 'removeClass'](Cs_error)
+	}
+
+	function reVerified() {
+		switchHeading(true)
+		markReCaptcha(false)
+		removePrevErrors()
+	}
+
+	function reExpired() {
+		maybeScrollTop()
+		processMessage({ recaptcha: errorMessages.expired })
+		switchHeading(false, true)
+		markReCaptcha(true)
+	}
+
+	function reNetwork() {
+		maybeScrollTop()
+		processMessage({ recaptcha: errorMessages.network })
+		switchHeading(false, true)
+		markReCaptcha(true)
+	}
+
+	function resetReCaptcha() {
+		// eslint-disable-next-line no-undef
+		if (typeof grecaptcha !== 'undefined') grecaptcha.reset()
+	}
+
+	function needsReCaptcha() {
+		// maybe we should check recaptcha first
+		if (typeof grecaptcha !== 'undefined' && $('.g-recaptcha').length) {
 			// eslint-disable-next-line no-undef
-			if(typeof grecaptcha !== 'undefined') grecaptcha.reset();
-		}
-
-		function needsReCaptcha() {
-			// maybe we should check recaptcha first
-			if(typeof grecaptcha !== 'undefined' && $('.g-recaptcha').length) {
-				// eslint-disable-next-line no-undef
-				var response = grecaptcha.getResponse();
-				if(response.length === 0) {
-					maybeScrollTop();
-					processMessage({ recaptcha: errorMessages.invalid });
-					switchHeading(false, true);
-					markReCaptcha(true);
-					return true;
-				}
+			const response = grecaptcha.getResponse()
+			if (response.length === 0) {
+				maybeScrollTop()
+				processMessage({ recaptcha: errorMessages.invalid })
+				switchHeading(false, true)
+				markReCaptcha(true)
+				return true
 			}
-			return false;
 		}
+		return false
+	}
 
-	}); // end of $(document).ready
-
-})(jQuery);
+	$form.on('submit', function (e) {
+		e.preventDefault()
+		if (needsReCaptcha()) return false
+		ajaxLoading(true)
+		setTimeout(ajaxCall, debugDelay)
+	})
+}) // end of $(document).ready
