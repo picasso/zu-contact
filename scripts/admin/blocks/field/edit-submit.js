@@ -69,6 +69,7 @@ const ZuSubmitEdit = ({
 					href={permalink}
 					target="zu-form-view"
 					rel="external noreferrer noopener"
+					__next40pxDefaultSize
 				>
 					{permalinkLabel}
 				</Button>

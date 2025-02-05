@@ -69,6 +69,7 @@ const ZucontactRecaptcha = ({ data, options, updateOptions }) => {
 					label={data.resetAll}
 					icon="image-rotate"
 					onClick={() => updateOptions({ recaptcha: null })}
+					__next40pxDefaultSize
 				>
 					{data.resetAll}
 				</Button>

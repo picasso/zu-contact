@@ -128,7 +128,11 @@ const PluginOptionsEdit = () => {
 					onChange={setSvgName}
 					__nextHasNoMarginBottom
 				/>
-				<Button variant="secondary" onClick={() => setCurrentSvg(svgName)}>
+				<Button
+					variant="secondary"
+					onClick={() => setCurrentSvg(svgName)}
+					__next40pxDefaultSize
+				>
 					{'Update SVG'}
 				</Button>
 			</PanelBody>

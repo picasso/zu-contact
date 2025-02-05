@@ -88,6 +88,7 @@ const ZucontactMailer = ({ data, options, updateOptions }) => {
 					label={data.resetAll}
 					icon="image-rotate"
 					onClick={() => updateOptions({ mailer: null })}
+					__next40pxDefaultSize
 				>
 					{data.resetAll}
 				</Button>
