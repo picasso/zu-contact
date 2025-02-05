@@ -22,8 +22,10 @@
 		"ajax"
 	],
 	"scripts": {
-		"dev": "wp-scripts start --config wp-dev.config.cjs",
-		"build": "wp-scripts build --config wp-scripts.config.cjs",
+		"dev:admin": "wp-scripts start --config wp-dev.config.cjs",
+		"build:admin": "wp-scripts build --config wp-admin.config.cjs",
+		"dev:frontend": "wp-scripts start --config wp-frontend.config.cjs",
+		"build:frontend": "wp-scripts build --config wp-frontend.config.cjs",
 		"---------": "",
 		"lint:eslint": "eslint scripts",
 		"lint:fix": "npm run lint:eslint -- --fix",
