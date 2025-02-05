@@ -1,198 +1,198 @@
-
-// Not a very accurate copy of Google's CSS styles
-
+// NB: not a very accurate copy of Google's CSS styles
 .rc-anchor {
-    border-radius:3px;
-    box-shadow:0 0 4px 1px rgba(0,0,0,0.08);
-    position: relative;
-    box-sizing: content-box;
+	border-radius: 3px;
+	box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+	position: relative;
+	box-sizing: content-box;
 }
 
 .rc-anchor-normal {
-    height:74px;
-    width:300px;
+	height: 74px;
+	width: 300px;
 }
 
 .rc-anchor-compact {
-    height:136px;
-    width:156px;
+	height: 136px;
+	width: 156px;
 }
 
 .rc-anchor-dark {
-    background:#222;
-    color:#fff;
-    border:1px solid #525252;
+	background: #222;
+	color: #fff;
+	border: 1px solid #525252;
 }
 
 .rc-anchor-light {
-    background:#f9f9f9;
-    color:#000;
-    border:1px solid #d3d3d3;
+	background: #f9f9f9;
+	color: #000;
+	border: 1px solid #d3d3d3;
 }
 
 .rc-inline-block {
-    display:inline-block;
-    height:100%;
+	display: inline-block;
+	height: 100%;
 }
 
 .rc-anchor-center-container {
-    display:table;
-    height:100%;
+	display: table;
+	height: 100%;
 }
 
 .rc-anchor-center-item {
-    display:table-cell;
-    vertical-align:middle;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .rc-anchor-content {
-    display:inline-block;
-    position:relative;
+	display: inline-block;
+	position: relative;
 
-    .rc-anchor-normal & {
-        height:74px;
-        width:206px;
-    }
-    .rc-anchor-compact & {
-        height:85px;
-    }
+	.rc-anchor-normal & {
+		height: 74px;
+		width: 206px;
+	}
+	.rc-anchor-compact & {
+		height: 85px;
+	}
 }
 
 .rc-anchor-checkbox-label {
-    .rc-inline-block .rc-anchor-center-container & {
-        font-family:Roboto,helvetica,arial,sans-serif !important;
-        font-size:14px !important;
-        font-weight:400 !important;
-        line-height:17px !important;
-        opacity: 1 !important;
+	.rc-inline-block .rc-anchor-center-container & {
+		font-family: Roboto, helvetica, arial, sans-serif !important;
+		font-size: 14px !important;
+		font-weight: 400 !important;
+		line-height: 17px !important;
+		opacity: 1 !important;
 
-        .rc-anchor-normal & {
-            width:152px;
-        }
-        .rc-anchor-compact & {
-            width:95px;
-        }
-    }
+		.rc-anchor-normal & {
+			width: 152px;
+		}
+		.rc-anchor-compact & {
+			width: 95px;
+		}
+	}
 }
 
 .recaptcha-checkbox {
-    border:none;
-    font-size:1px;
-    height:28px;
-    margin:0 12px 2px 12px;
-    width:28px;
-    overflow:visible;
-    outline:0;
-    vertical-align:text-bottom;
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
+	border: none;
+	font-size: 1px;
+	height: 28px;
+	margin: 0 12px 2px 12px;
+	width: 28px;
+	overflow: visible;
+	outline: 0;
+	vertical-align: text-bottom;
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
 }
 
 .recaptcha-checkbox-border {
-    border-radius:2px;
-    background-color:#fff;
-    border:2px solid #c1c1c1;
-    font-size:1px;
-    height:24px;
-    position:absolute;
-    width:24px;
-    z-index:1;
+	border-radius: 2px;
+	background-color: #fff;
+	border: 2px solid #c1c1c1;
+	font-size: 1px;
+	height: 24px;
+	position: absolute;
+	width: 24px;
+	z-index: 1;
 }
 
 .rc-anchor-normal-footer {
-    display:inline-block;
-    height:74px;
-    vertical-align:top;
-    width:70px;
+	display: inline-block;
+	height: 74px;
+	vertical-align: top;
+	width: 70px;
 }
 
 .rc-anchor-compact-footer {
-    margin: -16px 12px 0;
-    text-align:center;
-    width:136px;
-    font-size: 0;
+	margin: -16px 12px 0;
+	text-align: center;
+	width: 136px;
+	font-size: 0;
 }
 
 .rc-anchor-logo-img {
-    background:url('https://www.gstatic.com/recaptcha/api2/logo_48.png');
-    background-repeat:no-repeat;
+	background: url('https://www.gstatic.com/recaptcha/api2/logo_48.png');
+	background-repeat: no-repeat;
 }
 
 .rc-anchor-logo-text {
-    cursor:default;
-    font-family:Roboto,helvetica,arial,sans-serif;
-    font-size:10px;
-    font-weight:400;
-    line-height:10px;
-    margin-top:5px;
-    text-align:center;
+	cursor: default;
+	font-family: Roboto, helvetica, arial, sans-serif;
+	font-size: 10px;
+	font-weight: 400;
+	line-height: 10px;
+	margin-top: 5px;
+	text-align: center;
 }
 
-.rc-anchor-logo-text, div a:link, div a:visited {
-    .rc-anchor-light & {
-        color:#555;
-    }
-    .rc-anchor-dark & {
-        color:#f5f5f5;
-    }
+.rc-anchor-logo-text,
+div a:link,
+div a:visited {
+	.rc-anchor-light & {
+		color: #555;
+	}
+	.rc-anchor-dark & {
+		color: #f5f5f5;
+	}
 }
 
 .rc-anchor-logo-portrait {
-    margin:10px 0 0 26px;
-    width:58px;
-    user-select:none;
+	margin: 10px 0 0 26px;
+	width: 58px;
+	user-select: none;
 }
 .rc-anchor-logo-img-portrait {
-    background-size:32px;
-    height:32px;
-    margin:0 13px 0 13px;
-    width:32px;
+	background-size: 32px;
+	height: 32px;
+	margin: 0 13px 0 13px;
+	width: 32px;
 }
 .rc-anchor-logo-landscape {
-    user-select:none;
+	user-select: none;
 }
 .rc-anchor-logo-img-landscape {
-    background-size:24px;
-    display:inline-block;
-    height:24px;
-    width:24px;
+	background-size: 24px;
+	display: inline-block;
+	height: 24px;
+	width: 24px;
 }
 .rc-anchor-logo-landscape-text-holder {
-    display:inline-block;
-    height:24px;
-    margin:0 2px 0 2px;
-    width:54px;
-    .rc-anchor-logo-text {
-        padding-left: 5px;
-    }
+	display: inline-block;
+	height: 24px;
+	margin: 0 2px 0 2px;
+	width: 54px;
+	.rc-anchor-logo-text {
+		padding-left: 5px;
+	}
 }
 .rc-anchor-pt {
-    font-family:Roboto,helvetica,arial,sans-serif;
-    font-size:8px;
-    font-weight:400;
+	font-family: Roboto, helvetica, arial, sans-serif;
+	font-size: 8px;
+	font-weight: 400;
 
-    a {
-        display:inline;
-        padding-left:1px;
-        padding-right:1px;
-        padding-top:2px;
-        padding-bottom:2px;
-        text-decoration:none;
-        &:hover {
-            text-decoration:underline;
-        }
-    }
-    .rc-anchor-normal & {
-        margin:2px 11px 0 0;
-        padding-right:0;
-        position:absolute;
-        right:0;
-        text-align:right;
-        width:276px;
-    }
-    .rc-anchor-compact & {
-        margin:0 0 2px 0;
-        width:132px;
-    }
+	a {
+		display: inline;
+		padding-left: 1px;
+		padding-right: 1px;
+		padding-top: 2px;
+		padding-bottom: 2px;
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+	.rc-anchor-normal & {
+		margin: 2px 11px 0 0;
+		padding-right: 0;
+		position: absolute;
+		right: 0;
+		text-align: right;
+		width: 276px;
+	}
+	.rc-anchor-compact & {
+		margin: 0 0 2px 0;
+		width: 132px;
+	}
 }

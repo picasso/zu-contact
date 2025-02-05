@@ -1,43 +1,49 @@
-@import "vars";
+@use 'sass:color';
+@use 'vars';
 
-// Zu Contact Form & controls -------------------------------------------------]
+// Zu Contact Form & controls ---------------------------------------------------------------------]
 
-.#{$zuc-class-prefix}-container {
+.#{vars.$zuc-class-prefix}-container {
+	position: relative;
 
-    position: relative;
-
-	::placeholder { @include placeholder; }
-	input, textarea {
-		&:focus::placeholder { opacity: 0; }
+	::placeholder {
+		@include vars.placeholder;
+	}
+	input,
+	textarea {
+		&:focus::placeholder {
+			opacity: 0;
+		}
 	}
 	.__edit-placeholder {
 		@extend %sans_font;
-		font-size: $zuc-input-font-size;
+		font-size: vars.$zuc-input-font-size;
 		line-height: 1;
-		padding: $zuc-input-padding;
-		@include placeholder;
+		padding: vars.$zuc-input-padding;
+		@include vars.placeholder;
 	}
 
-	.#{$zuc-class-prefix}-loader {
+	.#{vars.$zuc-class-prefix}-loader {
 		position: absolute;
 		left: 0;
 		top: 0;
-		transition: opacity $zuc-transition-time $zuc-transition-function;
+		transition: opacity vars.$zuc-transition-time vars.$zuc-transition-function;
 		opacity: 0;
 		.ajaxed & {
 			opacity: 1;
 		}
 		svg {
-			color: $zuc-loader-color;
-			width: $zuc-loader-size;
+			color: vars.$zuc-loader-color;
+			width: vars.$zuc-loader-size;
 			height: 100%;
-			path, rect {
-				fill: $zuc-loader-color;
+			path,
+			rect {
+				fill: vars.$zuc-loader-color;
 			}
 		}
 	}
 
-	.#{$zuc-class-prefix}-subheading {
+	.#{vars.$zuc-class-prefix}-subheading {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -46,8 +52,8 @@
 		padding-top: 0 !important;
 
 		transition-property: top, opacity;
-		transition-duration: $zuc-transition-time;
-		transition-timing-function: $zuc-transition-function;
+		transition-duration: vars.$zuc-transition-time;
+		transition-timing-function: vars.$zuc-transition-function;
 
 		// transition: opacity $zuc-transition-short-time $zuc-transition-function;
 
@@ -64,25 +70,28 @@
 		}
 		// 'subscribe' heading is too long for this theme
 		@at-root {
-    		.is-twenty-twenty:not(.block-editor-page) {
-				.#{$zuc-class-prefix}-container.subscribe .#{$zuc-class-prefix}-subheading {
+			.is-twenty-twenty:not(.block-editor-page) {
+				.#{vars.$zuc-class-prefix}-container.subscribe
+					.#{vars.$zuc-class-prefix}-subheading {
 					font-size: 36px;
 				}
 			}
-    	}
+		}
 	}
 
-	.#{$zuc-class-prefix}-control {
-		margin-top: $zuc-field-top-margin * 2;
+	.#{vars.$zuc-class-prefix}-control {
+		margin-top: vars.$zuc-field-top-margin * 2;
 		line-height: 1;
-		.#{$zuc-class-prefix}-input {
-			margin-top: $zuc-field-top-margin;
+		.#{vars.$zuc-class-prefix}-input {
+			margin-top: vars.$zuc-field-top-margin;
 			&.submit {
 				padding: 0;
 			}
-			input, select, textarea {
+			input,
+			select,
+			textarea {
 				@extend %sans_font;
-				font-size: $zuc-input-font-size;
+				font-size: vars.$zuc-input-font-size;
 				line-height: 1;
 			}
 			.__align-middle {
@@ -98,30 +107,30 @@
 		}
 	}
 
-	.#{$zuc-class-prefix}-status {
+	.#{vars.$zuc-class-prefix}-status {
 		visibility: visible !important;
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
-	    padding: 10px;
-	    border-radius: $zuc-input-border-radius + 1;
+		padding: 10px;
+		border-radius: vars.$zuc-input-border-radius + 1;
 		@extend %sans_font;
-		transition: opacity $zuc-transition-medium-time $zuc-transition-function;
+		transition: opacity vars.$zuc-transition-medium-time vars.$zuc-transition-function;
 		opacity: 0;
-		background-color: $status-background-color;
+		background-color: vars.$status-background-color;
 
 		.message {
-			min-height: $zuc-status-message-min-height;
+			min-height: vars.$zuc-status-message-min-height;
 		}
 		.is-zu & {
-			background-color: $zu-status-background-color;
+			background-color: vars.$zu-status-background-color;
 		}
 		.ajaxed & {
 			opacity: 0 !important;
 		}
 		&.sent {
 			opacity: 1;
-			color: $zuc-ok-color;
+			color: vars.$zuc-ok-color;
 			.icon-ok {
 				visibility: visible;
 			}
@@ -131,7 +140,7 @@
 		}
 		&.was-error {
 			opacity: 1;
-			color: $zuc-error-color;
+			color: vars.$zuc-error-color;
 			.icon-error {
 				visibility: visible;
 			}
@@ -141,22 +150,24 @@
 		}
 		span {
 			@extend %smaller;
-			&.icon-ok, &.icon-error {
+			&.icon-ok,
+			&.icon-error {
 				line-height: 0;
 				visibility: hidden;
 			}
 			span {
-				color: $zuc-warning-color;
+				color: vars.$zuc-warning-color;
 				padding-left: 1em;
 			}
-			br + span, br + b span {
+			br + span,
+			br + b span {
 				padding-left: 0;
 			}
 		}
 		svg {
 			width: 30px;
 			height: auto;
-			margin-right: $zuc-field-left-margin * 2;
+			margin-right: vars.$zuc-field-left-margin * 2;
 			fill: currentColor;
 		}
 		b {
@@ -164,24 +175,23 @@
 			font-weight: 600;
 		}
 	}
-	.#{$zuc-validation-class} {
+	.#{vars.$zuc-validation-class} {
 		display: block;
 		height: 0;
-	    font-weight: $zuc-input-text-font-weight;
-	    margin: $zuc-field-top-margin 0 ($zuc-field-top-margin * 2);
+		font-weight: vars.$zuc-input-text-font-weight;
+		margin: vars.$zuc-field-top-margin 0 (vars.$zuc-field-top-margin * 2);
 		@extend %sans_font;
 		@extend %small;
 		transition-property: height, opacity;
-		transition-duration: $zuc-transition-time;
-		transition-timing-function: $zuc-transition-function;
+		transition-duration: vars.$zuc-transition-time;
+		transition-timing-function: vars.$zuc-transition-function;
 		opacity: 1;
 		.ajaxed & {
 			opacity: 0 !important;
 		}
 	}
-	&.#{$zuc-class-prefix}-processed {
-
-		.#{$zuc-class-prefix}-subheading {
+	&.#{vars.$zuc-class-prefix}-processed {
+		.#{vars.$zuc-class-prefix}-subheading {
 			display: none !important;
 		}
 
@@ -189,41 +199,44 @@
 			label {
 				@extend %sans_font;
 				.required {
-			    	color: $zuc-ok-color;
+					color: vars.$zuc-ok-color;
 				}
 			}
-			.#{$zuc-validation-class} {
+			.#{vars.$zuc-validation-class} {
 				opacity: 0;
 			}
 		}
 	}
 
 	// we need a special class to simulate errors in edit mode
-	&.#{$zuc-class-prefix}-processed, &.__edit-mode {
+	&.#{vars.$zuc-class-prefix}-processed,
+	&.__edit-mode {
 		.__error {
 			label {
 				@extend %sans_font;
-			    color: $zuc-required-color;
+				color: vars.$zuc-required-color;
 				.required {
-			    	color: $zuc-error-color;
+					color: vars.$zuc-error-color;
 				}
 			}
-			input:not([type=radio]):not([type=checkbox]):not([type=submit]):not([type=button]):not([type=image]):not([type=file]),
-				textarea {
-					@extend %not_valid;
+			input:not([type='radio']):not([type='checkbox']):not([type='submit']):not(
+					[type='button']
+				):not([type='image']):not([type='file']),
+			textarea {
+				@extend %not_valid;
 			}
-			.#{$zuc-validation-class} {
-				color: $zuc-error-color;
+			.#{vars.$zuc-validation-class} {
+				color: vars.$zuc-error-color;
 				height: 20px;
 			}
 		}
 	}
 
 	.hrule {
-	    height: 1px;
-	    overflow: hidden;
-	    border-top: 2px solid rgba(white, 0.7);
-	    margin: ($zuc-field-top-margin * 4) 0;
+		height: 1px;
+		overflow: hidden;
+		border-top: 2px solid rgba(white, 0.7);
+		margin: (vars.$zuc-field-top-margin * 4) 0;
 	}
 	.g-recaptcha {
 		display: flex;
@@ -235,71 +248,74 @@
 	}
 
 	form {
-	    text-align: left;
-	    max-width: 100%;
-	    margin: 0 auto;
+		text-align: left;
+		max-width: 100%;
+		margin: 0 auto;
 	}
 
 	label {
-		color: $zuc-label-color;
-	    font-weight: $zuc-label-font-weight;
-		font-size: $zuc-label-font-size !important;
-	    letter-spacing: $zuc-letter-spacing;
+		color: vars.$zuc-label-color;
+		font-weight: vars.$zuc-label-font-weight;
+		font-size: vars.$zuc-label-font-size !important;
+		letter-spacing: vars.$zuc-letter-spacing;
 		line-height: 1;
 		@extend %sans_font;
 		.is-twenty-twenty & {
 			opacity: 0.7;
 		}
-    	.required {
-		    color: $zuc-required-color;
-		    margin-left: $zuc-field-left-margin;
+		.required {
+			color: vars.$zuc-required-color;
+			margin-left: vars.$zuc-field-left-margin;
 		}
 		&.small {
 			@extend %small;
-		    white-space: nowrap;
+			white-space: nowrap;
 		}
 	}
-	.checkbox, .radio {
+	.checkbox,
+	.radio {
 		input {
 			top: auto;
 		}
 		label {
 			// font-weight: $zuc-input-text-font-weight;
-		    padding-left: 0.5rem;
+			padding-left: 0.5rem;
 		}
 	}
 
-	input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not([type='image']):not([type='file']),
-		textarea {
-	    @extend %reset_input;
-	    border-radius: $zuc-input-border-radius;
-	    color: $zuc-input-text-color;
-	    font-weight: $zuc-input-text-font-weight;
-	    border: 1px solid $zuc-input-border-color;
-	    background-color: $zuc-input-color;
-	    padding: $zuc-input-padding;
+	input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not(
+			[type='image']
+		):not([type='file']),
+	textarea {
+		@extend %reset_input;
+		border-radius: vars.$zuc-input-border-radius;
+		color: vars.$zuc-input-text-color;
+		font-weight: vars.$zuc-input-text-font-weight;
+		border: 1px solid vars.$zuc-input-border-color;
+		background-color: vars.$zuc-input-color;
+		padding: vars.$zuc-input-padding;
 		.is-twenty-twenty & {
-			color: $twentytwenty-text-color;
-			border-color: $twentytwenty-border-color;
+			color: vars.$twentytwenty-text-color;
+			border-color: vars.$twentytwenty-border-color;
 		}
 		&:disabled {
 			@extend %disabled;
 		}
-	    &:focus {
-		    background-color: $zuc-input-focus-color;
-		    box-shadow: 0 0 $zuc-input-focus-color-size $zuc-input-focus-shadow-color;
-		    border: 1px solid $zuc-input-focus-border-color;
+		&:focus {
+			background-color: vars.$zuc-input-focus-color;
+			box-shadow: 0 0 vars.$zuc-input-focus-color-size vars.$zuc-input-focus-shadow-color;
+			border: 1px solid vars.$zuc-input-focus-border-color;
 			.is-zu & {
-				box-shadow: 0 0 $zu-input-focus-color-size $zu-input-focus-shadow-color;
-			    border: 1px solid $zu-input-focus-border-color;
+				box-shadow: 0 0 vars.$zu-input-focus-color-size vars.$zu-input-focus-shadow-color;
+				border: 1px solid vars.$zu-input-focus-border-color;
 			}
 		}
-
 	}
-	input[type=checkbox], input[type=radio] {
+	input[type='checkbox'],
+	input[type='radio'] {
 		@extend %reset_input;
-	    width: auto !important;
-	    display: inline-block;
+		width: auto !important;
+		display: inline-block;
 		&:disabled {
 			@extend %disabled;
 		}
@@ -307,56 +323,59 @@
 			margin-bottom: 0;
 		}
 	}
-	select, textarea {
-	    @extend %reset_input;
-	    line-height: 1.5;
+	select,
+	textarea {
+		@extend %reset_input;
+		line-height: 1.5;
 		letter-spacing: normal;
 		option {
-		    padding: 2px;
-		    display: block;
-		    &:disabled {
+			padding: 2px;
+			display: block;
+			&:disabled {
 				@extend %disabled;
 			}
 		}
 	}
 
-	input[type=submit], input[type=button], .__edit-submit {
+	input[type='submit'],
+	input[type='button'],
+	.__edit-submit {
 		@extend %small;
 		appearance: none;
-	    border: 1px solid transparent;
-	    background-color: $zuc-button-color;
-	    color: white;
-		text-shadow: $zuc-text-shadow-for-white;
-	    box-shadow: none; //1px 1px darken($zuc-button-color, 10%);
-	    cursor: pointer;
-	    text-transform: uppercase;
+		border: 1px solid transparent;
+		background-color: vars.$zuc-button-color;
+		color: white;
+		text-shadow: vars.$zuc-text-shadow-for-white;
+		box-shadow: none; //1px 1px darken($zuc-button-color, 10%);
+		cursor: pointer;
+		text-transform: uppercase;
 		text-decoration: none;
-	    letter-spacing: 1.2px;
-	    padding: 10px 20px;
-		min-width: $zuc-button-width;
+		letter-spacing: 1.2px;
+		padding: 10px 20px;
+		min-width: vars.$zuc-button-width;
 
-	    display: inline-block;
-	    font-weight: $zuc-button-font-weight;
-	    outline: none;
-	    position: relative;
-	    border-radius: $zuc-button-border-radius;
-		transition: all $zuc-transition-time $zuc-transition-function;
-	    transition-property: background-color, top, left, border-color;
+		display: inline-block;
+		font-weight: vars.$zuc-button-font-weight;
+		outline: none;
+		position: relative;
+		border-radius: vars.$zuc-button-border-radius;
+		transition: all vars.$zuc-transition-time vars.$zuc-transition-function;
+		transition-property: background-color, top, left, border-color;
 
-	    &:disabled {
-			background: rgba($zuc-button-color, 0.5);
+		&:disabled {
+			background: rgba(vars.$zuc-button-color, 0.5);
 			color: rgba(white, 0.5);
 		}
-	    &:after {
-		    content: '';
-		    position: absolute;
-		    z-index: -1;
-		    transition: all $zuc-transition-time;
+		&:after {
+			content: '';
+			position: absolute;
+			z-index: -1;
+			transition: all vars.$zuc-transition-time;
 		}
 		&:hover:not(:disabled) {
-		    box-shadow: none; //1px 1px darken($zuc-button-color, 20%);
-		    background-color: darken($zuc-button-color, 10%);
-		    border-color: rgba($zuc-button-focus-color, 0.3);
+			box-shadow: none; //1px 1px darken($zuc-button-color, 20%);
+			background-color: color.adjust(vars.$zuc-button-color, $lightness: -10%);
+			border-color: rgba(vars.$zuc-button-focus-color, 0.3);
 			text-decoration: none;
 			color: white;
 		}
@@ -367,9 +386,7 @@
 	}
 }
 
-
-// Media queries customizations -----------------------------------------------]
-
+// Media queries customizations -------------------------------------------------------------------]
 
 // media queries - portrait mode tablet or desktop styles
 
@@ -377,11 +394,11 @@
 //
 //     body .#{$zuc-class-prefix}-container
 // 				input:not([type='radio'])
-				// :not([type='checkbox'])
-				// :not([type='submit'])
-				// :not([type='button'])
-				// :not([type='image'])
-				// :not([type='file']) {
+// :not([type='checkbox'])
+// :not([type='submit'])
+// :not([type='button'])
+// :not([type='image'])
+// :not([type='file']) {
 //         height: 35px;
 //     }
 // }

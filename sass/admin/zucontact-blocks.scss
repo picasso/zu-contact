@@ -1,4 +1,5 @@
-@import "../vars";
+@use '../vars';
+@use 'recaptcha';
 
 $brand-color: #bc2a8d;
 $wp-admin-blue-color: #0075af;
@@ -18,24 +19,22 @@ $zuc-icon-frame-opacity: 0.3;
 $zuc-layout-icon-size: 24px * 3;
 $zuc-layout-icon-font-size: 16px;
 $zuc-field-type-icon-size: 24px * 2;
-$zuc-loader-size: 40px;
 
 %transition-opacity {
-    transition: opacity .3s ease-in-out;
+	transition: opacity 0.3s ease-in-out;
 }
 
-// Form -----------------------------------------------------------------------]
+// Form -------------------------------------------------------------------------------------------]
 
 .#{$zuc-form-class} {
-
 	.zu-loader {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		width: 100%;
 
-		min-height: $zuc-loader-size;
-		max-height: $zuc-loader-size;
+		min-height: vars.$zuc-loader-size;
+		max-height: vars.$zuc-loader-size;
 		overflow: hidden;
 	}
 
@@ -106,7 +105,8 @@ $zuc-loader-size: 40px;
 		min-height: 90px !important;
 		box-shadow: none !important;
 
-		div, iframe {
+		div,
+		iframe {
 			z-index: 1;
 		}
 
@@ -143,7 +143,8 @@ $zuc-loader-size: 40px;
 
 			.components-button {
 				.__wrapper {
-					svg, .__skip {
+					svg,
+					.__skip {
 						width: $zuc-layout-icon-size;
 						height: $zuc-layout-icon-size;
 					}
@@ -154,41 +155,45 @@ $zuc-loader-size: 40px;
 						text-transform: uppercase;
 						letter-spacing: 0.5px;
 						padding-top: $zuc-layout-icon-size - $zuc-layout-icon-font-size + 5px; // 5px - padding for __wrapper
- 					}
+					}
 				}
 			}
 		}
 	}
 }
 
-// Field ----------------------------------------------------------------------]
+// Field ------------------------------------------------------------------------------------------]
 
-.wp-block[data-type="zu/field"], .wp-block[data-type="zu/recaptcha"]  {
-    margin-top: 0;
+.wp-block[data-type='zu/field'],
+.wp-block[data-type='zu/recaptcha'] {
+	margin-top: 0;
 	margin-bottom: 0;
 
-    .#{$zuc-field-class}, .g-recaptcha {
-        outline-width: 0;
-        outline-color: transparent;
-        outline-offset: 5px;
-        // NOTE: outline transitions does not stable in Safari 
-    }
+	.#{$zuc-field-class},
+	.g-recaptcha {
+		outline-width: 0;
+		outline-color: transparent;
+		outline-offset: 5px;
+		// NOTE: outline transitions does not stable in Safari
+	}
 
-    &.is-selected {
-        .#{$zuc-field-class}, .g-recaptcha {
-            outline: 1px dashed rgba($brand-color, 0.3);
-        }
-    }
+	&.is-selected {
+		.#{$zuc-field-class},
+		.g-recaptcha {
+			outline: 1px dashed rgba($brand-color, 0.3);
+		}
+	}
 
-    &:focus, &:hover {
-        .#{$zuc-field-class}, .g-recaptcha {
-            outline-color: transparent !important;
-        }
-    }
+	&:focus,
+	&:hover {
+		.#{$zuc-field-class},
+		.g-recaptcha {
+			outline-color: transparent !important;
+		}
+	}
 }
 
 .#{$zuc-field-class}__settings {
-
 	.__field-type {
 		.components-button-group {
 			justify-content: flex-start;
@@ -220,28 +225,29 @@ $zuc-loader-size: 40px;
 	}
 }
 
-// prevent disabled controls in "block-preview" mode --------------------------]
+// prevent disabled controls in "block-preview" mode ----------------------------------------------]
 
 .block-editor-block-preview__content {
-    &.components-disabled {
+	&.components-disabled {
+		input:not([type='radio']):not([type='checkbox']):not([type='submit']):not(
+				[type='button']
+			):not([type='image']):not([type='file']),
+		textarea {
+			&:disabled {
+				color: vars.$zuc-input-text-color;
+				border-color: vars.$zuc-input-border-color;
+				background-color: vars.$zuc-input-color;
+			}
+		}
 
-        input:not([type='radio']):not([type='checkbox']):not([type='submit']):not([type='button']):not([type='image']):not([type='file']),
-            textarea {
-                &:disabled {
-                    color: $zuc-input-text-color;
-            	    border-color: $zuc-input-border-color;
-            	    background-color: $zuc-input-color;
-        		}
-        }
-
-        input[type=submit], input[type=button], .__edit-submit {
-            &:disabled {
-                border-color: transparent;
-                background-color: $zuc-button-color;
-                color: white;
-            }
-        }
-    }
+		input[type='submit'],
+		input[type='button'],
+		.__edit-submit {
+			&:disabled {
+				border-color: transparent;
+				background-color: vars.$zuc-button-color;
+				color: white;
+			}
+		}
+	}
 }
-
-@import "recaptcha";
