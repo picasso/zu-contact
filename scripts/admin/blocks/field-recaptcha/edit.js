@@ -1,47 +1,35 @@
-// WordPress dependencies
+// wordpress dependencies
+import { InspectorControls } from '@wordpress/block-editor'
+import { PanelBody, ToggleControl } from '@wordpress/components'
+import { __ } from '@wordpress/i18n'
 
-const { __ } = wp.i18n;
-const { PanelBody, ToggleControl } = wp.components;
-const { InspectorControls } = wp.blockEditor;
+// internal dependencies
+import ZuRecaptcha from '../components/recaptcha.js'
 
-// Internal dependencies
+const ZuRecaptchaEdit = ({ attributes, setAttributes }) => {
+	const { theme, size } = attributes
 
-import ZuRecaptcha from './../components/recaptcha.js';
-
-const ZuRecaptchaEdit = ({
-		attributes,
-		setAttributes,
-}) => {
-
-	const {
-		theme,
-		size,
-	} = attributes;
-
-	// Other helpers ----------------------------------------------------------]
+	// other helpers ------------------------------------------------------------------------------]
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __('Settings') }>
+				<PanelBody title={__('Settings')}>
 					<ToggleControl
-						label={ __('Use Dark Theme', 'zu-contact') }
-						checked={ theme === 'dark' }
-						onChange={ val => setAttributes({ theme: val ? 'dark' : 'light' }) }
+						label={__('Use Dark Theme', 'zu-contact')}
+						checked={theme === 'dark'}
+						onChange={(val) => setAttributes({ theme: val ? 'dark' : 'light' })}
 					/>
 					<ToggleControl
-						label={ __('Use Compact Widget Size', 'zu-contact') }
-						checked={ size === 'compact' }
-						onChange={ val => setAttributes({ size: val ? 'compact' : 'normal' }) }
+						label={__('Use Compact Widget Size', 'zu-contact')}
+						checked={size === 'compact'}
+						onChange={(val) => setAttributes({ size: val ? 'compact' : 'normal' })}
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<ZuRecaptcha
-				withStub
-				{ ...{ theme, size } }
-			/>
+			<ZuRecaptcha withStub {...{ theme, size }} />
 		</>
-	);
+	)
 }
 
-export default  ZuRecaptchaEdit;
+export default ZuRecaptchaEdit

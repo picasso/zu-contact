@@ -1,39 +1,34 @@
-// WordPress dependencies
+import { isNil } from 'lodash-es'
 
-const { isNil } = lodash;
-const { RichText } = wp.blockEditor;
-const { useCallback, forwardRef } = wp.element;
+// wordpress dependencies
+import { RichText } from '@wordpress/block-editor'
+import { forwardRef, useCallback } from '@wordpress/element'
 
-// Internal dependencies
+// internal dependencies
+import { mergeClasses } from '../utils.js'
 
-import { mergeClasses } from './../utils.js';
-
-const ZuPlainEdit = ({
-		className,
-		attrKey,
-		value,
-		placeholder,
-		setAttributes,
-}, ref) => {
-
-	const setText = useCallback(val => {
-		const doc = document.implementation.createHTMLDocument('');
-		doc.body.innerHTML = val;
-		setAttributes(isNil(attrKey) ? doc.body.innerText : { [attrKey]: doc.body.innerText });
-	}, [attrKey, setAttributes]);
+const ZuPlainEdit = ({ className, attrKey, value, placeholder, setAttributes }, ref) => {
+	const setText = useCallback(
+		(val) => {
+			const doc = document.implementation.createHTMLDocument('')
+			doc.body.innerHTML = val
+			setAttributes(isNil(attrKey) ? doc.body.innerText : { [attrKey]: doc.body.innerText })
+		},
+		[attrKey, setAttributes],
+	)
 
 	return (
 		<RichText
-			ref={ ref }
+			ref={ref}
 			tagName="span"
-			className={ mergeClasses('__edit', className) }
-			allowedFormats={ [] }
-			value={ value }
-			onChange={ setText }
-			placeholder={ placeholder }
+			className={mergeClasses('__edit', className)}
+			allowedFormats={[]}
+			value={value}
+			onChange={setText}
+			placeholder={placeholder}
 			__unstablePastePlainText
 		/>
-	);
-};
+	)
+}
 
-export default forwardRef(ZuPlainEdit);
+export default forwardRef(ZuPlainEdit)

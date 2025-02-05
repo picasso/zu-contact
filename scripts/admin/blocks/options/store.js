@@ -1,57 +1,43 @@
-// // WordPress dependencies
-
-const { keys } = lodash;
+import { keys } from 'lodash-es'
 
 // Zukit dependencies
+const { setupOptionsStore, setupCoreStore } = wp.zukit.data
 
-const { setupOptionsStore, setupCoreStore } = wp.zukit.data;
+// internal dependencies
+import { zucontact } from './../../data.js'
+import { pluginDefaults } from './../assets.js'
 
-// Internal dependencies
+// Setup and register Options Store ---------------------------------------------------------------]
 
-import { pluginDefaults } from './../assets.js';
-import { zucontact } from './../../data.js';
+const { router } = pluginDefaults
 
-// Setup and register Options Store -------------------------------------------]
+const { registerOptionsStore, useGetOption, useSetOption, useGetOptions, useUpdateOptions } =
+	setupOptionsStore(router)
 
-const { router } = pluginDefaults;
+registerOptionsStore()
 
-const {
-    registerOptionsStore,
-    useGetOption,
-    useSetOption,
-    useGetOptions,
-    useUpdateOptions,
-} = setupOptionsStore(router);
+const { useSvgFromFile, useCoreData } = setupCoreStore(router)
 
-registerOptionsStore();
+// Prepare data for Plugin Options section --------------------------------------------------------]
 
-const {
-    useSvgFromFile,
-    useCoreData,
-} = setupCoreStore(router);
-
-
-// Prepare data for Plugin Options section ------------------------------------]
-
-const { options: optionsData, recaptcha: recaptchaData } = zucontact;
-const pluginOptions = keys(optionsData);
+const { options: optionsData, recaptcha: recaptchaData } = zucontact
+const pluginOptions = keys(optionsData)
 // const recaptchaData = pick(recaptcha, ['theme', 'themeOptions']);
 const recaptchaTheme = {
-    key: 'recaptcha.theme',
-    label: recaptchaData.theme,
-    options: recaptchaData.themeOptions
-};
+	key: 'recaptcha.theme',
+	label: recaptchaData.theme,
+	options: recaptchaData.themeOptions,
+}
 
 export {
-    useSvgFromFile,
-    useCoreData,
-
-    useGetOption,
-    useGetOptions,
-    useSetOption,
-    useUpdateOptions,
-    pluginOptions,
-    optionsData,
-    recaptchaTheme,
-    router as pluginRouter,
- };
+	useSvgFromFile,
+	useCoreData,
+	useGetOption,
+	useGetOptions,
+	useSetOption,
+	useUpdateOptions,
+	pluginOptions,
+	optionsData,
+	recaptchaTheme,
+	router as pluginRouter,
+}

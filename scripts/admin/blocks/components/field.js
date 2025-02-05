@@ -1,15 +1,14 @@
-// WordPress dependencies
+// wordpress dependencies
+import { forwardRef } from '@wordpress/element'
 
-const { forwardRef } = wp.element;
+// internal dependencies
+import { mergeClasses, prefixIt } from '../utils.js'
 
-// Internal dependencies
+const fieldPrefix = 'components-zu-field'
+const inputClass = '__zu-control'
 
-import { mergeClasses, prefixIt } from './../utils.js';
-
-const fieldPrefix = 'components-zu-field';
-const inputClass = '__zu-control';
-
-const ZuField = ({
+const ZuField = (
+	{
 		labelEdit,
 		validationEdit,
 		submitEdit,
@@ -27,97 +26,105 @@ const ZuField = ({
 		label,
 
 		rows = 10,
-}, ref) => {
+	},
+	ref,
+) => {
+	const idWithPrefix = prefixIt(id)
+	const inputValue = (onChange ? temporaryValue : value) || (type === 'checkbox' ? false : '')
+	const placeholderValue = type === 'checkbox' || placeholderEdit ? null : placeholder
 
-	const idWithPrefix = prefixIt(id);
-	const inputValue = (onChange ? temporaryValue : value) || (type === 'checkbox' ? false : '');
-	const placeholderValue = type === 'checkbox' || placeholderEdit ? null : placeholder;
+	const control =
+		type === 'textarea' ? (
+			<>
+				<textarea
+					ref={ref}
+					className={inputClass}
+					id={idWithPrefix}
+					data-id={id}
+					data-label={label}
+					data-required={required || undefined}
+					name={prefixIt(id, '[]')}
+					rows={rows}
+					placeholder={placeholderValue}
+					onChange={onChange}
+					value={inputValue}
+				/>
+				{placeholderEdit}
+			</>
+		) : type === 'submit' ? (
+			submitEdit ? (
+				submitEdit
+			) : (
+				<input
+					className={mergeClasses('button', 'button-submit', inputClass)}
+					type={type}
+					id={idWithPrefix}
+					data-id={id}
+					data-label={label}
+					value={label || ''}
+				/>
+			)
+		) : (
+			<>
+				<input
+					ref={ref}
+					className={inputClass}
+					type={type}
+					id={idWithPrefix}
+					data-id={id}
+					data-label={label}
+					data-required={required || undefined}
+					name={prefixIt(id, '[]')}
+					value={type === 'checkbox' ? '1' : inputValue}
+					checked={type === 'checkbox' ? inputValue : null}
+					placeholder={placeholderValue}
+					onChange={onChange}
+				/>
+				{placeholderEdit}
+			</>
+		)
 
-	const control = type === 'textarea' ? (
-		<>
-			<textarea
-				ref={ ref }
-				className={ inputClass }
-				id={ idWithPrefix }
-
-				data-id={ id }
-				data-label={ label }
-				data-required={ required || undefined }
-
-				name={ prefixIt(id, '[]') }
-				rows={ rows }
-				placeholder={ placeholderValue }
-				onChange={ onChange }
-				value={ inputValue }
-			/>
-			{ placeholderEdit }
-		</>
-	) : (type === 'submit' ? (submitEdit ? submitEdit :
-		<input
-			className={ mergeClasses('button', 'button-submit', inputClass) }
-			type={ type }
-			id={ idWithPrefix }
-
-			data-id={ id }
-			data-label={ label }
-
-			value={ label || '' }
-		/>
-	) : (
-		<>
-			<input
-				ref={ ref }
-				className={ inputClass }
-				type={ type }
-				id={ idWithPrefix }
-
-				data-id={ id }
-				data-label={ label }
-				data-required={ required || undefined }
-
-				name={ prefixIt(id, '[]') }
-				value={ type === 'checkbox' ? "1" : inputValue }
-				checked={ type === 'checkbox' ? inputValue : null }
-				placeholder={ placeholderValue }
-				onChange={ onChange }
-			/>
-			{ placeholderEdit }
-		</>
-	));
-
-	const controlLabel = labelEdit ? labelEdit : type === 'submit' ? null : (
-		<label htmlFor={ idWithPrefix }>
-			{ label }
-			{ required ? <span className="required">*</span> : null }
+	const controlLabel = labelEdit ? (
+		labelEdit
+	) : type === 'submit' ? null : (
+		<label htmlFor={idWithPrefix}>
+			{label}
+			{required ? <span className="required">*</span> : null}
 		</label>
-	);
+	)
 
-	const controlValidation = validationEdit ? validationEdit : type === 'submit' ? null : (
-		<span htmlFor={ idWithPrefix } className="__validation"></span>
-	);
+	const controlValidation = validationEdit ? (
+		validationEdit
+	) : type === 'submit' ? null : (
+		<span htmlFor={idWithPrefix} className="__validation" />
+	)
 
 	return (
 		<>
-			<div className={ mergeClasses(
-				fieldPrefix,
-				prefixIt('control'), {
-					__submit: type === 'submit',
-					__success: true,
-					__error: validationEdit,
-				}, className)
-			}>
-				{ type === 'checkbox' ? null : controlLabel }
-				<div className={ mergeClasses(prefixIt('input'), type) }>
-					{ control }
-					{ type === 'checkbox' ? controlLabel : null }
-					{ controlValidation }
+			<div
+				className={mergeClasses(
+					fieldPrefix,
+					prefixIt('control'),
+					{
+						__submit: type === 'submit',
+						__success: true,
+						__error: validationEdit,
+					},
+					className,
+				)}
+			>
+				{type === 'checkbox' ? null : controlLabel}
+				<div className={mergeClasses(prefixIt('input'), type)}>
+					{control}
+					{type === 'checkbox' ? controlLabel : null}
+					{controlValidation}
 				</div>
 			</div>
 		</>
-	);
-};
+	)
+}
 
-const ForwardZuField = forwardRef(ZuField);
-ForwardZuField.fieldPrefix = fieldPrefix;
+const ForwardZuField = forwardRef(ZuField)
+ForwardZuField.fieldPrefix = fieldPrefix
 
-export default ForwardZuField;
+export default ForwardZuField

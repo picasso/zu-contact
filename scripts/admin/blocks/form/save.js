@@ -1,26 +1,17 @@
-// WordPress dependencies
+// wordpress dependencies
+import { InnerBlocks } from '@wordpress/block-editor'
 
-const { InnerBlocks } = wp.blockEditor;
-
-// Internal dependencies
-
-import ZuForm from './../components/form.js';
+// internal dependencies
+import ZuForm from '../components/form.js'
 
 const save = ({ className, attributes }) => {
-	const {
-		postId,
-		postLink,
-		name,
-		title,
-		noajax,
-		loaderHTML,
-	} = attributes;
+	const { postId, postLink, name, title, noajax, loaderHTML } = attributes
 
 	return (
-		<ZuForm { ...{ className, name, title, noajax, postId, postLink, loaderHTML } }>
+		<ZuForm {...{ className, name, title, noajax, postId, postLink, loaderHTML }}>
 			<InnerBlocks.Content />
 		</ZuForm>
-	);
-};
+	)
+}
 
-export default save;
+export default save

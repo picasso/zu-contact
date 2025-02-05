@@ -1,16 +1,9 @@
-// Internal dependencies
-
-import ZuRecaptcha from './../components/recaptcha.js';
+// internal dependencies
+import ZuRecaptcha from '../components/recaptcha.js'
 
 const save = ({ attributes }) => {
-	const {
-		theme,
-		size,
-	} = attributes;
+	const { theme, size } = attributes
+	return <ZuRecaptcha {...{ theme, size }} />
+}
 
-	return (
-		<ZuRecaptcha { ...{ theme, size } }/>
-	);
-};
-
-export default save;
+export default save

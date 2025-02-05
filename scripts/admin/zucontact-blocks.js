@@ -1,36 +1,27 @@
-// WordPress dependencies
+// wordpress dependencies
+import { registerBlockType } from '@wordpress/blocks'
 
-const { registerBlockType } = wp.blocks;
-
-// Internal dependencies
-
-import { registerCollection, registerCategory, brandAssets } from './blocks/utils.js';
+// internal dependencies
+import { brandAssets, registerCategory, registerCollection } from './blocks/utils.js'
 
 // register ZU blocks collection or category
-const supportsCollections = registerCollection();
-if(!supportsCollections) registerCategory();
+const supportsCollections = registerCollection()
+if (!supportsCollections) registerCategory()
 
-//  Register Blocks -----------------------------------------------------------]
+// register blocks --------------------------------------------------------------------------------]
 
-import * as form from './blocks/form/index.js';
-import * as field from './blocks/field/index.js';
-import * as recaptcha from './blocks/field-recaptcha/index.js';
+import * as field from './blocks/field/index.js'
+import * as recaptcha from './blocks/field-recaptcha/index.js'
+import * as form from './blocks/form/index.js'
 
 export function registerBlocks() {
-	[
-		form,
-		field,
-		recaptcha,
+	;[form, field, recaptcha].forEach((block) => {
+		if (!block) return
 
-	].forEach(block => {
-
-		if(!block) return;
-
-		const { name, settings } = block;
-		if(!supportsCollections) settings.category = brandAssets.slug;
-		registerBlockType(name, settings);
-
-	} );
+		const { name, settings } = block
+		if (!supportsCollections) settings.category = brandAssets.slug
+		registerBlockType(name, settings)
+	})
 }
 
-registerBlocks();
+registerBlocks()

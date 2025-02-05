@@ -1,3 +1,2 @@
-const transforms = {};
-
-export default transforms;
+const transforms = {}
+export default transforms

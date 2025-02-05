@@ -1,43 +1,44 @@
-// WordPress dependencies
+import { isNil, noop, reduce, trim } from 'lodash-es'
 
-const { isNil, trim, reduce, noop } = lodash;
-const { __ } = wp.i18n;
-const { compose } = wp.compose;
-const { createBlock } = wp.blocks;
-const { PanelBody, ToggleControl } = wp.components;
-const { InnerBlocks, InspectorControls, InspectorAdvancedControls } = wp.blockEditor;
-const { withSelect, withDispatch } = wp.data;
-const { useCallback, useEffect, useState, useRef } = wp.element;
+// wordpress dependencies
+import { InnerBlocks, InspectorAdvancedControls, InspectorControls } from '@wordpress/block-editor'
+import { createBlock } from '@wordpress/blocks'
+import { PanelBody, ToggleControl } from '@wordpress/components'
+import { compose } from '@wordpress/compose'
+import { withDispatch, withSelect } from '@wordpress/data'
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element'
+import { __ } from '@wordpress/i18n'
 
 // Zukit dependencies
+const { LoaderControl, Loader, AdvTextControl } = wp.zukit.components
+const { useLoaders } = wp.zukit.data
 
-const { LoaderControl, Loader, AdvTextControl } = wp.zukit.components;
-const { useLoaders } = wp.zukit.data;
-
-// Internal dependencies
-
-import { uniqueValue, prefixIt } from './../utils.js';
-import { allowedBlocks, layoutTemplates, recaptchaBlockName, recaptchaDefaults } from './assets.js';
-import { FormContext, TYPES, useUpdateForm, useOnFormRemove, getUsedNames } from './../data/form-context.js';
-
-import ZuForm from './../components/form.js';
-import ZuPlainEdit from './../components/plain-edit.js';
-// import PluginOptionsEdit from './../options/plugin.js';
-import FormLayout from './layout.js';
+// internal dependencies
+import ZuForm from '../components/form.js'
+import ZuPlainEdit from '../components/plain-edit.js'
+import {
+	FormContext,
+	getUsedNames,
+	TYPES,
+	useOnFormRemove,
+	useUpdateForm,
+} from '../data/form-context.js'
+import { prefixIt, uniqueValue } from '../utils.js'
+import { allowedBlocks, layoutTemplates, recaptchaBlockName, recaptchaDefaults } from './assets.js'
+// import PluginOptionsEdit from '../options/plugin.js';
+import FormLayout from './layout.js'
 
 const ZuFormEdit = ({
-		clientId,
-		className,
-		currentPostId,
-		editedPostSlug,
-		attributes,
-		setAttributes,
+	clientId,
+	className,
+	currentPostId,
+	editedPostSlug,
+	attributes,
+	setAttributes,
 
-		reClientId,
-		enableRe,
-
+	reClientId,
+	enableRe,
 }) => {
-
 	const {
 		name,
 		title,
@@ -45,9 +46,9 @@ const ZuFormEdit = ({
 		postLink,
 		loader,
 		// useRecaptcha,
-	} = attributes;
+	} = attributes
 
-	// Sync form changes with information stored on the server ----------------]
+	// Sync form changes with information stored on the server ------------------------------------]
 
 	// * * *
 	// need to update form store on events:
@@ -56,116 +57,121 @@ const ZuFormEdit = ({
 	// + purge: { name, 'PURGE_FORM' }
 	// + rename: { name, 'RENAME_FORM', value(=newName) }
 
-	const [ updateForm = noop, updateField ] = useUpdateForm(name);
-	const [ templateName, setTemplateName ] = useState('contact');
+	const [updateForm = noop, updateField] = useUpdateForm(name)
+	const [templateName, setTemplateName] = useState('contact')
 
-	useOnFormRemove(clientId, postId, name, updateForm);
+	useOnFormRemove(clientId, postId, name, updateForm)
 
-	const onChangeName = useCallback(value => {
-		setAttributes({ name: value });
-		updateForm(name, TYPES.RENAME_FORM, value);
-	}, [name, setAttributes, updateForm]);
-
+	const onChangeName = useCallback(
+		(value) => {
+			setAttributes({ name: value })
+			updateForm(name, TYPES.RENAME_FORM, value)
+		},
+		[name, setAttributes, updateForm],
+	)
 
 	useEffect(() => {
-		if(isNil(postId) || isNil(postLink)) {
-			const link = isNil(editedPostSlug) ? '' : `/${trim(editedPostSlug, '/')}/`;
-			setAttributes({ postId: currentPostId, postLink: link });
+		if (isNil(postId) || isNil(postLink)) {
+			const link = isNil(editedPostSlug) ? '' : `/${trim(editedPostSlug, '/')}/`
+			setAttributes({ postId: currentPostId, postLink: link })
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
-	// Loader -----------------------------------------------------------------]
+	// Loader -------------------------------------------------------------------------------------]
 
 	// get all possible options for 'loaders'
-	const loaders = useLoaders();
+	const loaders = useLoaders()
 
 	// setup default loader if none
 	useEffect(() => {
-		if(loaders && isNil(loader)) {
+		if (loaders && isNil(loader)) {
 			setAttributes({ loader: 0, loaderHTML: loaders[0] })
 		}
-	}, [loader, loaders, setAttributes]);
+	}, [loader, loaders, setAttributes])
 
-	const loaderEdit = <Loader.WithOptions className={ prefixIt('loader') } id={ loader }/>;
+	const loaderEdit = <Loader.WithOptions className={prefixIt('loader')} id={loader} />
 
-	// Title ------------------------------------------------------------------]
+	// Title --------------------------------------------------------------------------------------]
 
-	const [ withoutTitle, setWithoutTitle ] = useState(!title);
-	const peviousTitle = useRef(title);
+	const [withoutTitle, setWithoutTitle] = useState(!title)
+	const peviousTitle = useRef(title)
 
 	const titleEdit = withoutTitle ? null : (
-		<h2 className={ prefixIt('subheading') }>
+		<h2 className={prefixIt('subheading')}>
 			<ZuPlainEdit
-				value={ title }
-				attrKey={ 'title' }
-				placeholder={ __('Add form title...', 'zu-contact') }
-				setAttributes={ setAttributes }
+				value={title}
+				attrKey={'title'}
+				placeholder={__('Add form title...', 'zu-contact')}
+				setAttributes={setAttributes}
 			/>
 		</h2>
-	);
+	)
 
-	const disableTitle = useCallback(val => {
-		setAttributes({ title: val ? '' : peviousTitle.current });
-		if(val) peviousTitle.current = title;
-		setWithoutTitle(val);
-	}, [title, setAttributes]);
+	const disableTitle = useCallback(
+		(val) => {
+			setAttributes({ title: val ? '' : peviousTitle.current })
+			if (val) peviousTitle.current = title
+			setWithoutTitle(val)
+		},
+		[title, setAttributes],
+	)
 
-	// ReCAPTCHA --------------------------------------------------------------]
+	// ReCAPTCHA ----------------------------------------------------------------------------------]
 
-	const enableRecaptcha = useCallback(val => {
-		setAttributes({ useRecaptcha: val });
-		enableRe(val);
-	}, [setAttributes, enableRe]);
+	const enableRecaptcha = useCallback(
+		(val) => {
+			setAttributes({ useRecaptcha: val })
+			enableRe(val)
+		},
+		[setAttributes, enableRe],
+	)
 
-// <PanelBody title={ __('Plugin options', 'zu-contact') }>
-// 	<PluginOptionsEdit/>
-// </PanelBody>
+	// <PanelBody title={ __('Plugin options', 'zu-contact') }>
+	// 	<PluginOptionsEdit/>
+	// </PanelBody>
 
-	// Layouts ----------------------------------------------------------------]
+	// Layouts ------------------------------------------------------------------------------------]
 
-	const setLayout = useCallback(layout => {
-		const uniqueName = uniqueValue(layout.name, getUsedNames());
-		setTemplateName(layout.name);
-		setAttributes({ name: uniqueName, title: layout.title });
-		setWithoutTitle(!layout.title)
-		updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
-	}, [updateForm, setAttributes]);
+	const setLayout = useCallback(
+		(layout) => {
+			const uniqueName = uniqueValue(layout.name, getUsedNames())
+			setTemplateName(layout.name)
+			setAttributes({ name: uniqueName, title: layout.title })
+			setWithoutTitle(!layout.title)
+			updateForm(uniqueName, TYPES.CREATE_FORM, layout.name)
+		},
+		[updateForm, setAttributes],
+	)
 
 	// if the name is not defined - display the layout selection
-	if(!name) {
-		return (
-			<FormLayout
-				classPrefix={ ZuForm.formPrefix }
-				layout={ name }
-				setLayout={ setLayout }
-			/>
-		);
+	if (!name) {
+		return <FormLayout classPrefix={ZuForm.formPrefix} layout={name} setLayout={setLayout} />
 	}
 
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ __('Form Settings', 'zu-contact') }>
+				<PanelBody title={__('Form Settings', 'zu-contact')}>
 					<ToggleControl
-						label={ __('Without Form Heading', 'zu-contact') }
-						checked={ withoutTitle }
-						onChange={ disableTitle }
+						label={__('Without Form Heading', 'zu-contact')}
+						checked={withoutTitle}
+						onChange={disableTitle}
 					/>
 					<ToggleControl
-						label={ __('Enable reCAPTCHA', 'zu-contact') }
-						checked={ reClientId || false }
-						onChange={ enableRecaptcha }
+						label={__('Enable reCAPTCHA', 'zu-contact')}
+						checked={reClientId || false}
+						onChange={enableRecaptcha}
 					/>
 				</PanelBody>
 
-				<PanelBody title={ __('Form Loader', 'zu-contact') } initialOpen={ false }>
+				<PanelBody title={__('Form Loader', 'zu-contact')} initialOpen={false}>
 					<LoaderControl
-						clientId={ clientId }
+						clientId={clientId}
 						editClassName="__reveal-loader"
-						shape={ loader }
-						loaders={ loaders }
-						setAttributes={ setAttributes }
+						shape={loader}
+						loaders={loaders}
+						setAttributes={setAttributes}
 					/>
 				</PanelBody>
 			</InspectorControls>
@@ -173,66 +179,73 @@ const ZuFormEdit = ({
 				<AdvTextControl
 					withDebounce
 					withoutClear
-					label={ __('Form Name', 'zu-contact') }
-					help={ __('Usually you don\'t need to change it.', 'zu-contact') }
-					value={ name }
-					onChange={ onChangeName }
-					withoutValues={ getUsedNames() }
+					label={__('Form Name', 'zu-contact')}
+					help={__("Usually you don't need to change it.", 'zu-contact')}
+					value={name}
+					onChange={onChangeName}
+					withoutValues={getUsedNames()}
 				/>
 			</InspectorAdvancedControls>
-			<ZuForm isEditor { ...{
-				className,
-				name,
-				title,
-				postId,
-				postLink,
-				loaderEdit,
-				titleEdit }
-			}>
-				<FormContext.Provider value={ updateField }>
+			<ZuForm
+				isEditor
+				{...{
+					className,
+					name,
+					title,
+					postId,
+					postLink,
+					loaderEdit,
+					titleEdit,
+				}}
+			>
+				<FormContext.Provider value={updateField}>
 					<InnerBlocks
-						allowedBlocks={ allowedBlocks }
-						template={ layoutTemplates[templateName] }
-						templateLock={ false }
-						templateInsertUpdatesSelection={ false }
-						renderAppender={ () => ( null ) }
-						__experimentalCaptureToolbars={ true }
+						allowedBlocks={allowedBlocks}
+						template={layoutTemplates[templateName]}
+						templateLock={false}
+						templateInsertUpdatesSelection={false}
+						renderAppender={() => null}
+						__experimentalCaptureToolbars={true}
 					/>
 				</FormContext.Provider>
 			</ZuForm>
 		</>
-	);
+	)
 }
 
 export default compose([
-	withSelect(( select, { clientId }) => {
-		const { getCurrentPostId, getEditedPostSlug } = select('core/editor');
-		const { getBlockOrder, getBlock } = select('core/block-editor');
-		const fieldIds = getBlockOrder(clientId);
-		const reClientId= reduce(fieldIds, (reId, id) => {
-			const block = getBlock(id);
-			return block.name === recaptchaBlockName ? block.clientId : reId;
-		}, null);
+	withSelect((select, { clientId }) => {
+		const { getCurrentPostId, getEditedPostSlug } = select('core/editor')
+		const { getBlockOrder, getBlock } = select('core/block-editor')
+		const fieldIds = getBlockOrder(clientId)
+		const reClientId = reduce(
+			fieldIds,
+			(reId, id) => {
+				const block = getBlock(id)
+				return block.name === recaptchaBlockName ? block.clientId : reId
+			},
+			null,
+		)
 
 		return {
 			currentPostId: getCurrentPostId(),
 			editedPostSlug: getEditedPostSlug(),
 			insertIndex: fieldIds.length ? fieldIds.length - 1 : 0,
 			reClientId,
-		};
+		}
 	}),
-	withDispatch(( dispatch, { clientId, insertIndex, reClientId }) => {
-		const { removeBlock, insertBlock } = dispatch('core/block-editor');
+	withDispatch((dispatch, { clientId, insertIndex, reClientId }) => {
+		const { removeBlock, insertBlock } = dispatch('core/block-editor')
 		return {
-			enableRe: val => val ?
-				insertBlock(
-					createBlock(recaptchaBlockName, { ...recaptchaDefaults }),
-					insertIndex,
-					clientId,
-					false
-				)
-			:
-				removeBlock(reClientId, false),
-		};
+			enableRe: (val) =>
+				val
+					? insertBlock(
+							createBlock(recaptchaBlockName, { ...recaptchaDefaults }),
+							insertIndex,
+							clientId,
+							false,
+						)
+					: removeBlock(reClientId, false),
+		}
 	}),
-])(ZuFormEdit);
+])(ZuFormEdit)

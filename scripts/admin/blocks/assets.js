@@ -1,19 +1,16 @@
-// WordPress dependencies
+import { defaults } from 'lodash-es'
 
-const { defaults } = lodash;
+// internal dependencies
+import { pluginData } from './utils.js'
 
-// Internal dependencies
-
-import { pluginData } from './utils.js';
-
-// Create plugin defaults from JSON data (CSS prefix, form templates, etc.)
+// create plugin defaults from JSON data (CSS prefix, form templates, etc.)
 export const pluginDefaults = defaults(pluginData, {
 	prefix: 'zuc',
 	templates: {},
 	types: {},
 	recaptcha: {},
-});
+})
 
-// re-export all named imports ------------------------------------------------]
+// re-export all named imports --------------------------------------------------------------------]
 
-export * from './icons.js';
+export * from './icons.js'
