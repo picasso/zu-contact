@@ -13,6 +13,14 @@ apple-touch-icon.png export-ignore
 /sources export-ignore
 /lang/*.pot export-ignore
 zukit.sh
+/includes/_unused export-ignore
+.markdownlint.json export-ignore
+eslint.config.js export-ignore
+prettier.config.cjs export-ignore
+wp-dev.config.cjs export-ignore
+wp-admin.config.cjs export-ignore
+wp-frontend.config.cjs export-ignore
+zu-contact.code-workspace export-ignore
 
 # GitHub ignore stuff
 #####################
@@ -31,3 +39,9 @@ zukit/*.sh export-ignore
 zukit/*.pot export-ignore
 zukit/.* export-ignore
 zukit/translate-2-json.js export-ignore
+zukit/.markdownlint.json export-ignore
+zukit/eslint.config.js export-ignore
+zukit/prettier.config.cjs export-ignore
+zukit/wp-dev.config.cjs export-ignore
+zukit/wp-scripts.config.cjs export-ignore
+zukit/zukit.code-workspace export-ignore
