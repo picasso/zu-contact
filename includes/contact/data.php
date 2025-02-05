@@ -2,24 +2,24 @@
 // Class for holding and validating data captured from the contact form
 //
 class zu_ContactData {
-	public string $name;
-	public string $email;
-	public string $message;
+	public $name;
+	public $email;
+	public $message;
 
 	public $post_id;
-	public string $post_link;
-	public bool $spam;
-	public bool $was_sent;
-	public bool $was_notified;
+	public $post_link;
+	public $spam;
+	public $was_sent;
+	public $was_notified;
 	public $recaptcha;
 
 	public $attributes;
 	public $errors;
-	public zu_ContactFields $form;
+	public zu_ContactFields|bool $form;
 
-	private string $prefix;
+	private $prefix;
 	private $available_errors;
-	private int $was_checked;
+	private $was_checked;
 
 	function __construct() {
 
