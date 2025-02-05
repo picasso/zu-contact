@@ -11,7 +11,6 @@ Simple but smart and modern Ajax contact form. With Form Blocks and Gutenberg ba
 
 [![Zu Contact, a simple but smart Ajax contact forms.](https://ps.w.org/zu-contact/assets/banner-1544x500.png)](https://github.com/picasso/zu-contact/)
 
-
 ## Description
 
 Unfortunately WordPress does not come with built-in functionality for a simple contact form. Although, there are a bunch of plugins that allow you to create various forms of any configuration and complexity. But for me the problem with all these plugins is that they are too huge and functional. When the site needs only one simple (but convenient) feedback form, then a multifunctional monster is too much for me. That's why I wrote this plugin. And then, when Gutenberg appeared, I decided to rewrite the settings page using React components... it turned out very conveniently.
@@ -75,7 +74,6 @@ You can also personalize the form by adding attributes to the shortcode:
 
 `[zu-contact class="my-contact-form" ajax=false rows=8]`
 
-
 <!--
 ### Connect
 
@@ -86,8 +84,8 @@ You can also personalize the form by adding attributes to the shortcode:
 
 ### Download
 
-+ [Zu Contact on WordPress.org](https://downloads.wordpress.org/plugin/zu-contact.zip)
-+ [Zu Contact on GitHub](https://github.com/picasso/zu-contact/archive/master.zip)
+* [Zu Contact on WordPress.org](https://downloads.wordpress.org/plugin/zu-contact.zip)
+* [Zu Contact on GitHub](https://github.com/picasso/zu-contact/archive/master.zip)
 
 ## Installation
 
@@ -210,7 +208,6 @@ if(function_exists('zucontact')) {
 Using the new form in `shortcode` is pretty simple:
 
 `[zu-contact form="my-form"]`
-
 
 ## Support
 
