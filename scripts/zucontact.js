@@ -139,13 +139,13 @@ $(function () {
 
 	function ajaxLoading(initiated) {
 		if (initiated) {
-			$button.attr('disabled', 'disabled')
+			$button.prop('disabled', true)
 			// put loader to center
 			const topCss = ($status.outerHeight() - $loader.outerHeight()) / 2
 			const leftCss = ($status.outerWidth() - $loader.outerWidth()) / 2
 			$loader.css({ top: topCss, left: leftCss })
 		} else {
-			$button.removeAttr('disabled')
+			$button.prop('disabled', false)
 		}
 		$body.toggleClass('ajaxed', initiated)
 	}
@@ -206,7 +206,10 @@ $(function () {
 			},
 			error(jqXHR, textStatus, errorThrown) {
 				const smtp = jqXHR.responseText.match(/SMTP Error:[^<]+/gi) || []
-				const data = { ajax: smtp[0] ? smtp[0] : `${jqXHR.status} : ${errorThrown}.` }
+				const fromJSON = jqXHR.responseJSON?.message ?? 'Unknown Error'
+				const data = {
+					ajax: smtp[0] ? smtp[0] : `${jqXHR.status} : ${errorThrown || fromJSON}.`,
+				}
 				processPostData({
 					is_valid: false,
 					errors: data,
